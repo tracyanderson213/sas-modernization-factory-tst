@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "node_id", "node_type", "status", "client_id", "workload_id",
+    "source_revision_id", "run_id", "attempt_id", "lineage_id", "subject_id",
+    "authority", "producer_id", "producer_version", "decision_id", "policy_digest",
+    "configuration_digest", "strategy_digest", "provider_id", "provider_version",
+    "original_evidence_type", "original_evidence_version", "original_evidence_ref",
+    "original_evidence_sha256", "inputs", "outputs",
+    "predecessor_node_ids", "supersedes_node_id", "reason_code", "proof"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "node_id": {"type": "string", "pattern": "^PN-v1-[a-f0-9]{64}$"},
+    "node_type": {"enum": ["source_intake", "strategy", "conversion", "generated_artifact", "execution", "validation", "repair", "human_decision"]},
+    "status": {"enum": ["admitted", "selected", "converted", "generated", "succeeded", "validated", "applied", "approved", "not_required", "blocked", "failed", "unsupported", "submitted", "cancelled", "human_required", "pending", "denied", "expired"]},
+    "client_id": {"$ref": "#/$defs/safe"},
+    "workload_id": {"type": "string", "pattern": "^WL-v1-[a-f0-9]{64}$"},
+    "source_revision_id": {"type": "string", "pattern": "^SRC-v1-[a-f0-9]{64}$"},
+    "run_id": {"type": "string", "pattern": "^RUN-v1-[a-f0-9]{64}$"},
+    "attempt_id": {"type": "string", "pattern": "^ATT-v1-[a-f0-9]{64}$"},
+    "lineage_id": {"type": "string", "pattern": "^LIN-v1-[a-f0-9]{64}$"},
+    "subject_id": {"$ref": "#/$defs/safe"},
+    "authority": {"$ref": "#/$defs/safe"},
+    "producer_id": {"$ref": "#/$defs/safe"},
+    "producer_version": {"$ref": "#/$defs/safe"},
+    "decision_id": {"$ref": "#/$defs/safe"},
+    "policy_digest": {"$ref": "#/$defs/nullableDigest"},
+    "configuration_digest": {"$ref": "#/$defs/nullableDigest"},
+    "strategy_digest": {"$ref": "#/$defs/nullableDigest"},
+    "provider_id": {"$ref": "#/$defs/nullableSafe"},
+    "provider_version": {"$ref": "#/$defs/nullableSafe"},
+    "original_evidence_type": {"$ref": "#/$defs/safe"},
+    "original_evidence_version": {"$ref": "#/$defs/safe"},
+    "original_evidence_ref": {"$ref": "#/$defs/ref"},
+    "original_evidence_sha256": {"$ref": "#/$defs/digest"},
+    "inputs": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/artifact"}},
+    "outputs": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/artifact"}},
+    "predecessor_node_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^PN-v1-[a-f0-9]{64}$"}},
+    "supersedes_node_id": {"anyOf": [{"type": "null"}, {"type": "string", "pattern": "^PN-v1-[a-f0-9]{64}$"}]},
+    "reason_code": {"$ref": "#/$defs/nullableSafe"},
+    "proof": {
+      "type": "object", "additionalProperties": false,
+      "required": ["algorithm", "key_id", "value"],
+      "properties": {
+        "algorithm": {"const": "ed25519"},
+        "key_id": {"$ref": "#/$defs/safe"},
+        "value": {"type": "string", "minLength": 80, "maxLength": 128}
+      }
+    }
+  },
+  "$defs": {
+    "safe": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@+\\-]{0,255}$"},
+    "nullableSafe": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/safe"}]},
+    "digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "nullableDigest": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/digest"}]},
+    "ref": {"type": "string", "minLength": 1, "maxLength": 1024, "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.?/).+$"},
+    "artifact": {
+      "type": "object", "additionalProperties": false,
+      "required": ["artifact_id", "artifact_ref", "sha256"],
+      "properties": {
+        "artifact_id": {"$ref": "#/$defs/safe"},
+        "artifact_ref": {"$ref": "#/$defs/ref"},
+        "sha256": {"$ref": "#/$defs/digest"}
+      }
+    }
+  }
+}

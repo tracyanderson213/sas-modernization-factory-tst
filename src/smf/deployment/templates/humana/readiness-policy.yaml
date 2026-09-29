@@ -1,0 +1,237 @@
+policy_id: humana-workload-readiness
+policy_version: "2.0"
+classification_precedence:
+  - UNSUPPORTED
+  - BLOCKED
+  - NEEDS_EVIDENCE
+  - HUMAN_REQUIRED
+  - READY
+supported_artifact_kinds:
+  - sas_program
+  - sas_macro
+  - sas_include
+  - format_catalog
+  - configuration
+  - shell_script
+  - scheduler_job
+unresolved_dependencies:
+  dynamic: NEEDS_EVIDENCE
+  ambiguous: NEEDS_EVIDENCE
+  missing: BLOCKED
+  external: NEEDS_EVIDENCE
+  recursive: BLOCKED
+  cyclic: BLOCKED
+  runtime_dependent: NEEDS_EVIDENCE
+  unsupported: UNSUPPORTED
+  limit_exceeded: BLOCKED
+required_environment_checks: []
+required_runtime_checks: []
+prerequisite_binding:
+  client_id: humana
+  deployment_id: humana-competition-pilot
+  environment_id: humana-databricks-pilot
+  # SHA-256 over the ordered factory, Databricks, security and validation file digests.
+  configuration_digest: ded3947b9eec305d2c050efb9df7a6fc71673bab831a2ec62ba2ee39ce134260
+prerequisites:
+  - prerequisite_id: sas_baseline_runtime_access
+    domain: sas_baseline
+    evidence_kind: runtime
+    owner_role: humana-sas-platform-owner
+    requirement_refs: [HC-REQ-03]
+    owner_assignment_ref: assignment-pending-sas-runtime
+    max_age_seconds: 86400
+    next_action: Confirm current SAS runtime access and publish the governed check result.
+  - prerequisite_id: sas_baseline_acquisition_permission
+    domain: sas_baseline
+    evidence_kind: environment
+    owner_role: humana-validation-owner
+    requirement_refs: [HC-REQ-03]
+    owner_assignment_ref: assignment-pending-sas-acquisition
+    max_age_seconds: 86400
+    next_action: Approve source baseline acquisition and publish the governed decision.
+  - prerequisite_id: databricks_workspace_binding
+    domain: databricks
+    evidence_kind: environment
+    owner_role: humana-databricks-platform-owner
+    requirement_refs: [HC-REQ-05]
+    owner_assignment_ref: assignment-pending-databricks-workspace
+    max_age_seconds: 86400
+    next_action: Verify the approved workspace binding through the governed adapter.
+  - prerequisite_id: governed_catalog_scratch_output
+    domain: databricks
+    evidence_kind: environment
+    owner_role: humana-data-platform-owner
+    requirement_refs: [HC-REQ-05]
+    owner_assignment_ref: assignment-pending-catalog-scratch
+    max_age_seconds: 86400
+    next_action: Verify catalog, schema, isolated scratch and output bindings.
+  - prerequisite_id: source_data_read_scope
+    domain: data_scope
+    evidence_kind: environment
+    owner_role: humana-data-owner
+    requirement_refs: [HC-REQ-05]
+    owner_assignment_ref: assignment-pending-source-read
+    max_age_seconds: 86400
+    next_action: Approve the exact cohort source-data read scope.
+  - prerequisite_id: target_data_write_scope
+    domain: data_scope
+    evidence_kind: environment
+    owner_role: humana-data-owner
+    requirement_refs: [HC-REQ-05]
+    owner_assignment_ref: assignment-pending-target-write
+    max_age_seconds: 86400
+    next_action: Approve the isolated target-data write scope.
+  - prerequisite_id: network_private_connectivity
+    domain: network
+    evidence_kind: environment
+    owner_role: humana-network-owner
+    requirement_refs: [HC-REQ-05]
+    owner_assignment_ref: assignment-pending-network
+    max_age_seconds: 86400
+    next_action: Verify DNS, egress and required private-path connectivity.
+  - prerequisite_id: workload_identity_token_exchange
+    domain: identity
+    evidence_kind: environment
+    owner_role: humana-identity-owner
+    requirement_refs: [HC-REQ-10]
+    owner_assignment_ref: assignment-pending-workload-identity
+    max_age_seconds: 86400
+    next_action: Verify workload identity and token exchange without persisting credentials.
+  - prerequisite_id: target_runtime_compatible
+    domain: databricks
+    evidence_kind: runtime
+    owner_role: humana-databricks-platform-owner
+    requirement_refs: [HC-REQ-05]
+    owner_assignment_ref: assignment-pending-target-runtime
+    max_age_seconds: 86400
+    next_action: Verify the governed Databricks runtime compatibility result.
+  - prerequisite_id: resource_quotas
+    domain: quota
+    evidence_kind: runtime
+    owner_role: humana-capacity-owner
+    requirement_refs: [HC-REQ-07]
+    owner_assignment_ref: assignment-pending-resource-quotas
+    max_age_seconds: 86400
+    next_action: Confirm current compute, concurrency, storage and job quotas.
+  - prerequisite_id: validation_execution_permission
+    domain: validation
+    evidence_kind: environment
+    owner_role: humana-validation-owner
+    requirement_refs: [HC-REQ-04]
+    owner_assignment_ref: assignment-pending-validation-execution
+    max_age_seconds: 86400
+    next_action: Approve execution of the configured validation checks.
+  - prerequisite_id: validation_evidence_permission
+    domain: validation
+    evidence_kind: environment
+    owner_role: humana-validation-owner
+    requirement_refs: [HC-REQ-04]
+    owner_assignment_ref: assignment-pending-validation-evidence
+    max_age_seconds: 86400
+    next_action: Approve validation-result read access and evidence retention.
+  - prerequisite_id: cleanup_retention_approval
+    domain: retention
+    evidence_kind: environment
+    owner_role: humana-security-owner
+    requirement_refs: [HC-REQ-06]
+    owner_assignment_ref: assignment-pending-cleanup-retention
+    max_age_seconds: 86400
+    next_action: Approve cleanup and retention policy for the selected cohort.
+  - prerequisite_id: logging_audit_access
+    domain: audit
+    evidence_kind: environment
+    owner_role: humana-security-owner
+    requirement_refs: [HC-REQ-09]
+    owner_assignment_ref: assignment-pending-logging-audit
+    max_age_seconds: 86400
+    next_action: Verify attributable logging and audit evidence access.
+evidence_provenance:
+  discovery_snapshot:
+    authorities:
+      - smf-discovery-service
+    acquisition_sources:
+      - governed-discovery-store
+    key_ids:
+      - humana-readiness-v1
+  assessment:
+    authorities:
+      - humana-assessment-service
+    acquisition_sources:
+      - governed-assessment-store
+    key_ids:
+      - humana-readiness-v1
+  dataset_mapping:
+    authorities:
+      - humana-data-governance
+    acquisition_sources:
+      - governed-mapping-registry
+    key_ids:
+      - humana-readiness-v1
+  baseline:
+    authorities:
+      - sas-executed-baseline
+    acquisition_sources:
+      - governed-baseline-store
+    key_ids:
+      - humana-readiness-v1
+  environment:
+    authorities:
+      - humana-platform-control-plane
+    acquisition_sources:
+      - readiness-evidence-adapter
+    key_ids:
+      - humana-readiness-v1
+  runtime:
+    authorities:
+      - humana-platform-control-plane
+    acquisition_sources:
+      - readiness-evidence-adapter
+    key_ids:
+      - humana-readiness-v1
+  approval:
+    authorities:
+      - humana-change-governance
+    acquisition_sources:
+      - governed-approval-adapter
+    key_ids:
+      - humana-readiness-v1
+verification_keys:
+  # Public verification material only; signing keys remain outside the repository.
+  humana-readiness-v1: iE46C/SokwE7IGnr2m4JVTwYjieUiu6DxIOu+w1AO+Y=
+baseline:
+  authorities:
+    - sas-executed-baseline
+  require_source_execution_id: true
+  # Populate only with reviewed deployment-bound producer and approval trust roots.
+  trusted_acquisition_policies: []
+mappings:
+  require_inputs: true
+  require_outputs: true
+human_review:
+  complexities:
+    - highly_complex
+  risk_factors:
+    - regulated_manual_approval
+max_evidence_age_seconds: 2592000
+owners:
+  discovery: discovery-owner
+  dependency: workload-owner
+  assessment: conversion-owner
+  unsupported_construct: architecture-owner
+  dataset_mapping: data-owner
+  baseline: validation-owner
+  runtime: platform-owner
+  environment: platform-owner
+  human_approval: workload-owner
+  evidence_integrity: security-owner
+next_actions:
+  discovery: Re-run canonical discovery and preserve attributable source evidence.
+  dependency: Resolve or explicitly govern the dependency finding.
+  assessment: Produce a current assessment for every convertible entry point.
+  unsupported_construct: Select a supported strategy or obtain an architecture decision.
+  dataset_mapping: Complete and approve the source-to-target dataset mapping.
+  baseline: Acquire an authoritative SAS-executed baseline with execution linkage.
+  runtime: Satisfy and re-test target runtime prerequisites.
+  environment: Restore access or configuration and capture a current environment check.
+  human_approval: Record the governed human decision as new evidence in a new attempt.
+  evidence_integrity: Re-acquire attributable evidence with matching identity and digests.

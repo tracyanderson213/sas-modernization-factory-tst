@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "$id": "https://smf.example/schemas/ai-transport-result.schema.json",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "decision_id", "request", "state", "blocker_codes", "evidence_refs", "response_status", "response_digest", "response_byte_count", "elapsed_ms", "context_qualified", "submission_authorized", "transport_attempted", "response_received", "generated", "executed", "validated", "parity_passed", "certified", "human_approved", "human_assisted", "proof"],
+  "properties": {
+    "schema_version": {"const": "1.0"}, "decision_id": {"$ref": "#/$defs/id"}, "request": {"type": "object", "minProperties": 1}, "state": {"enum": ["blocked_missing", "blocked_pending", "denied", "invalid_binding", "redirect_rejected", "transport_failed", "timed_out", "cancelled", "outcome_unknown", "response_received"]},
+    "blocker_codes": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}}, "evidence_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "response_status": {"type": ["integer", "null"], "minimum": 100, "maximum": 599}, "response_digest": {"anyOf": [{"$ref": "#/$defs/digest"}, {"type": "null"}]}, "response_byte_count": {"type": ["integer", "null"], "minimum": 0}, "elapsed_ms": {"type": "integer", "minimum": 0},
+    "context_qualified": {"type": "boolean"}, "submission_authorized": {"type": "boolean"}, "transport_attempted": {"type": "boolean"}, "response_received": {"type": "boolean"},
+    "generated": {"const": false}, "executed": {"const": false}, "validated": {"const": false}, "parity_passed": {"const": false}, "certified": {"const": false}, "human_approved": {"const": false}, "human_assisted": {"type": "boolean"}, "proof": {"$ref": "#/$defs/proof"}
+  },
+  "$defs": {"id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"}, "digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "proof": {"type": "object", "additionalProperties": false, "required": ["algorithm", "key_id", "value"], "properties": {"algorithm": {"const": "ed25519"}, "key_id": {"$ref": "#/$defs/id"}, "value": {"type": "string", "minLength": 1}}}}
+}

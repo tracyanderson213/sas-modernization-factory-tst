@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SMF Structural Parity Policy",
+  "type": "object",
+  "required": ["schema_version", "policy_id", "policy_version", "case_sensitive_names", "order_significant", "allow_empty_schemas", "nullability_rule", "length_rule", "precision_rule", "scale_rule", "type_mappings"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "policy_id": {"type": "string", "minLength": 1},
+    "policy_version": {"type": "string", "minLength": 1},
+    "case_sensitive_names": {"type": "boolean"},
+    "order_significant": {"type": "boolean"},
+    "allow_empty_schemas": {"type": "boolean"},
+    "nullability_rule": {"enum": ["exact", "target_may_be_nullable"]},
+    "length_rule": {"enum": ["exact", "target_may_widen"]},
+    "precision_rule": {"enum": ["exact", "target_may_widen"]},
+    "scale_rule": {"enum": ["exact", "target_may_widen"]},
+    "type_mappings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["rule_id", "source_logical_type", "source_native_type", "target_logical_type", "target_native_type"],
+        "properties": {
+          "rule_id": {"type": "string", "minLength": 1},
+          "source_logical_type": {"type": "string", "minLength": 1},
+          "source_native_type": {"type": "string", "minLength": 1},
+          "target_logical_type": {"type": "string", "minLength": 1},
+          "target_native_type": {"type": "string", "minLength": 1}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

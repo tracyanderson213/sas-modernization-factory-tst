@@ -1,0 +1,22 @@
+{
+  "policy_id": "smf.sassem04.classification",
+  "version": "1.0.0",
+  "strategy_id": "smf.sas-format-function-classifier",
+  "strategy_version": "1.0.0",
+  "executable_mapping_allowlist": [],
+  "source_encoding": "utf-8-strict",
+  "unknown_label_handling": "blocked",
+  "ambiguous_context_handling": "blocked",
+  "custom_semantics_handling": "unsupported",
+  "external_inputs": [
+    {"name": "sas_runtime", "status": "pending", "evidence_ref": null},
+    {"name": "sas_version", "status": "pending", "evidence_ref": null},
+    {"name": "session_options", "status": "pending", "evidence_ref": null},
+    {"name": "locale", "status": "pending", "evidence_ref": null},
+    {"name": "timezone", "status": "pending", "evidence_ref": null},
+    {"name": "yearcutoff", "status": "pending", "evidence_ref": null},
+    {"name": "oracle_authority", "status": "pending", "evidence_ref": null},
+    {"name": "business_tolerances", "status": "pending", "evidence_ref": null},
+    {"name": "humana_owner_decisions", "status": "pending", "evidence_ref": null}
+  ]
+}

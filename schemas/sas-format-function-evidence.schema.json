@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SMF SAS Format and Function Classification Evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "evidence_id", "decision_id", "client_id", "workload_id", "subject_id", "source_artifact_id", "run_id", "attempt_id", "source_snapshot_ref", "source_sha256", "source_size", "policy", "policy_digest", "strategy_id", "strategy_version", "disposition", "occurrences", "claims", "terminal_disposition", "evidence_sha256"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "evidence_id": {"$ref": "#/$defs/id"},
+    "decision_id": {"$ref": "#/$defs/id"},
+    "client_id": {"$ref": "#/$defs/id"},
+    "workload_id": {"$ref": "#/$defs/id"},
+    "subject_id": {"$ref": "#/$defs/id"},
+    "source_artifact_id": {"$ref": "#/$defs/id"},
+    "run_id": {"$ref": "#/$defs/id"},
+    "attempt_id": {"$ref": "#/$defs/id"},
+    "source_snapshot_ref": {"$ref": "#/$defs/id"},
+    "source_sha256": {"$ref": "#/$defs/sha"},
+    "source_size": {"type": "integer", "minimum": 1},
+    "policy": {"$ref": "sas-format-function-policy.schema.json"},
+    "policy_digest": {"$ref": "#/$defs/sha"},
+    "strategy_id": {"const": "smf.sas-format-function-classifier"},
+    "strategy_version": {"const": "1.0.0"},
+    "disposition": {"enum": ["not_applicable", "blocked", "unsupported"]},
+    "occurrences": {"type": "array", "items": {"$ref": "#/$defs/occurrence"}},
+    "claims": {"$ref": "#/$defs/claims"},
+    "terminal_disposition": {"enum": ["not_applicable", "unresolved"]},
+    "evidence_sha256": {"$ref": "#/$defs/sha"}
+  },
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"},
+    "sha": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "occurrence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["occurrence_id", "kind", "name", "byte_start", "byte_end", "line", "column", "source_token_sha256", "disposition", "reason_code", "underlying_value_separate", "formatted_projection_only"],
+      "properties": {
+        "occurrence_id": {"$ref": "#/$defs/id"},
+        "kind": {"enum": ["format_statement", "informat_statement", "format_label", "informat_label", "format_argument", "informat_argument", "sas_function", "macro_sysfunc", "macro_processing", "target_template", "proc_format", "proc_fcmp", "ambiguous_context"]},
+        "name": {"type": "string", "minLength": 1},
+        "byte_start": {"type": "integer", "minimum": 0},
+        "byte_end": {"type": "integer", "minimum": 1},
+        "line": {"type": "integer", "minimum": 1},
+        "column": {"type": "integer", "minimum": 1},
+        "source_token_sha256": {"$ref": "#/$defs/sha"},
+        "disposition": {"enum": ["blocked", "unsupported"]},
+        "reason_code": {"enum": ["unqualified_mapping", "custom_catalog_reference", "unqualified_function", "macro_function_context_unqualified", "macro_processing_separate", "target_template_not_sas", "custom_format_or_informat", "overlapping_or_ranged_definition", "unsupported_default", "fcmp_function", "ambiguous_format_or_informat_statement", "ambiguous_format_or_informat_argument", "ambiguous_context"]},
+        "underlying_value_separate": {"const": true},
+        "formatted_projection_only": {"const": true}
+      }
+    },
+    "claims": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["generated", "executed", "validated", "parity_passed", "certified", "human_assisted", "human_approved", "blocked"],
+      "properties": {
+        "generated": {"const": false},
+        "executed": {"const": false},
+        "validated": {"const": false},
+        "parity_passed": {"const": false},
+        "certified": {"const": false},
+        "human_assisted": {"const": false},
+        "human_approved": {"const": false},
+        "blocked": {"type": "boolean"}
+      }
+    }
+  }
+}

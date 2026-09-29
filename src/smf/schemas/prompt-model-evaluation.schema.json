@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://smf.example/schemas/prompt-model-evaluation.schema.json",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "suite_id", "suite_version", "evaluation_ref", "policy_id", "policy_version", "model_binding_id", "prompt_template_sha256", "context_budget_digest", "state", "evidence_class", "cases", "claims"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "suite_id": {"$ref": "#/$defs/id"}, "suite_version": {"$ref": "#/$defs/id"},
+    "evaluation_ref": {"$ref": "#/$defs/ref"}, "policy_id": {"$ref": "#/$defs/id"},
+    "policy_version": {"$ref": "#/$defs/id"}, "model_binding_id": {"$ref": "#/$defs/id"},
+    "prompt_template_sha256": {"$ref": "#/$defs/sha"}, "context_budget_digest": {"$ref": "#/$defs/sha"},
+    "state": {"const": "pending"}, "evidence_class": {"const": "synthetic_contract"},
+    "cases": {"type": "array", "minItems": 1, "items": {"type": "object", "additionalProperties": false, "required": ["case_id", "input_digest", "expected_disposition", "actual_disposition"], "properties": {"case_id": {"$ref": "#/$defs/id"}, "input_digest": {"$ref": "#/$defs/sha"}, "expected_disposition": {"enum": ["eligible", "blocked", "rejected"]}, "actual_disposition": {"enum": ["pending", "eligible", "blocked", "rejected"]}}}},
+    "claims": {"type": "object", "additionalProperties": false, "required": ["live_model_evaluated", "semantic_parity", "humana_validated"], "properties": {"live_model_evaluated": {"const": false}, "semantic_parity": {"const": false}, "humana_validated": {"const": false}}}
+  },
+  "$defs": {"id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"}, "sha": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "ref": {"type": "string", "pattern": "^evidence://[A-Za-z0-9][A-Za-z0-9._/-]{0,511}$"}}
+}

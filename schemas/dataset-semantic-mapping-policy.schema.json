@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://smf.local/schemas/dataset-semantic-mapping-policy.schema.json",
+  "title": "SMF governed dataset semantic mapping policy",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["policy_id","version","authority_scope","issued_at","valid_until","source_dataset_id","source_dataset_version","source_snapshot_sha256","canonical_descriptor_digest","canonical_descriptor_version","source_encoding","target_encoding","ordinary_missing_policy","special_missing_policy","numeric_precision_policy","temporal_timezone_policy","yearcutoff_policy","format_informat_policy","source_key_policy","target_key_policy","executable_format_allowlist","semantic_contract_digests","targets"],
+  "properties": {
+    "policy_id": {"type":"string"}, "version": {"type":"string"},
+    "authority_scope": {"const":"licensed-public-fixture-qualification"},
+    "issued_at": {"type":"string"}, "valid_until": {"type":"string"},
+    "source_dataset_id": {"type":"string"}, "source_dataset_version": {"type":"string"},
+    "source_snapshot_sha256": {"type":"string","pattern":"^[0-9a-f]{64}$"},
+    "canonical_descriptor_digest": {"type":"string","pattern":"^[0-9a-f]{64}$"},
+    "canonical_descriptor_version": {"const":"base04-canonical-physical-v1"},
+    "source_encoding": {"const":"WINDOWS-1252"}, "target_encoding": {"const":"UTF-8"},
+    "ordinary_missing_policy": {"const":"provider_null_to_target_null"},
+    "special_missing_policy": {"const":"blocked_unless_qualified"},
+    "numeric_precision_policy": {"const":"binary64_no_narrowing_tolerance_pending"},
+    "temporal_timezone_policy": {"const":"blocked_without_explicit_utc_policy"},
+    "yearcutoff_policy": {"const":"blocked_for_two_digit_year_semantics"},
+    "format_informat_policy": {"const":"metadata_only_no_executable_projection"},
+    "source_key_policy": {"const":"descriptor_declared_keys_only"},
+    "target_key_policy": {"const":"pending_business_owner"},
+    "executable_format_allowlist": {"type":"array","maxItems":0},
+    "semantic_contract_digests": {"type":"object","additionalProperties":false,"required":["temporal_policy_digest","value_policy_digest","format_function_policy_digest"],"properties":{"temporal_policy_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"},"value_policy_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"},"format_function_policy_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"}}},
+    "targets": {"type":"array","minItems":1,"items":{"$ref":"#/$defs/target"}}
+  },
+  "$defs": {
+    "column": {"type":"object","additionalProperties":false,"required":["source_name","source_position","source_physical_type","target_name","target_physical_type","mapping_kind","rename_rationale","expected_format","expected_informat","expected_storage_width","format_disposition","informat_disposition","encoding_disposition","precision_disposition","length_disposition","temporal_disposition","missing_disposition"],"properties":{"source_name":{"type":"string"},"source_position":{"type":"integer","minimum":0},"source_physical_type":{"enum":["string","double"]},"target_name":{"type":"string"},"target_physical_type":{"enum":["string","double"]},"mapping_kind":{"const":"identity_underlying_value"},"rename_rationale":{"type":["string","null"]},"expected_format":{"type":["string","null"]},"expected_informat":{"type":["string","null"]},"expected_storage_width":{"type":"integer","minimum":1},"format_disposition":{"const":"metadata_only_projection_blocked"},"informat_disposition":{"const":"metadata_only_application_blocked"},"encoding_disposition":{"enum":["provider_decoded_unicode_to_utf8","not_applicable"]},"precision_disposition":{"enum":["not_applicable","binary64_no_narrowing_tolerance_pending"]},"length_disposition":{"const":"preserve_storage_width_no_truncation"},"temporal_disposition":{"enum":["not_temporal_observation","blocked_pending_explicit_temporal_policy"]},"missing_disposition":{"const":"ordinary_null_only_special_missing_blocked"}}},
+    "target": {"type":"object","additionalProperties":false,"required":["target_dataset_id","target_dataset_version","target_namespace","transformation_id","transformation_version","rationale","columns"],"properties":{"target_dataset_id":{"type":"string"},"target_dataset_version":{"type":"string"},"target_namespace":{"type":"string"},"transformation_id":{"type":"string"},"transformation_version":{"type":"string"},"rationale":{"type":"string"},"columns":{"type":"array","minItems":1,"items":{"$ref":"#/$defs/column"}}}}
+  }
+}

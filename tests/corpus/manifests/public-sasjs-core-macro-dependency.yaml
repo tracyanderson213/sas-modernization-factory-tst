@@ -1,0 +1,93 @@
+schema_version: 1
+scenario_id: public-sasjs-core-macro-dependency
+name: SASjs Core macro dependency slice
+domain: macro-application
+description: Untouched public SAS acquired from a pinned upstream revision for CORPUS-07
+  realism testing.
+source:
+  source_id: sasjs-core
+  origin: public-open-source
+  license: MIT
+  upstream_url: https://github.com/sasjs/core
+  upstream_ref: d57fe80b08e3039be4b702aadbccf811c8704552
+  notes: Vendored bytes are untouched. SMF must adapt to the upstream source, not
+    the reverse.
+capabilities:
+- macro-library
+- macro-dependencies
+- code-generation
+- sas9-metadata
+- stored-process
+artifacts:
+- path: ../workloads/public/sasjs-core/meta/mm_createstp.sas
+  role: sas-macro
+  sha256: bfdb7c1f04c0ff1bb17bba53b34edc10a5f6c7dee0b76ef2fd07e240ae9553da
+  source_id: sasjs-core
+  upstream_path: meta/mm_createstp.sas
+- path: ../workloads/public/sasjs-core/base/mf_nobs.sas
+  role: sas-macro
+  sha256: 56372ddeddf22e7933962e9e2d1db86dda1b0526ef5115b934594acf8fbac4eb
+  source_id: sasjs-core
+  upstream_path: base/mf_nobs.sas
+- path: ../workloads/public/sasjs-core/base/mf_verifymacvars.sas
+  role: sas-macro
+  sha256: 972577eb0a6dc3c3ff8727ba6d229cd1cf13d8fdedb88d64fced08c27df288da
+  source_id: sasjs-core
+  upstream_path: base/mf_verifymacvars.sas
+- path: ../workloads/public/sasjs-core/meta/mm_getdirectories.sas
+  role: sas-macro
+  sha256: e87723168f397191bb45db005a36b87387e17f1562bc0a1a800998f4354a5f15
+  source_id: sasjs-core
+  upstream_path: meta/mm_getdirectories.sas
+- path: ../workloads/public/sasjs-core/meta/mm_updatestpsourcecode.sas
+  role: sas-macro
+  sha256: 1589bac5fb2dfa1fa9a82f7c53d19912b986f4a4460f8e63704cefaae5c3db27
+  source_id: sasjs-core
+  upstream_path: meta/mm_updatestpsourcecode.sas
+- path: ../workloads/public/sasjs-core/meta/mm_getservercontexts.sas
+  role: sas-macro
+  sha256: 6d371e30dbb3b9a6c1b67f272016776f6b7aa6e8b5c94b2e257f6534a99a1316
+  source_id: sasjs-core
+  upstream_path: meta/mm_getservercontexts.sas
+- path: ../workloads/public/sasjs-core/base/mp_abort.sas
+  role: sas-macro
+  sha256: 1a78af3695c7743e797cea1d804b2105944cea8e2f7ef322e39086d330648fb3
+  source_id: sasjs-core
+  upstream_path: base/mp_abort.sas
+- path: ../workloads/public/sasjs-core/base/mp_dropmembers.sas
+  role: sas-macro
+  sha256: ac44304c9be92f8570eb4ef4c4537911bb77717ac8fdc5e9cec3290cb45f90ab
+  source_id: sasjs-core
+  upstream_path: base/mp_dropmembers.sas
+metadata:
+  tier: untouched-public
+  private_data: false
+  modification_status: untouched
+  acquisition_date: '2026-09-04'
+  independent_authorship: true
+workload:
+  root: ../workloads/public/sasjs-core
+  entrypoints:
+  - ../workloads/public/sasjs-core/meta/mm_createstp.sas
+  relationships:
+  - source: ../workloads/public/sasjs-core/meta/mm_createstp.sas
+    target: ../workloads/public/sasjs-core/base/mf_nobs.sas
+    relationship: depends-on
+  - source: ../workloads/public/sasjs-core/meta/mm_createstp.sas
+    target: ../workloads/public/sasjs-core/base/mf_verifymacvars.sas
+    relationship: depends-on
+  - source: ../workloads/public/sasjs-core/meta/mm_createstp.sas
+    target: ../workloads/public/sasjs-core/meta/mm_getdirectories.sas
+    relationship: depends-on
+  - source: ../workloads/public/sasjs-core/meta/mm_createstp.sas
+    target: ../workloads/public/sasjs-core/meta/mm_updatestpsourcecode.sas
+    relationship: depends-on
+  - source: ../workloads/public/sasjs-core/meta/mm_createstp.sas
+    target: ../workloads/public/sasjs-core/meta/mm_getservercontexts.sas
+    relationship: depends-on
+  - source: ../workloads/public/sasjs-core/meta/mm_createstp.sas
+    target: ../workloads/public/sasjs-core/base/mp_abort.sas
+    relationship: depends-on
+  - source: ../workloads/public/sasjs-core/meta/mm_createstp.sas
+    target: ../workloads/public/sasjs-core/base/mp_dropmembers.sas
+    relationship: depends-on

@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "$id": "https://smf.example/schemas/ai-endpoint-binding.schema.json",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "binding_id", "binding_digest", "status", "deployment_id", "environment_id", "provider_id", "model_id", "identity_binding_id", "secret_binding_id", "tls_profile_ref", "url", "evidence_ref", "proof"],
+  "properties": {
+    "schema_version": {"const": "1.0"}, "binding_id": {"$ref": "#/$defs/id"}, "binding_digest": {"$ref": "#/$defs/digest"}, "status": {"enum": ["active", "pending", "denied"]},
+    "deployment_id": {"$ref": "#/$defs/id"}, "environment_id": {"$ref": "#/$defs/id"}, "provider_id": {"$ref": "#/$defs/id"}, "model_id": {"$ref": "#/$defs/id"}, "identity_binding_id": {"$ref": "#/$defs/id"}, "secret_binding_id": {"$ref": "#/$defs/id"}, "tls_profile_ref": {"$ref": "#/$defs/id"},
+    "url": {"type": "string", "minLength": 10, "maxLength": 2048}, "evidence_ref": {"type": "string", "pattern": "^evidence://[A-Za-z0-9][A-Za-z0-9._/-]{0,511}$"}, "proof": {"$ref": "#/$defs/proof"}
+  },
+  "$defs": {"id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"}, "digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "proof": {"type": "object", "additionalProperties": false, "required": ["algorithm", "key_id", "value"], "properties": {"algorithm": {"const": "ed25519"}, "key_id": {"$ref": "#/$defs/id"}, "value": {"type": "string", "minLength": 1}}}}
+}

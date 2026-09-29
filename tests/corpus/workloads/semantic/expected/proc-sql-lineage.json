@@ -1,0 +1,1 @@
+{"schema_version":1,"columns":[{"name":"member_id","logical_type":"character","nullable":false,"length":8},{"name":"region","logical_type":"character","nullable":false,"length":8},{"name":"total_paid","logical_type":"numeric","nullable":false}],"rows":[["M001","EAST",{"number":"30"}],["M003","NORTH",{"number":"12"}]]}

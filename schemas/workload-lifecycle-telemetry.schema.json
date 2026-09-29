@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/schemas/workload-lifecycle-telemetry.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "result_id", "client_id", "workload_id", "run_id", "attempt_id", "state", "terminal", "event_count", "authority_scope", "next_action", "claims"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "result_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"},
+    "client_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"},
+    "workload_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"},
+    "run_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"},
+    "attempt_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"},
+    "state": {"enum": ["pending_readiness", "ready", "converted", "executed", "validated", "blocked", "unsupported", "failed", "human_pending", "outcome_unknown", "human_approved", "human_denied", "cancelled"]},
+    "terminal": {"type": "boolean"},
+    "event_count": {"type": "integer", "minimum": 0, "maximum": 256},
+    "authority_scope": {"const": "synthetic_stage_contract_with_governed_failure_replay"},
+    "next_action": {"type": "string", "minLength": 1, "maxLength": 128},
+    "claims": {
+      "type": "object", "additionalProperties": false,
+      "required": ["live_external_execution", "humana_validated", "semantic_parity", "production_ready", "migration_complete", "exception_approved", "promotion_authorized"],
+      "properties": {
+        "live_external_execution": {"const": false}, "humana_validated": {"const": false},
+        "semantic_parity": {"const": false}, "production_ready": {"const": false},
+        "migration_complete": {"const": false}, "exception_approved": {"const": false},
+        "promotion_authorized": {"const": false}
+      }
+    }
+  }
+}

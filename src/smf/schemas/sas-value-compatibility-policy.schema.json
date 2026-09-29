@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SMF SAS Value Compatibility Policy",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["policy_id", "version", "sas_semantic_family", "supported_targets", "ordinary_missing_mode", "special_missing_mode", "missing_comparison_mode", "missing_ordering_mode", "missing_arithmetic_mode", "missing_summary_mode", "missing_output_mode", "character_to_numeric_mode", "numeric_to_character_mode", "schema_dependent_mode", "malformed_input_mode", "lossy_coercion_mode", "maximum_integer_digits", "maximum_fractional_digits", "unsupported_cases"],
+  "properties": {
+    "policy_id": {"type": "string", "pattern": "^[a-z][a-z0-9_.-]{2,127}$"},
+    "version": {"type": "string", "pattern": "^[1-9][0-9]*\\.[0-9]+\\.[0-9]+$"},
+    "sas_semantic_family": {"const": "sas-9.4-compatible"},
+    "supported_targets": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["sparksql", "pyspark"]}},
+    "ordinary_missing_mode": {"const": "unresolved"},
+    "special_missing_mode": {"const": "unresolved"},
+    "missing_comparison_mode": {"const": "unresolved"},
+    "missing_ordering_mode": {"const": "unresolved"},
+    "missing_arithmetic_mode": {"const": "unresolved"},
+    "missing_summary_mode": {"const": "unresolved"},
+    "missing_output_mode": {"const": "unresolved"},
+    "character_to_numeric_mode": {"const": "exact-bounded-decimal-literals"},
+    "numeric_to_character_mode": {"const": "unresolved"},
+    "schema_dependent_mode": {"const": "unresolved"},
+    "malformed_input_mode": {"const": "unresolved"},
+    "lossy_coercion_mode": {"const": "unresolved"},
+    "maximum_integer_digits": {"type": "integer", "minimum": 1, "maximum": 18},
+    "maximum_fractional_digits": {"type": "integer", "minimum": 0, "maximum": 9},
+    "unsupported_cases": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+  }
+}

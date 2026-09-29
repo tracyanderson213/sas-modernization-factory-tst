@@ -1,0 +1,1 @@
+{"schema_version":1,"columns":[{"name":"raw","logical_type":"character","nullable":false,"length":8},{"name":"roundtrip","logical_type":"character","nullable":false,"length":8},{"name":"numeric_value","logical_type":"numeric","nullable":true}],"rows":[["42","0042",{"number":"42"}],["0042","0042",{"number":"42"}],[" 7","0007",{"number":"7"}],["bad","   .",{"missing":"."}]]}

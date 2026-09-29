@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0",
+  "repository": "tbarry3c/sas-modernization-factory",
+  "backlog_key": "DBX-03",
+  "issue_number": 153,
+  "title": "Validation compute policy",
+  "state": "OPEN",
+  "url": "https://github.com/tbarry3c/sas-modernization-factory/issues/153",
+  "issue_updated_at": "2026-09-18T22:28:47Z",
+  "retrieved_at": "2026-09-19T11:20:44Z",
+  "retrieval_method": "gh issue view 153 --json number,title,body,url,updatedAt,state",
+  "body_sha256": "26186229f117a5199fe89843e8b4438a401dda42719d5dab210fc56e06d2e67e",
+  "canonical_selected_json_stream_sha256": "46bf94171e8aaca145b881449404b28b6fb1204a32bfbaa2ee4f75bceff5cef1",
+  "local_body": {
+    "path": "competition/generated/issue-specs/DBX-03.md",
+    "sha256": "ac09f4fb5bf86d8ad9de6ba91a144b8c87a1d5f17220429e507c66c384291b9e",
+    "matches_live_body": false
+  }
+}

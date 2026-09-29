@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "contract_version", "result_id", "decision_id", "scope_id", "run_id", "attempt_id", "evaluation_time", "policy_digest", "inventory_digest", "scope_kind", "policy_id", "policy_version", "inventory_id", "inventory_version", "qualification_authority", "prerequisite", "prerequisite_file", "decisions", "outcome", "blockers", "claims", "content_digest", "proof"],
+  "properties": {
+    "schema_version": {"const": "1.0"}, "contract_version": {"const": "smf-upstream-qualification-v1"},
+    "result_id": {"$ref": "#/$defs/id"}, "decision_id": {"$ref": "#/$defs/id"}, "scope_id": {"$ref": "#/$defs/id"}, "run_id": {"$ref": "#/$defs/id"}, "attempt_id": {"$ref": "#/$defs/id"}, "evaluation_time": {"type": "string", "format": "date-time"},
+    "policy_digest": {"$ref": "#/$defs/sha"}, "inventory_digest": {"$ref": "#/$defs/sha"},
+    "scope_kind": {"const": "global_program"}, "policy_id": {"$ref": "#/$defs/id"}, "policy_version": {"$ref": "#/$defs/id"}, "inventory_id": {"$ref": "#/$defs/id"}, "inventory_version": {"$ref": "#/$defs/id"}, "qualification_authority": {"$ref": "#/$defs/id"},
+    "prerequisite": {"$ref": "#/$defs/prerequisite"},
+    "prerequisite_file": {"$ref": "#/$defs/file"},
+    "decisions": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/decision"}},
+    "outcome": {"$ref": "#/$defs/outcome"},
+    "blockers": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 255}},
+    "claims": {"$ref": "#/$defs/claims"},
+    "content_digest": {"$ref": "#/$defs/sha"}, "proof": {"$ref": "#/$defs/proof"}
+  },
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"}, "sha": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "outcome": {"enum": ["qualified", "blocked_missing", "blocked_pending", "denied", "incompatible", "stale", "ambiguous", "unsupported", "failed"]},
+    "disposition": {"enum": ["adopt_directly", "wrap", "reuse_transitively", "reuse_selected_licensed_components", "patterns_only", "reject", "fork_and_harden"]},
+    "use": {"enum": ["runtime", "provider_wrapper", "transitive_dependency", "licensed_component", "evaluation_in_place", "public_corpus", "design_patterns", "dataframe_layer", "optional_quality_policy", "fixture_research", "none"]},
+    "proof": {"type": "object", "additionalProperties": false, "required": ["algorithm", "key_id", "value"], "properties": {"algorithm": {"const": "ed25519"}, "key_id": {"$ref": "#/$defs/id"}, "value": {"type": "string", "minLength": 1}}},
+    "prerequisite": {"type": "object", "additionalProperties": false, "required": ["schema_version", "prerequisite_id", "scope_id", "run_id", "attempt_id", "status", "implementation_state", "acceptance_digest", "authority", "decision_id", "decision_state", "proof"], "properties": {"schema_version": {"const": "1.0"}, "prerequisite_id": {"const": "SEC-03"}, "scope_id": {"$ref": "#/$defs/id"}, "run_id": {"$ref": "#/$defs/id"}, "attempt_id": {"$ref": "#/$defs/id"}, "status": {"enum": ["Done", "Todo", "In Progress", "Pending", "Denied", "Failed"]}, "implementation_state": {"enum": ["Foundation Complete", "Not Started", "In Progress", "Blocked", "Failed"]}, "acceptance_digest": {"$ref": "#/$defs/sha"}, "authority": {"$ref": "#/$defs/id"}, "decision_id": {"$ref": "#/$defs/id"}, "decision_state": {"enum": ["current", "superseded"]}, "proof": {"$ref": "#/$defs/proof"}}},
+    "file": {"type": "object", "additionalProperties": false, "required": ["relative_path", "artifact_type", "byte_count", "sha256"], "properties": {"relative_path": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._ /-]{0,255}$"}, "artifact_type": {"enum": ["source_tree_archive", "wheel", "jar", "runtime_inventory", "corpus_archive", "research_archive", "license", "execution_record", "environment_manifest", "command_output", "negative_case_record", "compatibility_record", "prerequisite_record", "observation_receipt"]}, "byte_count": {"type": "integer", "minimum": 1}, "sha256": {"$ref": "#/$defs/sha"}}},
+    "decision": {"type": "object", "additionalProperties": false, "required": ["upstream_id", "revision", "outcome", "disposition", "permitted_use", "blockers", "receipt_present", "receipt_digest", "files"], "properties": {"upstream_id": {"$ref": "#/$defs/id"}, "revision": {"type": "string", "pattern": "^[a-f0-9]{40,64}$"}, "outcome": {"$ref": "#/$defs/outcome"}, "disposition": {"$ref": "#/$defs/disposition"}, "permitted_use": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/use"}}, "blockers": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 255}}, "receipt_present": {"type": "boolean"}, "receipt_digest": {"oneOf": [{"$ref": "#/$defs/sha"}, {"type": "null"}]}, "files": {"type": "array", "items": {"$ref": "#/$defs/file"}}}},
+    "claims": {"type": "object", "additionalProperties": false, "required": ["installed", "security_cleared", "legally_approved", "executed", "validated", "parity_passed", "certified", "promoted", "human_approved"], "properties": {"installed": {"const": false}, "security_cleared": {"const": false}, "legally_approved": {"const": false}, "executed": {"const": false}, "validated": {"const": false}, "parity_passed": {"const": false}, "certified": {"const": false}, "promoted": {"const": false}, "human_approved": {"const": false}}}
+  }
+}

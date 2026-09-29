@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.smf.example/hmet01-automation-result.schema.json",
+  "type": "object", "additionalProperties": false,
+  "required": ["result_id", "schema_version", "policy", "policy_digest", "evidence_references", "evidence_set_digest", "member_outcomes", "outcome_distribution", "metrics", "claims", "content_digest"],
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"},
+    "sha": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "rate": {"type": "string", "pattern": "^[0-9]+\\.[0-9]{6}$"},
+    "member": {
+      "type": "object", "additionalProperties": false,
+      "required": ["workload_id", "source_artifact_id", "source_artifact_digest", "script_ids"],
+      "properties": {"workload_id": {"$ref": "#/$defs/id"}, "source_artifact_id": {"$ref": "#/$defs/id"}, "source_artifact_digest": {"$ref": "#/$defs/sha"}, "script_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}}}
+    }
+  },
+  "properties": {
+    "result_id": {"$ref": "#/$defs/sha"}, "schema_version": {"const": "1.0"},
+    "content_digest": {"$ref": "#/$defs/sha"}, "policy_digest": {"$ref": "#/$defs/sha"}, "evidence_set_digest": {"$ref": "#/$defs/sha"},
+    "policy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "policy_id", "policy_version", "authority_id", "authority_digest", "client_id", "cohort_id", "cohort_version", "window_started_at", "window_ended_at", "evaluated_at", "members"],
+      "properties": {
+        "schema_version": {"const": "1.0"}, "policy_id": {"$ref": "#/$defs/id"}, "policy_version": {"$ref": "#/$defs/id"},
+        "authority_id": {"$ref": "#/$defs/id"}, "authority_digest": {"$ref": "#/$defs/sha"}, "client_id": {"$ref": "#/$defs/id"},
+        "cohort_id": {"$ref": "#/$defs/id"}, "cohort_version": {"$ref": "#/$defs/id"},
+        "window_started_at": {"type": "string"}, "window_ended_at": {"type": "string"}, "evaluated_at": {"type": "string"},
+        "members": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/member"}}
+      }
+    },
+    "evidence_references": {
+      "type": "array", "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["workload_id", "attempt_id", "content_digest", "relative_path"],
+        "properties": {"workload_id": {"$ref": "#/$defs/id"}, "attempt_id": {"$ref": "#/$defs/id"}, "content_digest": {"$ref": "#/$defs/sha"}, "relative_path": {"type": "string", "minLength": 1}}
+      }
+    },
+    "member_outcomes": {
+      "type": "array", "minItems": 1, "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["workload_id", "script_ids", "attempt_count", "selected_attempt_id", "category", "generated", "executed", "validated", "parity_passed", "human_assisted", "ai_assisted", "blocker_codes", "elapsed_ms", "machine_ms", "human_minutes", "repair_attempts"],
+        "properties": {
+          "workload_id": {"$ref": "#/$defs/id"}, "script_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+          "attempt_count": {"type": "integer", "minimum": 0}, "selected_attempt_id": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/id"}]},
+          "category": {"enum": ["straight_through_parity", "eventual_automated_parity", "human_assisted_parity", "validated_no_parity", "generated_only", "executed_unvalidated", "blocked", "failed", "unsupported", "cancelled", "outcome_unknown", "skipped", "unresolved"]},
+          "generated": {"type": "boolean"}, "executed": {"type": "boolean"}, "validated": {"type": "boolean"}, "parity_passed": {"type": "boolean"}, "human_assisted": {"type": "boolean"}, "ai_assisted": {"type": "boolean"},
+          "blocker_codes": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+          "elapsed_ms": {"type": "integer", "minimum": 0}, "machine_ms": {"type": "integer", "minimum": 0}, "human_minutes": {"type": "integer", "minimum": 0}, "repair_attempts": {"type": "integer", "minimum": 0}
+        }
+      }
+    },
+    "outcome_distribution": {
+      "type": "object", "additionalProperties": false,
+      "required": ["straight_through_parity", "eventual_automated_parity", "human_assisted_parity", "validated_no_parity", "generated_only", "executed_unvalidated", "blocked", "failed", "unsupported", "cancelled", "outcome_unknown", "skipped", "unresolved"],
+      "properties": {
+        "straight_through_parity": {"type": "integer", "minimum": 0}, "eventual_automated_parity": {"type": "integer", "minimum": 0}, "human_assisted_parity": {"type": "integer", "minimum": 0},
+        "validated_no_parity": {"type": "integer", "minimum": 0}, "generated_only": {"type": "integer", "minimum": 0}, "executed_unvalidated": {"type": "integer", "minimum": 0},
+        "blocked": {"type": "integer", "minimum": 0}, "failed": {"type": "integer", "minimum": 0}, "unsupported": {"type": "integer", "minimum": 0},
+        "cancelled": {"type": "integer", "minimum": 0}, "outcome_unknown": {"type": "integer", "minimum": 0}, "skipped": {"type": "integer", "minimum": 0}, "unresolved": {"type": "integer", "minimum": 0}
+      }
+    },
+    "metrics": {
+      "type": "object", "additionalProperties": false,
+      "required": ["workload_denominator", "script_denominator", "attempt_count", "retry_count", "generated_workloads", "executed_workloads", "validated_workloads", "parity_workloads", "straight_through_parity_workloads", "eventual_automated_parity_workloads", "human_assisted_parity_workloads", "blocked_or_unresolved_workloads", "generated_rate", "executed_rate", "validated_rate", "parity_rate", "straight_through_rate", "eventual_automated_rate", "human_assisted_rate", "window_seconds", "parity_workloads_per_hour", "elapsed_ms_total", "machine_ms_total", "human_minutes_total", "repair_attempts_total"],
+      "properties": {
+        "workload_denominator": {"type": "integer", "minimum": 1}, "script_denominator": {"type": "integer", "minimum": 1}, "attempt_count": {"type": "integer", "minimum": 0}, "retry_count": {"type": "integer", "minimum": 0},
+        "generated_workloads": {"type": "integer", "minimum": 0}, "executed_workloads": {"type": "integer", "minimum": 0}, "validated_workloads": {"type": "integer", "minimum": 0}, "parity_workloads": {"type": "integer", "minimum": 0},
+        "straight_through_parity_workloads": {"type": "integer", "minimum": 0}, "eventual_automated_parity_workloads": {"type": "integer", "minimum": 0}, "human_assisted_parity_workloads": {"type": "integer", "minimum": 0}, "blocked_or_unresolved_workloads": {"type": "integer", "minimum": 0},
+        "generated_rate": {"$ref": "#/$defs/rate"}, "executed_rate": {"$ref": "#/$defs/rate"}, "validated_rate": {"$ref": "#/$defs/rate"}, "parity_rate": {"$ref": "#/$defs/rate"}, "straight_through_rate": {"$ref": "#/$defs/rate"}, "eventual_automated_rate": {"$ref": "#/$defs/rate"}, "human_assisted_rate": {"$ref": "#/$defs/rate"},
+        "window_seconds": {"type": "integer", "minimum": 1}, "parity_workloads_per_hour": {"$ref": "#/$defs/rate"},
+        "elapsed_ms_total": {"type": "integer", "minimum": 0}, "machine_ms_total": {"type": "integer", "minimum": 0}, "human_minutes_total": {"type": "integer", "minimum": 0}, "repair_attempts_total": {"type": "integer", "minimum": 0}
+      }
+    },
+    "claims": {
+      "type": "object", "additionalProperties": false,
+      "required": ["measured_from_immutable_evidence", "real_humana_cohort", "humana_validated", "production_throughput", "migration_complete"],
+      "properties": {"measured_from_immutable_evidence": {"const": true}, "real_humana_cohort": {"const": false}, "humana_validated": {"const": false}, "production_throughput": {"const": false}, "migration_complete": {"const": false}}
+    }
+  }
+}

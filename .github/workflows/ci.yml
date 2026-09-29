@@ -1,0 +1,122 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # DBX-03's protected-review manifest verifies that its recorded base
+          # is an ancestor of the immutable reviewed revision. Preserve Git
+          # history so that fail-closed verification has the required evidence.
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          python -m pip install -e ".[dev,conversion,vertical-slice]"
+
+      - name: Ruff
+        run: python -m ruff check src tests
+
+      - name: Type check
+        run: python -m mypy src
+
+      - name: Test
+        run: python -m pytest --cov=smf --cov-report=term-missing
+
+      - name: Qualified SAS reader confidence
+        run: make base08-confidence
+
+      - name: SAS7BDAT-to-Delta vertical-slice confidence
+        run: make vs01-confidence
+
+      - name: Distributed SAS7BDAT reader confidence
+        run: make scale01-confidence
+
+      - name: Canonical cross-provider descriptor confidence
+        run: make base04-confidence
+
+      - name: Governed type and semantic mapping confidence
+        run: make base02-confidence
+
+      - name: Governed Delta target mapping confidence
+        run: make base10-confidence
+
+      - name: Restartable Spark-to-Delta ingestion confidence
+        run: make dbpkg04-confidence
+
+      - name: Offline Unity Catalog validation planning confidence
+        run: make dbpkg01-confidence
+
+      - name: Governed remote-execution boundary confidence
+        run: make dbx01-confidence
+
+      - name: Immutable runtime-evidence receipt confidence
+        run: make dbx04-confidence
+
+      - name: Distributed aggregate reconciliation confidence
+        run: make dp03-confidence
+
+      - name: Distributed null and distribution confidence
+        run: make dp04-confidence
+
+      - name: Deterministic sample comparison confidence
+        run: make dp05-confidence
+
+      - name: Aggregate tolerance policy confidence
+        run: make task12-confidence
+
+      - name: Row-count tolerance policy confidence
+        run: make task11-confidence
+
+      - name: Canonical schema integration confidence
+        run: make schemaint-confidence
+
+      - name: Exception lifecycle confidence
+        run: make task24-confidence
+
+      - name: Deterministic SAS conversion package confidence
+        run: make cv04-confidence
+      - name: Bounded sas2databricks coverage confidence
+        run: make spike02-confidence
+
+      - name: Bounded deterministic-plus-gateway repair confidence
+        run: make airep01-confidence
+
+      - name: Offline prompt and model governance confidence
+        run: make aip05-confidence
+
+      - name: Machine-actionable failure taxonomy confidence
+        run: make fail01-confidence
+
+      - name: Canonical workload lifecycle confidence
+        run: make orch01-confidence
+
+      - name: Governed retry and restart planning confidence
+        run: make orch03-confidence
+
+      - name: Certification bundle contract confidence
+        run: make task25-confidence
+
+      - name: Dependency audit
+        run: python -m pip_audit

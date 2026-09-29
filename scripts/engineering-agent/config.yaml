@@ -1,0 +1,361 @@
+# Explicit contract dependencies reviewed for the competition loop.
+# Client/environment approvals remain separate runtime gates.
+dependencies:
+  AD-01:
+  - SEC-05
+  AD-02:
+  - SEC-05
+  AD-03:
+  - AD-02
+  AD-04:
+  - CORPUS-01
+  - CORPUS-03
+  - CORPUS-05
+  AD-05:
+  - WLD-01
+  - AD-02
+  AIGW-01:
+  - PKG-DES-01
+  - CLICON-01
+  - HENV-02
+  - SEC-01
+  - SEC-02
+  - SEC-03
+  AIP-01:
+  - CV-02
+  AIP-02:
+  - AIP-01
+  - AIP-05
+  - SEC-04
+  - ART-02
+  AIP-04:
+  - AIP-01
+  - AIP-05
+  AIP-05:
+  - AIP-01
+  AIREP-01:
+  - AIGW-01
+  - CV-04
+  - BASE-02
+  ART-02:
+  - HENV-01
+  BASE-01:
+  - CORPUS-05
+  BASE-02:
+  - BASE-04
+  - SASSEM-01
+  - SASSEM-02
+  - SASSEM-04
+  BASE-03:
+  - BASE-02
+  - HENV-02
+  BASE-04:
+  - BASE-08
+  - SCALE-01
+  BASE-06:
+  - WLD-03
+  - BASE-07
+  - TASK-04
+  - SEC-05
+  BASE-07:
+  - WLD-03
+  - WLD-04
+  - WLD-05
+  - TASK-04
+  - SEC-05
+  BASE-08:
+  - UPQ-01
+  - LIC-01
+  - PKG-DES-01
+  - CORPUS-11
+  - BASE-06
+  - BASE-07
+  BASE-09:
+  - BASE-07
+  - BASE-11
+  - WLD-05
+  - TASK-04
+  BASE-10:
+  - BASE-02
+  - BASE-03
+  - HENV-02
+  BASE-11:
+  - BASE-02
+  - BASE-04
+  - BASE-06
+  - BASE-08
+  - SCALE-01
+  BENCH-01:
+  - ORCH-02
+  - HMET-01
+  - SCORE-01
+  CLICON-01:
+  - HENV-02
+  - SEC-01
+  - SEC-02
+  COMP-01:
+  - HPILOT-04
+  - READY-02
+  - PROV-02
+  CORPUS-02:
+  - CORPUS-01
+  - CORPUS-03
+  - CORPUS-04
+  - CORPUS-05
+  - CORPUS-06
+  - CORPUS-07
+  - CORPUS-08
+  - CORPUS-09
+  - CORPUS-10
+  CORPUS-11:
+  - UPQ-01
+  - LIC-01
+  CV-01:
+  - CV-02
+  - AD-03
+  CV-03:
+  - AD-04
+  - CV-02
+  CV-04:
+  - UPQ-01
+  - LIC-01
+  - PKG-DES-01
+  - BASE-02
+  - CV-02
+  DBENV-01:
+  - HENV-01
+  - HENV-02
+  - SEC-01
+  - SEC-02
+  - CLICON-01
+  DBENV-02:
+  - DBENV-01
+  - DBX-02
+  - DBX-03
+  - AIGW-01
+  DBENV-03:
+  - DBENV-01
+  - DBX-03
+  - LIC-01
+  - PKG-DES-01
+  DBPKG-01:
+  - DBPKG-04
+  - BASE-10
+  - DBX-02
+  - DBX-03
+  DBPKG-03:
+  - DBX-02
+  - DBPKG-01
+  DBPKG-04:
+  - BASE-02
+  - BASE-08
+  - SCALE-01
+  - ORCH-04
+  DBX-01:
+  - DBX-02
+  - DBX-03
+  - DBPKG-01
+  - CV-04
+  DBX-02:
+  - HENV-01
+  DBX-03:
+  - HENV-01
+  - HENV-02
+  - SEC-01
+  - SEC-02
+  DBX-04:
+  - DBX-01
+  - ORCH-04
+  - PROV-01
+  DP-02:
+  - DBPKG-01
+  - DBX-04
+  - BASE-02
+  DP-03:
+  - DP-02
+  - DBPKG-01
+  - DBX-04
+  DP-04:
+  - DP-02
+  - BASE-02
+  - SASSEM-01
+  - SASSEM-02
+  - SASSEM-04
+  DP-05:
+  - DP-02
+  - DBX-04
+  HENV-02:
+  - HENV-01
+  HENV-03:
+  - SEC-01
+  - HENV-01
+  HMET-01:
+  - ORCH-04
+  HMET-02:
+  - HMET-01
+  HMET-03:
+  - HMET-01
+  - ORCH-04
+  HPILOT-03:
+  - HENV-01
+  - ORCH-02
+  HPILOT-04:
+  - ORCH-02
+  - MIGOPS-01
+  - PKG-QUAL-01
+  HR-01:
+  - REM-03
+  HR-02:
+  - HR-01
+  - VAL-01
+  HR-03:
+  - HR-02
+  - PROV-01
+  LEARN-01:
+  - PROV-01
+  - FAIL-01
+  - VAL-01
+  - SEC-02
+  LIC-01:
+  - UPQ-01
+  - SEC-03
+  LOOP-01:
+  - ORCH-02
+  - REM-01
+  - HR-02
+  MIGCLI-01:
+  - CLICON-01
+  - PROV-02
+  - READY-02
+  - PKG-QUAL-01
+  - ORCH-01
+  - ORCH-03
+  - ORCH-04
+  MIGOPS-01:
+  - CLICON-01
+  - MIGCLI-01
+  - PROV-02
+  MODAP-01:
+  - BASE-09
+  - WLD-11
+  - WLD-12
+  - MOD-02
+  - MOD-08
+  MODCLI-01:
+  - CLICON-01
+  - MIGCLI-01
+  - MODAP-01
+  - PKG-QUAL-01
+  OPS-01:
+  - ORCH-04
+  - FAIL-01
+  ORCH-01:
+  - ORCH-04
+  - FAIL-01
+  ORCH-02:
+  - MIGCLI-01
+  - MIGOPS-01
+  - READY-02
+  - AIREP-01
+  ORCH-03:
+  - ORCH-01
+  ORCH-04:
+  - WLD-01
+  ORCH-05:
+  - ORCH-02
+  - ORCH-03
+  ORCH-06:
+  - ORCH-03
+  PKG-DES-01:
+  - UPQ-01
+  - LIC-01
+  - HENV-02
+  PKG-QUAL-01:
+  - AIGW-01
+  - BASE-08
+  - SCALE-01
+  - CV-04
+  - DBPKG-01
+  - DBX-04
+  - VAL-01
+  - PROV-02
+  PROM-01:
+  - PROV-01
+  - VAL-01
+  PROV-01:
+  - ORCH-04
+  PROV-02:
+  - PROV-01
+  - DBPKG-04
+  - DBPKG-01
+  - DBX-04
+  - VAL-01
+  - TASK-24
+  - TASK-25
+  PV-01:
+  - VAL-01
+  - DBX-04
+  READY-02:
+  - DBX-04
+  - VAL-01
+  - PROV-02
+  REM-01:
+  - AIP-02
+  - FAIL-01
+  - VAL-01
+  - REM-03
+  REM-02:
+  - AIP-02
+  - VAL-01
+  REM-03:
+  - FAIL-01
+  - ORCH-04
+  SASSEM-01:
+  - CORPUS-02
+  SASSEM-02:
+  - CORPUS-02
+  SASSEM-03:
+  - CORPUS-02
+  SASSEM-04:
+  - CORPUS-02
+  - AD-03
+  SASSEM-05:
+  - CORPUS-02
+  SCALE-01:
+  - VS-01
+  - DBX-03
+  - PKG-DES-01
+  SCHEMA-INT-01:
+  - DP-01
+  - BASE-04
+  - DBPKG-01
+  SCORE-01:
+  - HMET-01
+  - VAL-01
+  SEC-02:
+  - SEC-01
+  SEC-04:
+  - SEC-02
+  SPIKE-02:
+  - AD-04
+  - CV-02
+  SV-01:
+  - VAL-01
+  SV-02:
+  - SV-01
+  UPQ-01:
+  - SEC-03
+  VAL-01:
+  - SCHEMA-INT-01
+  - DP-02
+  - DP-03
+  - DP-04
+  - DP-05
+  - DBX-04
+  VS-01:
+  - BASE-08
+  - PROV-01
+  WLD-03:
+  - WLD-01
+  - TASK-03
+  - SEC-05

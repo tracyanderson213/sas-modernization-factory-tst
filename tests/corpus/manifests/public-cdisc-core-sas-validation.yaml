@@ -1,0 +1,46 @@
+schema_version: 1
+scenario_id: public-cdisc-core-sas-validation
+name: CDISC CORE SAS validation workload slice
+domain: multi-artifact-application
+description: Untouched public SAS acquired from a pinned upstream revision for CORPUS-07
+  realism testing.
+source:
+  source_id: cdisc-core-sas
+  origin: public-open-source
+  license: MIT
+  upstream_url: https://github.com/lexjansen/cdisc-core-sas
+  upstream_ref: c9928c6819e0064e41c4af6606dc2839ddf750ef
+  notes: Vendored bytes are untouched. SMF must adapt to the upstream source, not
+    the reverse.
+capabilities:
+- multi-artifact
+- macro-autocall
+- include
+- environment-variables
+- python-integration
+- clinical-validation
+artifacts:
+- path: ../workloads/public/cdisc-core-sas/programs/run_core_validate_data.sas
+  role: sas-program
+  sha256: eba1d83f7be3ab887347f1ec71af6ba135984fe4bdf43371ae4cd47e063c3f7f
+  source_id: cdisc-core-sas
+  upstream_path: programs/run_core_validate_data.sas
+- path: ../workloads/public/cdisc-core-sas/programs/config.sas
+  role: sas-include
+  sha256: d5d146b0f3e9bf2f0f6ee87c7ee78b4bd9173096edd61189eed493f21edaab9f
+  source_id: cdisc-core-sas
+  upstream_path: programs/config.sas
+metadata:
+  tier: untouched-public
+  private_data: false
+  modification_status: untouched
+  acquisition_date: '2026-09-04'
+  independent_authorship: true
+workload:
+  root: ../workloads/public/cdisc-core-sas
+  entrypoints:
+  - ../workloads/public/cdisc-core-sas/programs/run_core_validate_data.sas
+  relationships:
+  - source: ../workloads/public/cdisc-core-sas/programs/run_core_validate_data.sas
+    target: ../workloads/public/cdisc-core-sas/programs/config.sas
+    relationship: includes

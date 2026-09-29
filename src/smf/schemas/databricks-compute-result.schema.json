@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "$id": "databricks-compute-result.schema.json",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "request", "request_digest", "selection_request_id", "selection_attempt_id", "decision_id", "state", "reason_code", "selected_profile_id", "effective_profile", "effective_profile_digest", "evaluated_at", "availability_observation", "availability_proof", "evidence_refs", "retryable", "generated", "allocated", "submitted", "executed", "validated", "parity_passed", "human_assisted", "blocked", "certified", "human_approved", "content_digest"],
+  "properties": {
+    "schema_version": {"const": "1.0"}, "request": {"$ref": "databricks-compute-request.schema.json"},
+    "request_digest": {"$ref": "#/$defs/digest"}, "selection_request_id": {"$ref": "#/$defs/id"}, "selection_attempt_id": {"$ref": "#/$defs/id"}, "decision_id": {"$ref": "#/$defs/id"},
+    "state": {"enum": ["selected_offline", "blocked_missing", "blocked_pending", "denied", "quota_exhausted", "allocation_unavailable", "incompatible_runtime", "invalid_binding", "expired", "outcome_unknown"]},
+    "reason_code": {"$ref": "#/$defs/id"}, "selected_profile_id": {"oneOf": [{"$ref": "#/$defs/id"}, {"type": "null"}]}, "effective_profile": {"oneOf": [{"type": "object"}, {"type": "null"}]}, "effective_profile_digest": {"oneOf": [{"$ref": "#/$defs/digest"}, {"type": "null"}]},
+    "evaluated_at": {"type": "string", "format": "date-time"}, "availability_observation": {"oneOf": [{"type": "object"}, {"type": "null"}]}, "availability_proof": {"oneOf": [{"type": "object", "additionalProperties": false, "required": ["key_id", "signature"], "properties": {"key_id": {"$ref": "#/$defs/id"}, "signature": {"type": "string", "minLength": 1}}}, {"type": "null"}]},
+    "evidence_refs": {"type": "array", "minItems": 4, "items": {"type": "string", "minLength": 1}}, "retryable": {"type": "boolean"}, "generated": {"const": true}, "allocated": {"const": false}, "submitted": {"const": false}, "executed": {"const": false}, "validated": {"const": false}, "parity_passed": {"const": false}, "human_assisted": {"type": "boolean"}, "blocked": {"type": "boolean"}, "certified": {"const": false}, "human_approved": {"const": false}, "content_digest": {"$ref": "#/$defs/digest"}
+  },
+  "$defs": {"id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"}, "digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://smf.local/schemas/restartable-ingestion-result.schema.json",
+  "title": "SMF restartable Spark-to-Delta ingestion result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "result_id", "request", "request_digest", "config", "state", "checkpoints", "dependencies", "delta", "reconciliation", "exceptions", "claims", "content_digest"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "result_id": {"type": "string", "pattern": "^DBPKG04-[0-9a-f]{16}$"},
+    "request": {"$ref": "#/$defs/request"},
+    "request_digest": {"$ref": "#/$defs/digest"},
+    "config": {"$ref": "#/$defs/config"},
+    "state": {"enum": ["complete_local_delta", "blocked_unsupported"]},
+    "checkpoints": {"type": "array", "items": {"$ref": "#/$defs/checkpoint"}},
+    "dependencies": {"type": "object"},
+    "delta": {"type": ["object", "null"]},
+    "reconciliation": {"type": ["object", "null"]},
+    "exceptions": {"type": "array", "items": {"$ref": "#/$defs/exception"}},
+    "claims": {"$ref": "#/$defs/claims"},
+    "content_digest": {"$ref": "#/$defs/digest"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"state": {"const": "complete_local_delta"}}},
+      "then": {
+        "properties": {
+          "checkpoints": {"minItems": 2, "maxItems": 2},
+          "dependencies": {"$ref": "#/$defs/dependencies"},
+          "delta": {"$ref": "#/$defs/delta"},
+          "reconciliation": {"$ref": "#/$defs/reconciliation"},
+          "exceptions": {"maxItems": 0}
+        }
+      },
+      "else": {
+        "properties": {
+          "checkpoints": {"maxItems": 0},
+          "dependencies": {"maxProperties": 0},
+          "delta": {"type": "null"},
+          "reconciliation": {"type": "null"},
+          "exceptions": {"minItems": 1}
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"},
+    "request": {
+      "type": "object", "additionalProperties": false,
+      "required": ["client_id", "workload_id", "source_id", "run_id", "attempt_id", "source_relative_path", "source_sha256", "source_byte_count", "asset_kind", "target_id"],
+      "properties": {
+        "client_id": {"$ref": "#/$defs/id"}, "workload_id": {"$ref": "#/$defs/id"},
+        "source_id": {"$ref": "#/$defs/id"}, "run_id": {"$ref": "#/$defs/id"},
+        "attempt_id": {"$ref": "#/$defs/id"}, "source_relative_path": {"type": "string", "minLength": 1},
+        "source_sha256": {"$ref": "#/$defs/digest"}, "source_byte_count": {"type": "integer", "minimum": 1},
+        "asset_kind": {"enum": ["sas7bdat", "catalog", "corrupt_dataset", "encrypted_dataset", "index", "unsupported_encoding", "view"]},
+        "target_id": {"$ref": "#/$defs/id"}
+      }
+    },
+    "config": {
+      "type": "object", "additionalProperties": false,
+      "required": ["version", "writer", "delta_version", "spark_version", "spark_master", "numeric_significant_digits", "output_mode", "network_at_runtime"],
+      "properties": {
+        "version": {"const": "dbpkg04-restartable-ingestion-v1"},
+        "writer": {"const": "spark-parquet-plus-delta-rs-convert"},
+        "delta_version": {"const": "1.6.4"}, "spark_version": {"const": "3.5.8"},
+        "spark_master": {"const": "local[4]"}, "numeric_significant_digits": {"const": 12},
+        "output_mode": {"const": "create_only"}, "network_at_runtime": {"const": false}
+      }
+    },
+    "checkpoint": {
+      "type": "object", "additionalProperties": false,
+      "required": ["phase", "content_digest"],
+      "properties": {"phase": {"enum": ["admission", "delta"]}, "content_digest": {"$ref": "#/$defs/digest"}}
+    },
+    "dependencies": {
+      "type": "object", "additionalProperties": false,
+      "required": ["base02_result_id", "base02_content_digest", "base04_result_id", "base04_content_digest", "scale01_result_id", "scale01_content_digest", "source_sha256"],
+      "properties": {
+        "base02_result_id": {"type": "string"}, "base02_content_digest": {"$ref": "#/$defs/digest"},
+        "base04_result_id": {"type": "string"}, "base04_content_digest": {"$ref": "#/$defs/digest"},
+        "scale01_result_id": {"type": "string"}, "scale01_content_digest": {"$ref": "#/$defs/digest"},
+        "source_sha256": {"$ref": "#/$defs/digest"}
+      }
+    },
+    "manifest_file": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "byte_count", "sha256"],
+      "properties": {"path": {"type": "string", "minLength": 1}, "byte_count": {"type": "integer", "minimum": 0}, "sha256": {"$ref": "#/$defs/digest"}}
+    },
+    "summary": {
+      "type": "object", "additionalProperties": false,
+      "required": ["row_count", "null_counts", "digest_xor", "digest_sum"],
+      "properties": {
+        "row_count": {"type": "integer", "minimum": 0},
+        "null_counts": {"type": "array", "items": {"type": "integer", "minimum": 0}},
+        "digest_xor": {"$ref": "#/$defs/digest"}, "digest_sum": {"$ref": "#/$defs/digest"}
+      }
+    },
+    "delta": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path_reference", "format", "table_version", "writer", "manifest", "manifest_digest"],
+      "properties": {
+        "path_reference": {"const": "dbpkg04/delta"}, "format": {"const": "delta"},
+        "table_version": {"type": "integer", "minimum": 0},
+        "writer": {"const": "spark-parquet-plus-delta-rs-convert"},
+        "manifest": {"type": "array", "minItems": 2, "items": {"$ref": "#/$defs/manifest_file"}},
+        "manifest_digest": {"$ref": "#/$defs/digest"}
+      }
+    },
+    "reconciliation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["source_summary", "target_summary", "partition_complete", "whole_table_driver_collection", "passed"],
+      "properties": {
+        "source_summary": {"$ref": "#/$defs/summary"}, "target_summary": {"$ref": "#/$defs/summary"},
+        "partition_complete": {"const": true}, "whole_table_driver_collection": {"const": false},
+        "passed": {"const": true}
+      }
+    },
+    "exception": {
+      "type": "object", "additionalProperties": false,
+      "required": ["code", "asset_kind", "source_reference", "action", "retryable"],
+      "properties": {
+        "code": {"const": "unsupported_asset_requires_disposition"},
+        "asset_kind": {"type": "string"}, "source_reference": {"type": "string"},
+        "action": {"const": "route_to_exception_queue_and_obtain_supported_export_or_approved_disposition"},
+        "retryable": {"const": false}
+      }
+    },
+    "claims": {
+      "type": "object", "additionalProperties": false,
+      "required": ["live_databricks_or_unity_catalog", "humana_asset_qualified", "production_ready", "arbitrary_sas_supported", "semantic_parity", "migration_complete"],
+      "properties": {
+        "live_databricks_or_unity_catalog": {"const": false}, "humana_asset_qualified": {"const": false},
+        "production_ready": {"const": false}, "arbitrary_sas_supported": {"const": false},
+        "semantic_parity": {"const": false}, "migration_complete": {"const": false}
+      }
+    }
+  }
+}

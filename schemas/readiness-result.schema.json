@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sas-modernization-factory/schemas/readiness-result.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "result_id", "workload_id", "boundary_id", "run_id", "attempt_id", "policy_id", "policy_version", "policy_digest", "input_digest", "workload_digest", "qualification_input", "policy_snapshot", "evidence_references", "classification", "checks", "prerequisite_checklist", "blockers", "missing_evidence", "next_actions", "evidence_ids", "evaluated_at", "valid_until", "elapsed_ms", "terminal_disposition", "content_digest"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "result_id": {"type": "string", "pattern": "^READY-[a-f0-9]{16}$"},
+    "workload_id": {"type": "string", "minLength": 1},
+    "boundary_id": {"type": ["string", "null"]},
+    "run_id": {"type": "string", "minLength": 1},
+    "attempt_id": {"type": "string", "minLength": 1},
+    "policy_id": {"type": "string", "minLength": 1},
+    "policy_version": {"type": "string", "minLength": 1},
+    "policy_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "input_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "workload_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "qualification_input": {
+      "type": "object", "additionalProperties": false,
+      "required": ["workload", "evidence", "run_id", "attempt_id", "boundary_id"],
+      "properties": {
+        "workload": {"type": "object"}, "evidence": {"type": "array", "items": {"type": "object"}},
+        "run_id": {"type": "string"}, "attempt_id": {"type": "string"},
+        "boundary_id": {"type": ["string", "null"]},
+        "result_artifacts": {"type": "array", "items": {"type": "object"}}
+      }
+    },
+    "policy_snapshot": {"type": "object", "minProperties": 1},
+    "evidence_references": {
+      "type": "array",
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["evidence_id", "kind", "subject_id", "status", "evidence_digest", "source_checksum", "target_dataset_id", "target_catalog", "target_schema", "mapping_digest", "authority", "source_execution_id", "acquisition_source", "execution_id", "decision_id", "approver_id", "observed_at", "attestation_key_id", "workload_digest", "qualified_boundary_id", "snapshot_uri", "artifact_uri", "artifact_digest", "schema_digest", "qualification_subject_digest", "approved_run_id", "approved_attempt_id", "approved_boundary_id", "approved_workload_digest", "client_id", "deployment_id", "environment_id", "prerequisite_id", "configuration_digest", "evidence_run_id", "evidence_attempt_id", "result_uri", "result_digest", "valid_until", "owner_assignment_ref", "reason_code", "workload_revision_id", "baseline_result_id", "acquisition_id", "acquisition_mode", "acquisition_policy_digest", "execution_receipt_digest", "input_snapshot_digest", "runtime_configuration_digest", "output_id"],
+        "properties": {
+          "evidence_id": {"type": "string"}, "kind": {"type": "string"},
+          "subject_id": {"type": "string"}, "status": {"enum": ["pass", "fail", "pending"]},
+          "evidence_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "source_checksum": {"type": ["string", "null"]}, "authority": {"type": ["string", "null"]},
+          "target_dataset_id": {"type": ["string", "null"]},
+          "target_catalog": {"type": ["string", "null"]},
+          "target_schema": {"type": ["string", "null"]},
+          "mapping_digest": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"},
+          "source_execution_id": {"type": ["string", "null"]},
+          "acquisition_source": {"type": ["string", "null"]}, "execution_id": {"type": ["string", "null"]},
+          "decision_id": {"type": ["string", "null"]}, "approver_id": {"type": ["string", "null"]},
+          "observed_at": {"type": ["string", "null"]},
+          "attestation_key_id": {"type": ["string", "null"]},
+          "workload_digest": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"},
+          "qualified_boundary_id": {"type": ["string", "null"]},
+          "snapshot_uri": {"type": ["string", "null"]},
+          "artifact_uri": {"type": ["string", "null"]},
+          "artifact_digest": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"},
+          "schema_digest": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"},
+          "qualification_subject_digest": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"},
+          "approved_run_id": {"type": ["string", "null"]},
+          "approved_attempt_id": {"type": ["string", "null"]},
+          "approved_boundary_id": {"type": ["string", "null"]},
+          "approved_workload_digest": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"},
+          "client_id": {"type": ["string", "null"]}, "deployment_id": {"type": ["string", "null"]},
+          "environment_id": {"type": ["string", "null"]}, "prerequisite_id": {"type": ["string", "null"]},
+          "configuration_digest": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"},
+          "evidence_run_id": {"type": ["string", "null"]}, "evidence_attempt_id": {"type": ["string", "null"]},
+          "result_uri": {"type": ["string", "null"]}, "result_digest": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"},
+          "valid_until": {"type": ["string", "null"], "format": "date-time"},
+          "owner_assignment_ref": {"type": ["string", "null"]}, "reason_code": {"type": ["string", "null"]},
+          "workload_revision_id": {"type": ["string", "null"]},
+          "baseline_result_id": {"type": ["string", "null"]},
+          "acquisition_id": {"type": ["string", "null"]},
+          "acquisition_mode": {"type": ["string", "null"]},
+          "acquisition_policy_digest": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"},
+          "execution_receipt_digest": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"},
+          "input_snapshot_digest": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"},
+          "runtime_configuration_digest": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"},
+          "output_id": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "classification": {"enum": ["READY", "BLOCKED", "NEEDS_EVIDENCE", "UNSUPPORTED", "HUMAN_REQUIRED"]},
+    "checks": {"type": "array", "items": {"$ref": "#/$defs/check"}},
+    "prerequisite_checklist": {"type": "array", "items": {"$ref": "#/$defs/prerequisiteChecklistEntry"}},
+    "blockers": {"type": "array", "items": {"$ref": "#/$defs/blocker"}},
+    "missing_evidence": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["evidence_kind", "subject_id", "reason"], "properties": {"evidence_kind": {"type": "string"}, "subject_id": {"type": "string"}, "reason": {"type": "string"}}}},
+    "next_actions": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["category", "owner", "action"], "properties": {"category": {"$ref": "#/$defs/category"}, "owner": {"type": "string"}, "action": {"type": "string"}}}},
+    "evidence_ids": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "evaluated_at": {"type": "string", "format": "date-time"},
+    "valid_until": {"type": ["string", "null"], "format": "date-time"},
+    "elapsed_ms": {"type": "integer", "minimum": 0},
+    "terminal_disposition": {"enum": ["admitted", "not_admitted"]},
+    "content_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  },
+  "$defs": {
+    "prerequisiteChecklistEntry": {
+      "type": "object", "additionalProperties": false,
+      "required": ["prerequisite_id", "domain", "evidence_kind", "subject_id", "state", "owner_role", "requirement_refs", "owner_assignment_ref", "evidence_ids", "evidence_digests", "result_uris", "result_digests", "observed_at", "valid_until", "blocker_reason_code", "next_action"],
+      "properties": {
+        "prerequisite_id": {"type": "string"}, "domain": {"enum": ["sas_baseline", "databricks", "data_scope", "network", "identity", "quota", "validation", "retention", "audit"]},
+        "evidence_kind": {"enum": ["environment", "runtime"]}, "subject_id": {"type": "string"},
+        "state": {"enum": ["pass", "denied", "pending", "missing", "expired", "conflicting"]},
+        "owner_role": {"type": "string"}, "requirement_refs": {"type": "array", "items": {"type": "string", "pattern": "^HC-REQ-[0-9]{2}$"}, "minItems": 1, "uniqueItems": true}, "owner_assignment_ref": {"type": ["string", "null"]},
+        "evidence_ids": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "evidence_digests": {"type": "array", "items": {"type": "string", "pattern": "^[a-f0-9]{64}$"}, "uniqueItems": true},
+        "result_uris": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "result_digests": {"type": "array", "items": {"type": "string", "pattern": "^[a-f0-9]{64}$"}, "uniqueItems": true},
+        "observed_at": {"type": ["string", "null"], "format": "date-time"}, "valid_until": {"type": ["string", "null"], "format": "date-time"},
+        "blocker_reason_code": {"type": ["string", "null"]}, "next_action": {"type": "string"}
+      }
+    },
+    "classification": {"enum": ["READY", "BLOCKED", "NEEDS_EVIDENCE", "UNSUPPORTED", "HUMAN_REQUIRED"]},
+    "category": {"enum": ["discovery", "dependency", "assessment", "unsupported_construct", "dataset_mapping", "baseline", "runtime", "environment", "human_approval", "evidence_integrity"]},
+    "check": {
+      "type": "object", "additionalProperties": false,
+      "required": ["check_id", "category", "status", "classification", "subject_id", "evidence_ids", "diagnostic"],
+      "properties": {"check_id": {"type": "string"}, "category": {"$ref": "#/$defs/category"}, "status": {"enum": ["pass", "fail", "missing"]}, "classification": {"anyOf": [{"$ref": "#/$defs/classification"}, {"type": "null"}]}, "subject_id": {"type": "string"}, "evidence_ids": {"type": "array", "items": {"type": "string"}}, "diagnostic": {"type": "string"}}
+    },
+    "blocker": {
+      "type": "object", "additionalProperties": false,
+      "required": ["blocker_id", "category", "classification", "owner", "subject_id", "evidence_ids", "diagnostic"],
+      "properties": {"blocker_id": {"type": "string"}, "category": {"$ref": "#/$defs/category"}, "classification": {"$ref": "#/$defs/classification"}, "owner": {"type": "string"}, "subject_id": {"type": "string"}, "evidence_ids": {"type": "array", "items": {"type": "string"}}, "diagnostic": {"type": "string"}}
+    }
+  }
+}

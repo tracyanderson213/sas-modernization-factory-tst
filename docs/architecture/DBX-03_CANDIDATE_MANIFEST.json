@@ -1,0 +1,227 @@
+{
+  "backlog_key": "DBX-03",
+  "base_revision": "075d16897710dbffe9c8e913e80a0b80ad1238f9",
+  "candidate_fingerprint": "8ac0f5104597a2ee75e69de56d33752225d5d2d736648d017f852eb4549b185c",
+  "files": [
+    {
+      "path": ".gitignore",
+      "sha256": "e11c4486fa77d12ec47918ba3927f58b940ec6b3f14f34863e49df9f9762d8d7",
+      "status": "M "
+    },
+    {
+      "path": "competition/generated/replan.yaml",
+      "sha256": "e387b2c3711609e3530ecbc300a29f309b7aa11cbc86459326901f96db847e29",
+      "status": "M "
+    },
+    {
+      "path": "deployments/humana/compute-policy.yaml",
+      "sha256": "aeca4073c6446f19e3650311084d19c03b33a90616dd44bffaca3a09b88977f5",
+      "status": "A "
+    },
+    {
+      "path": "deployments/humana/databricks.yaml",
+      "sha256": "245e7c29c76005615df807ad1daeae1ed384634a3f3c65f66cced3dcaba24d6a",
+      "status": "M "
+    },
+    {
+      "path": "deployments/humana/factory.yaml",
+      "sha256": "2c1a0667f9641709f98fbba7be108621c30743297f24761a629a04d4887b9936",
+      "status": "M "
+    },
+    {
+      "path": "deployments/humana/readiness-policy.yaml",
+      "sha256": "e70e755e7b5c099ec78cde6b2236267d264c251a2e5e8068958a8eceddff1ea8",
+      "status": "M "
+    },
+    {
+      "path": "docs/DBX-03_ACCEPTANCE.md",
+      "sha256": "a7afa092c576e1c0a9dff9692c3e3d0126f4caa698d8bb44a262c5425289e640",
+      "status": "A "
+    },
+    {
+      "path": "docs/EXECUTION_VALIDATION_V2.md",
+      "sha256": "8afe96dbb0bcbd5a16260d8815ea5175bb726b8c198b810eaa5aa5f0315dc638",
+      "status": "M "
+    },
+    {
+      "path": "docs/IMPLEMENTATION_STATUS.md",
+      "sha256": "cc78a1b520c9b499718e70c1a36ab266b6aab7a7757ba1e3bf04035939df9598",
+      "status": "M "
+    },
+    {
+      "path": "docs/architecture/DBX-03_ISSUE_153_READBACK.json",
+      "sha256": "f3b4e6cb8440671311d6f88f0d0026fffb06435993a69449e7bb7579bb1cf0be",
+      "status": "A "
+    },
+    {
+      "path": "docs/architecture/security-threat-model.yaml",
+      "sha256": "40f29453c51685aaeb2a66db89d5196418094871af6cfeee569c8e3f61165d4f",
+      "status": "M "
+    },
+    {
+      "path": "docs/operations/telemetry.md",
+      "sha256": "30cef54e14308c82e4f0e57c89623215f97615caccb4c935d42e4a3db748231d",
+      "status": "M "
+    },
+    {
+      "path": "schemas/databricks-compute-availability.schema.json",
+      "sha256": "f2c950fa1ffb9549a4b3885af532956046d55c6163d4c7884874c1929b8d23e6",
+      "status": "A "
+    },
+    {
+      "path": "schemas/databricks-compute-policy.schema.json",
+      "sha256": "f8b712f13cec6be7537d06fc03e65b4daafa8687213d5fbbe1ff133b3eeabf58",
+      "status": "A "
+    },
+    {
+      "path": "schemas/databricks-compute-request.schema.json",
+      "sha256": "6c459b8e36595c22536296d5eef9a1abd38e642d97f3f0f2998326be889d41e2",
+      "status": "A "
+    },
+    {
+      "path": "schemas/databricks-compute-result.schema.json",
+      "sha256": "f35dfe10562fc085868a38680b3af9f09c6c4eac08ac2aaa1e32736b1138f2b3",
+      "status": "A "
+    },
+    {
+      "path": "schemas/github-issue-readback-receipt.schema.json",
+      "sha256": "928528db509b55e12b4a9b2333074abc5bf43c7b4214ce9f338fcb09c0b06534",
+      "status": "A "
+    },
+    {
+      "path": "scripts/generate-dbx03-candidate-manifest.py",
+      "sha256": "17d308f6602cb62a39fa6822df5982268502da4c37b8d8da3a8107a7226d0449",
+      "status": "A "
+    },
+    {
+      "path": "scripts/test-dbx03-confidence.sh",
+      "sha256": "e99595477e3c9fe9f4ee6567f71a330428696c43ba90c4539f960d3284d7663f",
+      "status": "A "
+    },
+    {
+      "path": "src/smf/deployment/__init__.py",
+      "sha256": "fbc0940b659eaf6aa048a5c3fb577314fbf11cfff92ced0e02abadf292c409f7",
+      "status": "M "
+    },
+    {
+      "path": "src/smf/deployment/configuration.py",
+      "sha256": "519f0ba74f9d5a49cdbac51928c13b45c50e18548a56c71bad06d94a9ad17e9c",
+      "status": "M "
+    },
+    {
+      "path": "src/smf/deployment/templates/humana/compute-policy.yaml",
+      "sha256": "aeca4073c6446f19e3650311084d19c03b33a90616dd44bffaca3a09b88977f5",
+      "status": "A "
+    },
+    {
+      "path": "src/smf/deployment/templates/humana/databricks.yaml",
+      "sha256": "245e7c29c76005615df807ad1daeae1ed384634a3f3c65f66cced3dcaba24d6a",
+      "status": "M "
+    },
+    {
+      "path": "src/smf/deployment/templates/humana/factory.yaml",
+      "sha256": "2c1a0667f9641709f98fbba7be108621c30743297f24761a629a04d4887b9936",
+      "status": "M "
+    },
+    {
+      "path": "src/smf/deployment/templates/humana/readiness-policy.yaml",
+      "sha256": "e70e755e7b5c099ec78cde6b2236267d264c251a2e5e8068958a8eceddff1ea8",
+      "status": "M "
+    },
+    {
+      "path": "src/smf/execution/__init__.py",
+      "sha256": "0e8d51183b7b2157845b33f4bf0a46443231a07833de7fcc15cd2561edb6efcb",
+      "status": "M "
+    },
+    {
+      "path": "src/smf/execution/databricks_compute.py",
+      "sha256": "520a670475e932b827af31757dc6a2e3a434d88677be5422859d41990e6d3fe5",
+      "status": "A "
+    },
+    {
+      "path": "src/smf/execution/databricks_compute_manifest.py",
+      "sha256": "6cf243b5a0da3feb04a315da9210ff4239c25bf08207b0ffb25e1b4bc0b1d6de",
+      "status": "A "
+    },
+    {
+      "path": "src/smf/execution/databricks_compute_models.py",
+      "sha256": "d85cbd843480e38b035483a05d0c15c73d38aed43c9039a448a4d7d1b7355f42",
+      "status": "A "
+    },
+    {
+      "path": "src/smf/execution/databricks_compute_schema.py",
+      "sha256": "428327917bd7fea6e576cf53a20fd0ff38ea4c4643851d45c317456ac34e1298",
+      "status": "A "
+    },
+    {
+      "path": "src/smf/execution/providers/databricks.py",
+      "sha256": "cceba0998a809567c826baf7b3ee62de7513ee000402f98a468cb5c87e760bc6",
+      "status": "M "
+    },
+    {
+      "path": "src/smf/readiness/deployment.py",
+      "sha256": "bf13b77dc33a894b34baeb54fcf1ce96471163147f40ddeddb6f98f6ae0837af",
+      "status": "M "
+    },
+    {
+      "path": "src/smf/readiness/policy.py",
+      "sha256": "65ecd8d24db02d5f2c3233d162b52b485312852506d8cadf718e24728c70a9f2",
+      "status": "M "
+    },
+    {
+      "path": "src/smf/schemas/databricks-compute-availability.schema.json",
+      "sha256": "f2c950fa1ffb9549a4b3885af532956046d55c6163d4c7884874c1929b8d23e6",
+      "status": "A "
+    },
+    {
+      "path": "src/smf/schemas/databricks-compute-policy.schema.json",
+      "sha256": "f8b712f13cec6be7537d06fc03e65b4daafa8687213d5fbbe1ff133b3eeabf58",
+      "status": "A "
+    },
+    {
+      "path": "src/smf/schemas/databricks-compute-request.schema.json",
+      "sha256": "6c459b8e36595c22536296d5eef9a1abd38e642d97f3f0f2998326be889d41e2",
+      "status": "A "
+    },
+    {
+      "path": "src/smf/schemas/databricks-compute-result.schema.json",
+      "sha256": "f35dfe10562fc085868a38680b3af9f09c6c4eac08ac2aaa1e32736b1138f2b3",
+      "status": "A "
+    },
+    {
+      "path": "src/smf/schemas/github-issue-readback-receipt.schema.json",
+      "sha256": "928528db509b55e12b4a9b2333074abc5bf43c7b4214ce9f338fcb09c0b06534",
+      "status": "A "
+    },
+    {
+      "path": "src/smf/security/candidate_manifest.py",
+      "sha256": "6dd6a4e7b3e62729201001ea4b794974d4017302d8baa6f034eae376d2f219af",
+      "status": "A "
+    },
+    {
+      "path": "src/smf/strict_yaml.py",
+      "sha256": "3c482c59a1e2dec113e73cbad4dd36c550515e26251a3fd2d914f4a9a8a3deb8",
+      "status": "A "
+    },
+    {
+      "path": "tests/unit/test_databricks_compute.py",
+      "sha256": "034da528f0beb7263e63fec53a4fc2b5f8ea784ef00028fc7bc2c7ef64ff9f35",
+      "status": "A "
+    },
+    {
+      "path": "tests/unit/test_dbx03_candidate_manifest.py",
+      "sha256": "2accc924884e25be142db24ca9abee3bd241c8fb504508f94b5f13bea2c25b82",
+      "status": "A "
+    },
+    {
+      "path": "tests/unit/test_deployment_configuration.py",
+      "sha256": "1f3c4c71308d67aec43e552ff5e98bfe90ef56b61808e3b9a656eff7aba8af02",
+      "status": "M "
+    }
+  ],
+  "manifest_path": "docs/architecture/DBX-03_CANDIDATE_MANIFEST.json",
+  "manifest_self_excluded": true,
+  "review_status": "pending_independent_protected_review",
+  "schema_version": "1.0",
+  "uncommitted_candidate": true
+}

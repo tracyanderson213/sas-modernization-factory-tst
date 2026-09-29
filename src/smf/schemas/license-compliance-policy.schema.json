@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "policy_id", "policy_version", "client_id", "max_evidence_age_seconds", "allowed_deployment_profiles", "approved_license_ids", "vulnerability_exception_allowlist", "sec03_acceptance_contract_digests", "collector_provenance", "license_provenance", "security_provenance", "scanner_provenance", "prerequisite_provenance", "evaluator_provenance", "verification_keys"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "policy_id": {"$ref": "#/$defs/id"},
+    "policy_version": {"$ref": "#/$defs/id"},
+    "client_id": {"$ref": "#/$defs/id"},
+    "max_evidence_age_seconds": {"type": "integer", "minimum": 0},
+    "allowed_deployment_profiles": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "object", "additionalProperties": false, "required": ["profile_id", "profile_digest"], "properties": {"profile_id": {"$ref": "#/$defs/id"}, "profile_digest": {"$ref": "#/$defs/sha"}}}},
+    "approved_license_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+    "vulnerability_exception_allowlist": {"type": "array", "uniqueItems": true, "items": {"type": "object", "additionalProperties": false, "required": ["exception_id", "advisory_id", "component_id", "expires_at", "authority"], "properties": {"exception_id": {"$ref": "#/$defs/id"}, "advisory_id": {"$ref": "#/$defs/id"}, "component_id": {"$ref": "#/$defs/id"}, "expires_at": {"type": "string", "format": "date-time"}, "authority": {"$ref": "#/$defs/id"}}}},
+    "sec03_acceptance_contract_digests": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/sha"}},
+    "collector_provenance": {"$ref": "#/$defs/trust"},
+    "license_provenance": {"$ref": "#/$defs/trust"},
+    "security_provenance": {"$ref": "#/$defs/trust"},
+    "scanner_provenance": {"$ref": "#/$defs/trust"},
+    "prerequisite_provenance": {"$ref": "#/$defs/trust"},
+    "evaluator_provenance": {"$ref": "#/$defs/trust"},
+    "verification_keys": {"type": "object", "minProperties": 1, "additionalProperties": {"type": "string", "minLength": 1}}
+  },
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"},
+    "sha": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "trust": {"type": "object", "additionalProperties": false, "required": ["authorities", "key_ids"], "properties": {"authorities": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}}, "key_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}}}}
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://smf.local/schemas/migration-cli-request.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "command", "run_id", "attempt_id", "workload_id"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "command": {"enum": ["convert", "modernize", "status", "resume", "exceptions.list", "exceptions.submit", "exceptions.decide", "approve", "promote", "ai-gateway.preflight"]},
+    "run_id": {"$ref": "#/$defs/id"},
+    "attempt_id": {"oneOf": [{"$ref": "#/$defs/id"}, {"type": "null"}]},
+    "workload_id": {"oneOf": [{"$ref": "#/$defs/id"}, {"type": "null"}]}
+  },
+  "$defs": {"id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"}}
+}

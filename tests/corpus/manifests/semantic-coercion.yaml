@@ -1,0 +1,24 @@
+schema_version: 1
+scenario_id: semantic-character-numeric-coercion
+name: SAS character and numeric coercion
+domain: semantics
+description: Isolates valid, padded, leading-zero, and invalid explicit character-to-numeric conversion.
+source: {source_id: smf-semantic-fixtures, origin: smf, license: Internal test fixture}
+capabilities: [data-step, coercion, informat, format, missing-value]
+artifacts:
+- {path: ../workloads/semantic/adversarial/coercion.sas, role: sas-program, sha256: 286cc6c9356867dceea7cfb517443ac5fd42c35e398a56b77d37edc69cdd0c8f, source_id: smf-semantic-fixtures}
+- {path: ../workloads/semantic/expected/coercion.json, role: expected-output, sha256: ce4e18917d6dfe1d816496239d40ef86493afddd336ca1b12ffe37ba5d9cbb1f, source_id: smf-semantic-fixtures}
+output_evidence:
+- {evidence_id: coercion-declared, logical_output: work.coercion, artifact: ../workloads/semantic/expected/coercion.json, format: json, evidence_origin: declared-synthetic-expectation, producer: smf-authored-oracle, content_hash: ce4e18917d6dfe1d816496239d40ef86493afddd336ca1b12ffe37ba5d9cbb1f, deterministic: true, authoritative: true}
+semantic_oracles:
+- oracle_id: coercion-oracle
+  logical_output: work.coercion
+  evidence_id: coercion-declared
+  comparison: ordered
+  behavior: Explicit INPUT handles whitespace and leading zeros while invalid text becomes ordinary missing.
+  columns:
+  - {name: raw, logical_type: character, nullable: false, length: 8}
+  - {name: roundtrip, logical_type: character, nullable: false, length: 8}
+  - {name: numeric_value, logical_type: numeric, nullable: true}
+  session: {yearcutoff: 1920, locale: en_US, encoding: utf-8, sort_sequence: binary, timezone: UTC}
+metadata: {tier: semantic, private_data: false, fixture_kind: smf-authored, primary_behavior: coercion}

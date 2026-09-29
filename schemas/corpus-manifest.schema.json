@@ -1,0 +1,518 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://smf.local/schemas/corpus-manifest.schema.json",
+  "title": "SMF Modernization Corpus Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "scenario_id",
+    "name",
+    "domain",
+    "description",
+    "source",
+    "artifacts"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "scenario_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "domain": {
+      "type": "string",
+      "minLength": 1
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_id",
+        "origin",
+        "license"
+      ],
+      "properties": {
+        "source_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "origin": {
+          "type": "string",
+          "enum": [
+            "smf",
+            "public-open-source",
+            "public-government",
+            "private-client"
+          ]
+        },
+        "license": {
+          "type": "string",
+          "minLength": 1
+        },
+        "upstream_url": {
+          "type": "string",
+          "minLength": 1
+        },
+        "upstream_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "capabilities": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "role"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "sas-program",
+              "sas-macro",
+              "sas-include",
+              "configuration",
+              "scheduler",
+              "script",
+              "input-data",
+              "expected-output",
+              "expected-conversion",
+              "expected-architecture",
+              "business-assertions",
+              "other"
+            ]
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "source_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "upstream_path": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "expected": {
+      "type": "object"
+    },
+    "metadata": {
+      "type": "object"
+    },
+    "workload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "root",
+        "entrypoints"
+      ],
+      "properties": {
+        "root": {
+          "type": "string",
+          "minLength": 1
+        },
+        "entrypoints": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "relationships": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "source",
+              "target",
+              "relationship"
+            ],
+            "properties": {
+              "source": {
+                "type": "string",
+                "minLength": 1
+              },
+              "target": {
+                "type": "string",
+                "minLength": 1
+              },
+              "relationship": {
+                "type": "string",
+                "enum": [
+                  "includes",
+                  "invokes",
+                  "configures",
+                  "reads",
+                  "writes",
+                  "schedules",
+                  "depends-on"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "regression": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "subjects"],
+      "properties": {
+        "version": {"const": 1},
+        "subjects": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "subject_id",
+              "workload_id",
+              "entrypoint",
+              "target",
+              "source_closure",
+              "stages",
+              "validation_policy",
+              "evidence_scope",
+              "environment"
+            ],
+            "properties": {
+              "subject_id": {"type": "string", "minLength": 1},
+              "workload_id": {"type": "string", "minLength": 1},
+              "entrypoint": {"type": "string", "minLength": 1},
+              "target": {"enum": ["pyspark", "sparksql"]},
+              "source_closure": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {"type": "string", "minLength": 1}
+              },
+              "stages": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "enum": ["admission", "conversion", "execution", "static-validation", "parity-validation", "golden-comparison"]
+                }
+              },
+              "validation_policy": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["policy_id", "policy_version", "validation_kind"],
+                "properties": {
+                  "policy_id": {"type": "string", "minLength": 1},
+                  "policy_version": {"type": "string", "minLength": 1},
+                  "validation_kind": {"enum": ["static", "structural-parity", "data-parity", "semantic-parity"]}
+                }
+              },
+              "evidence_scope": {"enum": ["shared-regression", "test-only"]},
+              "environment": {"enum": ["test-only"]},
+              "oracle_ids": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {"type": "string", "minLength": 1}
+              },
+              "baseline_evidence_ids": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {"type": "string", "minLength": 1}
+              },
+              "golden": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "golden_id", "golden_version", "expected_disposition",
+                  "comparison_mode", "provider_id", "provider_version",
+                  "strategy_id", "strategy_version", "rationale",
+                  "review_reference", "fixture_classification"
+                ],
+                "properties": {
+                  "golden_id": {"type": "string", "minLength": 1},
+                  "golden_version": {"type": "string", "pattern": "^[1-9][0-9]*\\.[0-9]+\\.[0-9]+$"},
+                  "expected_disposition": {"enum": ["generated", "unsupported", "human_pending"]},
+                  "comparison_mode": {"const": "exact-bytes"},
+                  "provider_id": {"type": "string", "minLength": 1},
+                  "provider_version": {"type": "string", "minLength": 1},
+                  "strategy_id": {"type": "string", "minLength": 1},
+                  "strategy_version": {"type": "string", "minLength": 1},
+                  "behavioral_expectation_id": {"type": "string", "minLength": 1},
+                  "behavioral_evidence_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+                  "artifact": {"type": "string", "minLength": 1},
+                  "rationale": {"type": "string", "minLength": 1},
+                  "review_reference": {"type": "string", "minLength": 1},
+                  "fixture_classification": {"enum": ["shared-regression", "test-only"]}
+                },
+                "allOf": [
+                  {
+                    "if": {"properties": {"expected_disposition": {"const": "generated"}}},
+                    "then": {"required": ["artifact", "behavioral_expectation_id", "behavioral_evidence_digest"]},
+                    "else": {
+                      "not": {
+                        "anyOf": [
+                          {"required": ["artifact"]},
+                          {"required": ["behavioral_expectation_id"]},
+                          {"required": ["behavioral_evidence_digest"]}
+                        ]
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "data_fixtures": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "fixture_id",
+          "dataset",
+          "artifact",
+          "format"
+        ],
+        "properties": {
+          "fixture_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "dataset": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact": {
+            "type": "string",
+            "minLength": 1
+          },
+          "format": {
+            "type": "string",
+            "enum": [
+              "csv",
+              "json",
+              "parquet",
+              "sas7bdat",
+              "other"
+            ]
+          },
+          "deterministic": {
+            "type": "boolean"
+          },
+          "contains_private_data": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "output_evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "evidence_id",
+          "logical_output",
+          "artifact",
+          "format",
+          "evidence_origin",
+          "producer",
+          "content_hash",
+          "deterministic",
+          "authoritative"
+        ],
+        "properties": {
+          "evidence_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "logical_output": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact": {
+            "type": "string",
+            "minLength": 1
+          },
+          "format": {
+            "type": "string",
+            "enum": [
+              "csv",
+              "json",
+              "parquet",
+              "sas7bdat",
+              "other"
+            ]
+          },
+          "evidence_origin": {
+            "type": "string",
+            "enum": [
+              "sas-executed-baseline",
+              "declared-synthetic-expectation",
+              "public-reference-artifact"
+            ]
+          },
+          "producer": {
+            "type": "string",
+            "minLength": 1
+          },
+          "content_hash": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "deterministic": {
+            "type": "boolean"
+          },
+          "authoritative": {
+            "type": "boolean"
+          },
+          "source_execution_id": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "semantic_oracles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["oracle_id", "logical_output", "evidence_id", "comparison", "columns", "session", "behavior"],
+        "properties": {
+          "oracle_id": {"type": "string", "minLength": 1},
+          "logical_output": {"type": "string", "minLength": 1},
+          "evidence_id": {"type": "string", "minLength": 1},
+          "comparison": {"type": "string", "enum": ["ordered", "keyed", "unordered-multiset"]},
+          "keys": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+          "authoritative_values": {"type": "string", "enum": ["underlying", "formatted", "both"]},
+          "behavior": {"type": "string", "minLength": 1},
+          "columns": {
+            "type": "array", "minItems": 1,
+            "items": {
+              "type": "object", "additionalProperties": false,
+              "required": ["name", "logical_type", "nullable"],
+              "properties": {
+                "name": {"type": "string", "minLength": 1},
+                "logical_type": {"type": "string", "enum": ["character", "numeric", "date", "datetime", "time", "boolean"]},
+                "nullable": {"type": "boolean"},
+                "length": {"type": "integer", "minimum": 1},
+                "absolute_tolerance": {"type": "number", "minimum": 0},
+                "relative_tolerance": {"type": "number", "minimum": 0}
+              }
+            }
+          },
+          "session": {
+            "type": "object", "additionalProperties": false,
+            "required": ["yearcutoff", "locale", "encoding", "sort_sequence", "timezone"],
+            "properties": {
+              "yearcutoff": {"type": "integer", "minimum": 1582, "maximum": 9999},
+              "locale": {"type": "string", "minLength": 1},
+              "encoding": {"type": "string", "minLength": 1},
+              "sort_sequence": {"type": "string", "minLength": 1},
+              "timezone": {"type": "string", "minLength": 1}
+            }
+          }
+        }
+      }
+    },
+    "dependency_expectations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "expectation_id",
+          "source",
+          "relationship",
+          "resolution",
+          "evidence_method"
+        ],
+        "properties": {
+          "expectation_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "source": {
+            "type": "string",
+            "minLength": 1
+          },
+          "target": {
+            "type": "string",
+            "minLength": 1
+          },
+          "unresolved_reference": {
+            "type": "string",
+            "minLength": 1
+          },
+          "relationship": {
+            "type": "string",
+            "enum": [
+              "includes",
+              "invokes",
+              "configures",
+              "reads",
+              "writes",
+              "schedules",
+              "depends-on"
+            ]
+          },
+          "resolution": {
+            "type": "string",
+            "enum": [
+              "resolved",
+              "unresolved"
+            ]
+          },
+          "evidence_method": {
+            "type": "string",
+            "enum": [
+              "declared-corpus",
+              "static-analysis",
+              "scheduler-metadata",
+              "runtime-metadata"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,144 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sas-modernization-factory/schemas/assessment.schema.json",
+  "title": "SAS Workload Assessment",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "workload_id",
+    "source_file",
+    "complexity",
+    "complexity_score",
+    "automation_route",
+    "confidence",
+    "sas_constructs",
+    "dependencies",
+    "risk_factors",
+    "unsupported_constructs",
+    "recommended_validation_level",
+    "score_breakdown"
+  ],
+  "properties": {
+    "workload_id": {
+      "type": "string",
+      "pattern": "^SMF-[0-9]{6}$"
+    },
+    "source_file": {
+      "type": "string",
+      "minLength": 1
+    },
+    "complexity": {
+      "type": "string",
+      "enum": [
+        "simple",
+        "moderate",
+        "complex",
+        "highly_complex"
+      ]
+    },
+    "complexity_score": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "automation_route": {
+      "type": "string",
+      "enum": [
+        "deterministic",
+        "ai_assisted",
+        "human_supervised"
+      ]
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "sas_constructs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "dependencies": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "inputs",
+        "outputs",
+        "includes",
+        "macros_defined",
+        "macros_invoked"
+      ],
+      "properties": {
+        "inputs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "outputs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "includes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "macros_defined": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "macros_invoked": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "risk_factors": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "unsupported_constructs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "recommended_validation_level": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5
+    },
+    "score_breakdown": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "points",
+          "reason"
+        ],
+        "properties": {
+          "points": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}

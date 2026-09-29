@@ -1,0 +1,23 @@
+schema_version: 1
+scenario_id: semantic-empty-dataset
+name: SAS empty dataset behavior
+domain: semantics
+description: Isolates preserved schema and BY-group non-execution for a zero-observation input.
+source: {source_id: smf-semantic-fixtures, origin: smf, license: Internal test fixture}
+capabilities: [data-step, empty-dataset, by-group, zero-observation]
+artifacts:
+- {path: ../workloads/semantic/adversarial/empty-dataset.sas, role: sas-program, sha256: 2bc4c662d07791174273b3e29a1c3f56653f144a0b24914315523ef0ff3f18aa, source_id: smf-semantic-fixtures}
+- {path: ../workloads/semantic/expected/empty-dataset.json, role: expected-output, sha256: 167fc69a5f3dc7d31d138ef2182d2f5038dafe0bb89da95041c05add8d1de38d, source_id: smf-semantic-fixtures}
+output_evidence:
+- {evidence_id: empty-dataset-declared, logical_output: work.empty_result, artifact: ../workloads/semantic/expected/empty-dataset.json, format: json, evidence_origin: declared-synthetic-expectation, producer: smf-authored-oracle, content_hash: 167fc69a5f3dc7d31d138ef2182d2f5038dafe0bb89da95041c05add8d1de38d, deterministic: true, authoritative: true}
+semantic_oracles:
+- oracle_id: empty-dataset-oracle
+  logical_output: work.empty_result
+  evidence_id: empty-dataset-declared
+  comparison: ordered
+  behavior: A zero-observation SET preserves columns and produces no FIRST./LAST. iterations.
+  columns:
+  - {name: group, logical_type: character, nullable: false, length: 4}
+  - {name: value, logical_type: numeric, nullable: true}
+  session: {yearcutoff: 1920, locale: en_US, encoding: utf-8, sort_sequence: binary, timezone: UTC}
+metadata: {tier: semantic, private_data: false, fixture_kind: smf-authored, primary_behavior: empty-dataset}

@@ -1,0 +1,30 @@
+{
+  "policy_id": "smf.sas-temporal.utc-literals",
+  "version": "1.0.0",
+  "date_epoch": "1960-01-01",
+  "date_unit": "days",
+  "datetime_epoch": "1960-01-01T00:00:00",
+  "datetime_unit": "seconds",
+  "calendar": "proleptic-gregorian",
+  "minimum_date": "0001-01-01",
+  "maximum_date": "9999-12-31",
+  "maximum_fractional_digits": 6,
+  "precision_mode": "preserve-exact",
+  "source_timezone": "UTC",
+  "target_timezone": "UTC",
+  "date_format_projection": "DATE9.",
+  "datetime_format_projection": "ISO8601-6",
+  "supported_targets": [
+    "sparksql",
+    "pyspark"
+  ],
+  "unsupported_cases": [
+    "time-only literals",
+    "two-digit years and YEARCUTOFF",
+    "named zones, numeric offsets, and local wall-clock interpretation",
+    "more than six fractional digits",
+    "locale-dependent month forms",
+    "macro-generated literals",
+    "FORMAT, INFORMAT, INPUT, INTCK, and INTNX"
+  ]
+}

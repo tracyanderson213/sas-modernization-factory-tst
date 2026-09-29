@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://smf.example/schemas/sas-library-binding-evidence.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "strategy_id", "strategy_version", "client_id", "workload_id", "source_closure_digest", "policy", "policy_digest", "run_id", "attempt_id", "evaluated_at", "occurrences", "bindings", "claims", "result_id"],
+  "properties": {
+    "schema_version": {"const": "1.0"}, "strategy_id": {"const": "smf-sas-library-binding"}, "strategy_version": {"const": "1.0"},
+    "client_id": {"$ref": "#/$defs/id"}, "workload_id": {"$ref": "#/$defs/id"},
+    "source_closure_digest": {"$ref": "#/$defs/sha256"}, "policy": {"$ref": "#/$defs/policy"},
+    "policy_digest": {"$ref": "#/$defs/sha256"}, "run_id": {"$ref": "#/$defs/id"}, "attempt_id": {"$ref": "#/$defs/id"},
+    "evaluated_at": {"type": "string", "format": "date-time"},
+    "occurrences": {"type": "array", "items": {"$ref": "#/$defs/occurrence"}},
+    "bindings": {"type": "array", "items": {"$ref": "#/$defs/binding"}},
+    "claims": {"$ref": "#/$defs/resultClaims"}, "result_id": {"$ref": "#/$defs/id"}
+  },
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "policy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["policy_id", "policy_version", "client_id", "allowed_runtime_providers", "trusted_runtime_authorities", "verification_keys", "max_evidence_age_seconds", "future_skew_seconds", "strategy_id", "strategy_version"],
+      "properties": {
+        "policy_id": {"$ref": "#/$defs/id"}, "policy_version": {"$ref": "#/$defs/id"}, "client_id": {"$ref": "#/$defs/id"},
+        "allowed_runtime_providers": {"type": "array", "items": {"type": "array", "prefixItems": [{"$ref": "#/$defs/id"}, {"$ref": "#/$defs/id"}], "items": false, "minItems": 2, "maxItems": 2}, "uniqueItems": true},
+        "trusted_runtime_authorities": {"type": "array", "items": {"$ref": "#/$defs/id"}, "uniqueItems": true},
+        "verification_keys": {"type": "array", "items": {"type": "array", "prefixItems": [{"$ref": "#/$defs/id"}, {"type": "string", "minLength": 1}], "items": false, "minItems": 2, "maxItems": 2}},
+        "max_evidence_age_seconds": {"type": "integer", "minimum": 1}, "future_skew_seconds": {"type": "integer", "minimum": 0},
+        "strategy_id": {"const": "smf-sas-library-binding"}, "strategy_version": {"const": "1.0"}
+      }
+    },
+    "occurrence": {
+      "type": "object", "additionalProperties": false,
+      "required": ["occurrence_id", "artifact_id", "source_path", "source_sha256", "libref", "line", "column", "byte_start", "byte_end", "statement_sha256", "state", "paths", "macro_references", "blockers"],
+      "properties": {
+        "occurrence_id": {"$ref": "#/$defs/id"}, "artifact_id": {"$ref": "#/$defs/id"}, "source_path": {"type": "string", "minLength": 1},
+        "source_sha256": {"$ref": "#/$defs/sha256"}, "libref": {"type": "string", "pattern": "^[a-z_][a-z0-9_]*$"},
+        "line": {"type": "integer", "minimum": 1}, "column": {"type": "integer", "minimum": 1}, "byte_start": {"type": "integer", "minimum": 0}, "byte_end": {"type": "integer", "minimum": 1},
+        "statement_sha256": {"$ref": "#/$defs/sha256"}, "state": {"enum": ["literal", "dynamic", "cleared", "unresolved"]},
+        "paths": {"type": "array", "items": {"type": "string"}}, "macro_references": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "blockers": {"type": "array", "items": {"enum": ["missing_macro", "dynamic_expression", "unsupported_form", "reassigned", "cleared", "runtime_evidence_required", "runtime_evidence_invalid"]}, "uniqueItems": true}
+      }
+    },
+    "bindingClaims": {"type": "object", "additionalProperties": false, "required": ["authoritative_logical_binding", "path_exists", "path_authorized", "credentials_resolved", "connectivity_validated"], "properties": {"authoritative_logical_binding": {"type": "boolean"}, "path_exists": {"const": false}, "path_authorized": {"const": false}, "credentials_resolved": {"const": false}, "connectivity_validated": {"const": false}}},
+    "binding": {
+      "type": "object", "additionalProperties": false,
+      "required": ["binding_id", "libref", "state", "logical_paths", "occurrence_ids", "selected_occurrence_id", "runtime_evidence_id", "runtime_evidence_digest", "runtime_provider", "runtime_observed_at", "runtime_authority", "runtime_key_id", "blockers", "claims"],
+      "properties": {"binding_id": {"$ref": "#/$defs/id"}, "libref": {"type": "string"}, "state": {"enum": ["literal", "runtime_observed", "dynamic", "ambiguous", "cleared", "unresolved"]}, "logical_paths": {"type": "array", "items": {"type": "string"}}, "occurrence_ids": {"type": "array", "items": {"$ref": "#/$defs/id"}, "minItems": 1, "uniqueItems": true}, "selected_occurrence_id": {"oneOf": [{"$ref": "#/$defs/id"}, {"type": "null"}]}, "runtime_evidence_id": {"oneOf": [{"$ref": "#/$defs/id"}, {"type": "null"}]}, "runtime_evidence_digest": {"oneOf": [{"$ref": "#/$defs/sha256"}, {"type": "null"}]}, "runtime_provider": {"oneOf": [{"type": "array", "prefixItems": [{"$ref": "#/$defs/id"}, {"$ref": "#/$defs/id"}], "items": false, "minItems": 2, "maxItems": 2}, {"type": "null"}]}, "runtime_observed_at": {"type": ["string", "null"]}, "runtime_authority": {"oneOf": [{"$ref": "#/$defs/id"}, {"type": "null"}]}, "runtime_key_id": {"oneOf": [{"$ref": "#/$defs/id"}, {"type": "null"}]}, "blockers": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}, "claims": {"$ref": "#/$defs/bindingClaims"}}
+    },
+    "resultClaims": {"type": "object", "additionalProperties": false, "required": ["offline_analysis_generated", "sas_executed", "customer_paths_accessed", "credentials_inferred", "migration_ready", "validated", "parity_passed", "certified", "human_approved"], "properties": {"offline_analysis_generated": {"type": "boolean"}, "sas_executed": {"const": false}, "customer_paths_accessed": {"const": false}, "credentials_inferred": {"const": false}, "migration_ready": {"const": false}, "validated": {"const": false}, "parity_passed": {"const": false}, "certified": {"const": false}, "human_approved": {"const": false}}}
+  }
+}

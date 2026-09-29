@@ -1,0 +1,13 @@
+%include "macros/common.sas";
+%include "macros/common.sas";
+%global cohort;
+%let cohort=active;
+%macro local_report(flag=);
+  %local inner;
+  %common;
+%mend;
+proc format;
+  value common 1='one';
+run;
+%local_report(flag=&cohort);
+%local_report(flag=&cohort);

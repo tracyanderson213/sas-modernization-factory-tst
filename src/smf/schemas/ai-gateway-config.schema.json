@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://smf.local/schemas/ai-gateway-config.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "mode", "gateway", "authentication", "headers", "tls", "timeout", "retry", "quota", "retention", "authority"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "mode": {"const": "preflight"},
+    "gateway": {
+      "type": "object", "additionalProperties": false,
+      "required": ["state", "endpoint", "route", "model_alias", "api_version"],
+      "properties": {
+        "state": {"enum": ["active", "pending"]},
+        "endpoint": {"type": "string", "minLength": 10, "maxLength": 2048},
+        "route": {"type": "string", "pattern": "^/[A-Za-z0-9._~!$&'()*+,;=:@%/-]+$", "maxLength": 1024},
+        "model_alias": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"},
+        "api_version": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"}
+      }
+    },
+    "authentication": {
+      "type": "object", "additionalProperties": false,
+      "required": ["mode", "credential_reference", "audience_reference"],
+      "properties": {
+        "mode": {"enum": ["entra_workload_identity", "vault_reference", "pending"]},
+        "credential_reference": {"type": ["string", "null"]},
+        "audience_reference": {"type": ["string", "null"]}
+      }
+    },
+    "headers": {
+      "type": "array", "maxItems": 32,
+      "items": {"type": "object", "additionalProperties": false, "required": ["name", "value_reference"], "properties": {
+        "name": {"type": "string", "pattern": "^[A-Za-z][A-Za-z0-9-]{0,63}$"},
+        "value_reference": {"type": "string"}
+      }}
+    },
+    "tls": {
+      "type": "object", "additionalProperties": false,
+      "required": ["minimum_version", "ca_bundle_reference", "client_certificate_reference", "client_key_reference"],
+      "properties": {
+        "minimum_version": {"enum": ["TLS1.2", "TLS1.3"]},
+        "ca_bundle_reference": {"type": ["string", "null"]},
+        "client_certificate_reference": {"type": ["string", "null"]},
+        "client_key_reference": {"type": ["string", "null"]}
+      }
+    },
+    "timeout": {
+      "type": "object", "additionalProperties": false,
+      "required": ["connect_seconds", "request_seconds", "uncertain_outcome_seconds"],
+      "properties": {
+        "connect_seconds": {"type": "integer", "minimum": 1, "maximum": 60},
+        "request_seconds": {"type": "integer", "minimum": 1, "maximum": 600},
+        "uncertain_outcome_seconds": {"type": "integer", "minimum": 1, "maximum": 900}
+      }
+    },
+    "retry": {
+      "type": "object", "additionalProperties": false,
+      "required": ["max_attempts", "base_delay_ms", "max_delay_ms", "retryable_statuses"],
+      "properties": {
+        "max_attempts": {"type": "integer", "minimum": 1, "maximum": 5},
+        "base_delay_ms": {"type": "integer", "minimum": 1, "maximum": 60000},
+        "max_delay_ms": {"type": "integer", "minimum": 1, "maximum": 120000},
+        "retryable_statuses": {"type": "array", "uniqueItems": true, "items": {"enum": [429, 502, 503, 504]}}
+      }
+    },
+    "quota": {
+      "type": "object", "additionalProperties": false,
+      "required": ["max_concurrency", "requests_per_minute", "input_tokens_per_request", "output_tokens_per_request"],
+      "properties": {
+        "max_concurrency": {"type": "integer", "minimum": 1, "maximum": 64},
+        "requests_per_minute": {"type": "integer", "minimum": 1},
+        "input_tokens_per_request": {"type": "integer", "minimum": 1},
+        "output_tokens_per_request": {"type": "integer", "minimum": 1}
+      }
+    },
+    "retention": {
+      "type": "object", "additionalProperties": false,
+      "required": ["persist_prompt", "persist_response", "sanitized_receipt_only"],
+      "properties": {
+        "persist_prompt": {"const": false}, "persist_response": {"const": false}, "sanitized_receipt_only": {"const": true}
+      }
+    },
+    "authority": {
+      "type": "object", "additionalProperties": false,
+      "required": ["state", "qualification_time", "valid_until", "configuration_authority_reference", "connectivity_authority_reference"],
+      "properties": {
+        "state": {"enum": ["active", "pending", "denied"]},
+        "qualification_time": {"type": "string", "pattern": "^\\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\\d|3[01])T(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d{1,9})?(?:Z|[+-](?:[01]\\d|2[0-3]):[0-5]\\d)$"},
+        "valid_until": {"type": "string", "pattern": "^\\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\\d|3[01])T(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d{1,9})?(?:Z|[+-](?:[01]\\d|2[0-3]):[0-5]\\d)$"},
+        "configuration_authority_reference": {"type": ["string", "null"]},
+        "connectivity_authority_reference": {"type": ["string", "null"]}
+      }
+    }
+  }
+}

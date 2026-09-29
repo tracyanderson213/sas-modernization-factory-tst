@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "$id": "databricks-compute-request.schema.json",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "client_id", "deployment_id", "environment_id", "workspace_binding_id", "workload_id", "workload_digest", "boundary_id", "subject_id", "executable_entrypoint_id", "qualified_snapshot_ref", "source_sha256", "source_closure_digest", "generated_sha256", "configuration_digest", "bundle_digest", "readiness_result_id", "readiness_manifest_digest", "readiness_policy_id", "readiness_policy_version", "readiness_policy_digest", "readiness_activation_authority_ref", "readiness_manifest", "target", "workload_class", "run_id", "workflow_attempt_id", "selection_attempt_id", "policy_id", "policy_version", "policy_digest", "policy_bytes_sha256", "policy_snapshot", "observation_id", "observation_digest", "requested_profile_id", "evaluated_at"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "client_id": {"$ref": "#/$defs/id"}, "deployment_id": {"$ref": "#/$defs/id"}, "environment_id": {"$ref": "#/$defs/id"}, "workspace_binding_id": {"$ref": "#/$defs/id"},
+    "workload_id": {"$ref": "#/$defs/id"}, "workload_digest": {"$ref": "#/$defs/digest"}, "boundary_id": {"$ref": "#/$defs/id"}, "subject_id": {"$ref": "#/$defs/id"}, "executable_entrypoint_id": {"$ref": "#/$defs/id"},
+    "qualified_snapshot_ref": {"type": "string", "pattern": "^evidence://[A-Za-z0-9][A-Za-z0-9._/-]{0,511}$"},
+    "source_sha256": {"$ref": "#/$defs/digest"}, "source_closure_digest": {"$ref": "#/$defs/digest"}, "generated_sha256": {"$ref": "#/$defs/digest"}, "configuration_digest": {"$ref": "#/$defs/digest"}, "bundle_digest": {"$ref": "#/$defs/digest"},
+    "readiness_result_id": {"$ref": "#/$defs/id"}, "readiness_manifest_digest": {"$ref": "#/$defs/digest"}, "readiness_policy_id": {"$ref": "#/$defs/id"}, "readiness_policy_version": {"$ref": "#/$defs/id"}, "readiness_policy_digest": {"$ref": "#/$defs/digest"}, "readiness_activation_authority_ref": {"$ref": "#/$defs/id"}, "readiness_manifest": {"type": "object"},
+    "target": {"enum": ["pyspark", "sparksql"]}, "workload_class": {"$ref": "#/$defs/id"}, "run_id": {"$ref": "#/$defs/id"}, "workflow_attempt_id": {"$ref": "#/$defs/id"}, "selection_attempt_id": {"$ref": "#/$defs/id"},
+    "policy_id": {"$ref": "#/$defs/id"}, "policy_version": {"$ref": "#/$defs/version"}, "policy_digest": {"$ref": "#/$defs/digest"}, "policy_bytes_sha256": {"$ref": "#/$defs/digest"}, "policy_snapshot": {"type": "object"}, "observation_id": {"oneOf": [{"$ref": "#/$defs/id"}, {"type": "null"}]}, "observation_digest": {"oneOf": [{"$ref": "#/$defs/digest"}, {"type": "null"}]}, "requested_profile_id": {"oneOf": [{"$ref": "#/$defs/id"}, {"type": "null"}]}, "evaluated_at": {"type": "string", "format": "date-time"}
+  },
+  "$defs": {"id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"}, "version": {"type": "string", "pattern": "^[1-9][0-9]*\\.[0-9]+\\.[0-9]+$"}, "digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

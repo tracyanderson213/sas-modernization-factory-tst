@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://smf.example/schemas/prompt-model-governance-telemetry.schema.json",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "result_id", "status", "terminal_disposition", "policy_id", "policy_version", "model_binding_id", "blockers", "claims"],
+  "properties": {
+    "schema_version": {"const": "1.0"}, "result_id": {"$ref": "#/$defs/id"},
+    "status": {"const": "blocked_external_authority"}, "terminal_disposition": {"const": "live_model_and_evaluation_authority_required"},
+    "policy_id": {"$ref": "#/$defs/id"}, "policy_version": {"$ref": "#/$defs/id"}, "model_binding_id": {"$ref": "#/$defs/id"},
+    "blockers": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "string"}},
+    "claims": {"type": "object", "additionalProperties": false, "required": ["live_model_authorized", "gateway_invoked", "provider_invoked", "generated", "executed", "validated", "parity_passed", "humana_ready", "production_ready", "migration_complete"], "properties": {"live_model_authorized": {"const": false}, "gateway_invoked": {"const": false}, "provider_invoked": {"const": false}, "generated": {"const": false}, "executed": {"const": false}, "validated": {"const": false}, "parity_passed": {"const": false}, "humana_ready": {"const": false}, "production_ready": {"const": false}, "migration_complete": {"const": false}}}
+  },
+  "$defs": {"id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"}}
+}

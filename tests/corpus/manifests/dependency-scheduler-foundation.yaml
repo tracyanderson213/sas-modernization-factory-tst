@@ -1,0 +1,120 @@
+schema_version: 1
+scenario_id: dependency-scheduler-foundation
+name: Dependency and scheduler corpus foundation
+domain: core-sas
+description: SMF-owned orchestration fixture covering resolved code, scheduler, runtime, producer/consumer,
+  and deliberately unresolved dynamic dependency evidence.
+source:
+  source_id: smf-owned
+  origin: smf
+  license: Apache-2.0
+  notes: Controlled CORPUS-06 fixture. It is not representative public SAS evidence.
+capabilities:
+- dependency-evidence
+- scheduler-metadata
+- runtime-launch
+- producer-consumer
+- unresolved-dynamic-dependency
+artifacts:
+- path: ../workloads/representative/dependency-scheduler-foundation/source/main.sas
+  role: sas-program
+  sha256: b28ce1639451deaa01d4697f42f3a0561acfd18e25a990c19fe331562c3c58ab
+  source_id: smf-owned
+- path: ../workloads/representative/dependency-scheduler-foundation/source/macros/common.sas
+  role: sas-macro
+  sha256: 8400f3686a1fc9a5fb2c111138dc3fbae3068cd75a44a7f08778dcbeb175a239
+  source_id: smf-owned
+- path: ../workloads/representative/dependency-scheduler-foundation/source/producer.sas
+  role: sas-program
+  sha256: c515c2e62a47e9f08c60e0fe12ade815d96ca07957b816a33a049ae112d42dfd
+  source_id: smf-owned
+- path: ../workloads/representative/dependency-scheduler-foundation/source/consumer.sas
+  role: sas-program
+  sha256: a1281ce487cf4c20799d77afb2df82882d5d874e997b894ce1f7077a69a14ccf
+  source_id: smf-owned
+- path: ../workloads/representative/dependency-scheduler-foundation/scripts/run_main.sh
+  role: script
+  sha256: 8d63a81b2b5f807750f92740730f55308ba8f1f44d6288bdc6bce8c7f4168142
+  source_id: smf-owned
+- path: ../workloads/representative/dependency-scheduler-foundation/scripts/run_dynamic.sh
+  role: script
+  sha256: 1bdeacbab1da778c4f7e9fbe2cb95bacdb3dc6e2cd9cb1d1b19121d21027c3e1
+  source_id: smf-owned
+- path: ../workloads/representative/dependency-scheduler-foundation/scheduler/schedule.jil
+  role: scheduler
+  sha256: bd848f76f777a07d9dc0bc8210ca396130c2a2af8b15d04783a63f74d9944625
+  source_id: smf-owned
+- path: ../workloads/representative/dependency-scheduler-foundation/data/shared.csv
+  role: other
+  sha256: a980d0bcc2b584e6ca1aeba7350a5d1dba60dc49360dcfdf8bcb663dc1d504e8
+  source_id: smf-owned
+workload:
+  root: ../workloads/representative/dependency-scheduler-foundation
+  entrypoints:
+  - ../workloads/representative/dependency-scheduler-foundation/scheduler/schedule.jil
+  relationships:
+  - source: ../workloads/representative/dependency-scheduler-foundation/scheduler/schedule.jil
+    target: ../workloads/representative/dependency-scheduler-foundation/scripts/run_main.sh
+    relationship: schedules
+  - source: ../workloads/representative/dependency-scheduler-foundation/scripts/run_main.sh
+    target: ../workloads/representative/dependency-scheduler-foundation/source/main.sas
+    relationship: invokes
+  - source: ../workloads/representative/dependency-scheduler-foundation/source/main.sas
+    target: ../workloads/representative/dependency-scheduler-foundation/source/macros/common.sas
+    relationship: includes
+  - source: ../workloads/representative/dependency-scheduler-foundation/source/producer.sas
+    target: ../workloads/representative/dependency-scheduler-foundation/data/shared.csv
+    relationship: writes
+  - source: ../workloads/representative/dependency-scheduler-foundation/source/consumer.sas
+    target: ../workloads/representative/dependency-scheduler-foundation/data/shared.csv
+    relationship: reads
+dependency_expectations:
+- expectation_id: scheduler-launch-main
+  source: ../workloads/representative/dependency-scheduler-foundation/scheduler/schedule.jil
+  target: ../workloads/representative/dependency-scheduler-foundation/scripts/run_main.sh
+  relationship: schedules
+  resolution: resolved
+  evidence_method: scheduler-metadata
+- expectation_id: wrapper-launch-main
+  source: ../workloads/representative/dependency-scheduler-foundation/scripts/run_main.sh
+  target: ../workloads/representative/dependency-scheduler-foundation/source/main.sas
+  relationship: invokes
+  resolution: resolved
+  evidence_method: static-analysis
+- expectation_id: main-include-common
+  source: ../workloads/representative/dependency-scheduler-foundation/source/main.sas
+  target: ../workloads/representative/dependency-scheduler-foundation/source/macros/common.sas
+  relationship: includes
+  resolution: resolved
+  evidence_method: static-analysis
+- expectation_id: producer-shared
+  source: ../workloads/representative/dependency-scheduler-foundation/source/producer.sas
+  target: ../workloads/representative/dependency-scheduler-foundation/data/shared.csv
+  relationship: writes
+  resolution: resolved
+  evidence_method: static-analysis
+- expectation_id: consumer-shared
+  source: ../workloads/representative/dependency-scheduler-foundation/source/consumer.sas
+  target: ../workloads/representative/dependency-scheduler-foundation/data/shared.csv
+  relationship: reads
+  resolution: resolved
+  evidence_method: static-analysis
+- expectation_id: dynamic-wrapper-target
+  source: ../workloads/representative/dependency-scheduler-foundation/scripts/run_dynamic.sh
+  relationship: invokes
+  resolution: unresolved
+  evidence_method: static-analysis
+  unresolved_reference: $PROGRAM
+- expectation_id: external-autosys-upstream
+  source: ../workloads/representative/dependency-scheduler-foundation/scheduler/schedule.jil
+  relationship: depends-on
+  resolution: unresolved
+  evidence_method: scheduler-metadata
+  unresolved_reference: LOAD_SOURCE
+expected:
+  discovery:
+    preserve_unresolved_dependencies: true
+metadata:
+  tier: representative
+  private_data: false
+  framework_stage: CORPUS-06

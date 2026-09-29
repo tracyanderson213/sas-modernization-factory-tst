@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SMF Execution Result",
+  "type": "object",
+  "required": [
+    "source_file",
+    "generated_file",
+    "target",
+    "provider",
+    "status",
+    "duration_seconds",
+    "stdout",
+    "stderr",
+    "warnings",
+    "evidence",
+    "output_files"
+  ],
+  "properties": {
+    "source_file": {
+      "type": "string"
+    },
+    "generated_file": {
+      "type": "string"
+    },
+    "target": {
+      "type": "string"
+    },
+    "provider": {
+      "enum": [
+        "local",
+        "databricks"
+      ]
+    },
+    "status": {
+      "enum": [
+        "succeeded",
+        "failed",
+        "blocked",
+        "submitted"
+      ]
+    },
+    "duration_seconds": {
+      "type": "number",
+      "minimum": 0
+    },
+    "exit_code": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "stdout": {
+      "type": "string"
+    },
+    "stderr": {
+      "type": "string"
+    },
+    "run_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "workspace_host": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "evidence": {
+      "type": "object"
+    },
+    "output_files": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}

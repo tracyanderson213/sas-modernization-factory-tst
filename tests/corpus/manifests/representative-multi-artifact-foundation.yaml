@@ -1,0 +1,110 @@
+schema_version: 1
+scenario_id: representative-multi-artifact-foundation
+name: Representative multi-artifact workload foundation
+domain: core-sas
+description: SMF-owned workload-level fixture proving that a corpus scenario can preserve
+  multiple cooperating SAS artifacts, configuration, entrypoints, and explicit artifact
+  relationships.
+source:
+  source_id: smf-owned
+  origin: smf
+  license: Apache-2.0
+  notes: Created by the SAS Modernization Factory project for workload-level regression
+    testing.
+capabilities:
+- multi-artifact-workload
+- sas-include
+- macro-definition
+- macro-invocation
+- configuration
+- synthetic-input-data
+- deterministic-data-fixtures
+artifacts:
+- path: ../workloads/representative/multi-artifact-foundation/source/main.sas
+  role: sas-program
+  sha256: 2409c6bb32cd2ab95d9cce37da16036b68562decdc48dd75a622ecf398f6fc13
+  source_id: smf-owned
+- path: ../workloads/representative/multi-artifact-foundation/source/includes/configure.sas
+  role: sas-include
+  sha256: 497e74941a35f261c43f4b54c45808e6c965b6c8ad43f54be7247906593024db
+  source_id: smf-owned
+- path: ../workloads/representative/multi-artifact-foundation/source/macros/member_rules.sas
+  role: sas-macro
+  sha256: ff669b4c5b563b4958b8636100892931427005752da6d8d6f42ab93fdee23a89
+  source_id: smf-owned
+- path: ../workloads/representative/multi-artifact-foundation/config/workload.properties
+  role: configuration
+  sha256: 97be33d69bee4359c2512ad5a9ee2a4c073e21e108a240d682de25e8a88ae999
+  source_id: smf-owned
+- path: ../workloads/representative/multi-artifact-foundation/data/members.csv
+  role: input-data
+  sha256: af48aad97c78924bf8b9807b5e2867f831d5e02d66bb0165aef40b9eb5fdff83
+  source_id: smf-owned
+- path: ../workloads/representative/multi-artifact-foundation/data/member_flags.csv
+  role: input-data
+  sha256: 56539a7288ae7a11b3965c69f28ba8d1aa5f9e99eb82994958d1094c48fce885
+  source_id: smf-owned
+workload:
+  root: ../workloads/representative/multi-artifact-foundation
+  entrypoints:
+  - ../workloads/representative/multi-artifact-foundation/source/main.sas
+  relationships:
+  - source: ../workloads/representative/multi-artifact-foundation/source/main.sas
+    target: ../workloads/representative/multi-artifact-foundation/source/includes/configure.sas
+    relationship: includes
+  - source: ../workloads/representative/multi-artifact-foundation/source/main.sas
+    target: ../workloads/representative/multi-artifact-foundation/source/macros/member_rules.sas
+    relationship: includes
+  - source: ../workloads/representative/multi-artifact-foundation/source/main.sas
+    target: ../workloads/representative/multi-artifact-foundation/config/workload.properties
+    relationship: configures
+  - source: ../workloads/representative/multi-artifact-foundation/source/main.sas
+    target: ../workloads/representative/multi-artifact-foundation/data/members.csv
+    relationship: reads
+  - source: ../workloads/representative/multi-artifact-foundation/source/main.sas
+    target: ../workloads/representative/multi-artifact-foundation/data/member_flags.csv
+    relationship: reads
+regression:
+  version: 1
+  subjects:
+  - subject_id: representative-multi-artifact-main
+    workload_id: representative-multi-artifact-foundation
+    entrypoint: ../workloads/representative/multi-artifact-foundation/source/main.sas
+    target: pyspark
+    source_closure:
+    - ../workloads/representative/multi-artifact-foundation/source/main.sas
+    - ../workloads/representative/multi-artifact-foundation/source/includes/configure.sas
+    - ../workloads/representative/multi-artifact-foundation/source/macros/member_rules.sas
+    - ../workloads/representative/multi-artifact-foundation/config/workload.properties
+    - ../workloads/representative/multi-artifact-foundation/data/members.csv
+    - ../workloads/representative/multi-artifact-foundation/data/member_flags.csv
+    stages:
+    - admission
+    - conversion
+    - static-validation
+    validation_policy:
+      policy_id: smf-static-validation
+      policy_version: '1'
+      validation_kind: static
+    evidence_scope: shared-regression
+    environment: test-only
+expected:
+  discovery:
+    minimum_artifacts: 4
+metadata:
+  tier: representative
+  private_data: false
+  framework_stage: CORPUS-04
+data_fixtures:
+- fixture_id: members-input
+  dataset: work.members
+  artifact: ../workloads/representative/multi-artifact-foundation/data/members.csv
+  format: csv
+  deterministic: true
+  contains_private_data: false
+- fixture_id: member-flags-input
+  dataset: work.member_flags
+  artifact: ../workloads/representative/multi-artifact-foundation/data/member_flags.csv
+  format: csv
+  deterministic: true
+  contains_private_data: false

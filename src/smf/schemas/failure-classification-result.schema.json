@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://smf.example/schemas/failure-classification-result.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "contract_version", "failure_id", "content_digest", "canonical_evidence_reference", "identity", "classification", "lifecycle", "evidence", "causes", "implementation_manifest", "claims"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "contract_version": {"const": "fail-01.1.0"},
+    "failure_id": {"type": "string", "pattern": "^FAILRES-[A-Fa-f0-9]+$"},
+    "content_digest": {"$ref": "#/$defs/sha"},
+    "canonical_evidence_reference": {"type": "string", "pattern": "^runs/[^/]+/workloads/[^/]+/attempts/[^/]+/failures/[^/]+/failure-classification\\.result\\.json$"},
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["client_id", "source_id", "workload_id", "run_id", "attempt_id", "event_id", "evaluation_time", "evidence_digest", "causal_chain_digest", "implementation_digest", "taxonomy_version"],
+      "properties": {
+        "client_id": {"$ref": "#/$defs/id"}, "source_id": {"$ref": "#/$defs/id"},
+        "workload_id": {"$ref": "#/$defs/id"}, "run_id": {"$ref": "#/$defs/id"},
+        "attempt_id": {"$ref": "#/$defs/id"}, "event_id": {"$ref": "#/$defs/id"},
+        "evaluation_time": {"$ref": "#/$defs/time"},
+        "evidence_digest": {"$ref": "#/$defs/sha"}, "causal_chain_digest": {"$ref": "#/$defs/sha"},
+        "implementation_digest": {"$ref": "#/$defs/sha"}, "taxonomy_version": {"const": "fail-01.1.0"}
+      }
+    },
+    "classification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stage", "reason_code", "category", "owner", "retryability", "repairability", "blocker_class", "terminal_disposition", "next_action", "side_effect_state"],
+      "properties": {
+        "stage": {"enum": ["readiness", "discovery", "dependency_resolution", "deterministic_conversion", "ai_fallback", "execution", "validation", "reconciliation", "evidence", "governance", "environment"]},
+        "reason_code": {"enum": ["prerequisite_missing", "unsupported_source", "dependency_unresolved", "deterministic_conversion_failed", "deterministic_conversion_transient", "ai_gateway_authority_required", "ai_fallback_exhausted", "ai_outcome_unknown", "execution_rejected", "execution_failed_no_side_effect", "execution_outcome_unknown", "validation_mismatch", "reconciliation_incomplete", "validation_policy_missing", "evidence_integrity_failed", "security_boundary", "external_system_unavailable"]},
+        "category": {"enum": ["prerequisite", "unsupported", "dependency", "conversion", "remediation", "execution", "validation", "governance", "evidence", "environment"]},
+        "owner": {"enum": ["migration_engineering", "source_owner", "gateway_owner", "security_owner", "platform_owner", "data_validation_owner", "business_owner"]},
+        "retryability": {"enum": ["bounded_retry", "not_retryable", "retry_after_evidence", "retry_after_authority", "outcome_unknown_do_not_retry"]},
+        "repairability": {"enum": ["deterministic", "ai_candidate", "human_decision", "external_input", "external_authority", "external_owner", "unsupported"]},
+        "blocker_class": {"enum": ["technical", "external_input", "business_decision", "security_boundary", "protected_action", "unsupported"]},
+        "terminal_disposition": {"enum": ["blocked", "failed", "unsupported", "human_pending", "outcome_unknown"]},
+        "next_action": {"enum": ["supply_governed_prerequisite", "create_actionable_exception", "resolve_dependency_evidence", "route_to_bounded_ai_repair", "retry_deterministic_conversion", "obtain_gateway_authority", "request_bounded_human_disposition", "investigate_unknown_gateway_outcome", "resolve_execution_authority", "retry_execution_from_checkpoint", "perform_target_readback_before_retry", "repair_then_reexecute_and_revalidate", "complete_partition_reconciliation", "obtain_validation_policy", "quarantine_and_reconstruct_evidence", "request_security_decision", "retry_after_external_recovery"]},
+        "side_effect_state": {"enum": ["not_attempted", "none_confirmed", "observed", "unknown"]}
+      }
+    },
+    "lifecycle": {"$ref": "#/$defs/lifecycle"},
+    "evidence": {
+      "type": "array", "minItems": 1, "uniqueItems": true,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["evidence_id", "evidence_class", "relative_path", "sha256"],
+        "properties": {
+          "evidence_id": {"$ref": "#/$defs/id"},
+          "evidence_class": {"enum": ["readiness_result", "discovery_result", "dependency_result", "deterministic_conversion_result", "ai_repair_result", "execution_result", "validation_result", "reconciliation_result", "policy_result", "evidence_integrity_result", "security_result", "external_observation"]},
+          "relative_path": {"type": "string", "pattern": "^[^/][A-Za-z0-9._/-]*$"},
+          "sha256": {"$ref": "#/$defs/sha"}
+        }
+      }
+    },
+    "causes": {
+      "type": "array", "minItems": 1, "uniqueItems": true,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["cause_id", "content_digest", "relation"],
+        "properties": {"cause_id": {"$ref": "#/$defs/id"}, "content_digest": {"$ref": "#/$defs/sha"}, "relation": {"enum": ["observed_in", "caused_by"]}}
+      }
+    },
+    "implementation_manifest": {
+      "type": "array", "minItems": 4, "maxItems": 4, "uniqueItems": true,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["path", "sha256"],
+        "properties": {"path": {"type": "string", "minLength": 1}, "sha256": {"$ref": "#/$defs/sha"}}
+      }
+    },
+    "claims": {"$ref": "#/$defs/claims"}
+  },
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"},
+    "sha": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "time": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"},
+    "state": {"enum": ["not_attempted", "succeeded", "failed", "rejected", "blocked", "incomplete", "unknown", "pending", "not_observed"]},
+    "lifecycle": {
+      "type": "object", "additionalProperties": false,
+      "required": ["generated", "executed", "validated", "parity", "human_assisted"],
+      "properties": {"generated": {"$ref": "#/$defs/state"}, "executed": {"$ref": "#/$defs/state"}, "validated": {"$ref": "#/$defs/state"}, "parity": {"$ref": "#/$defs/state"}, "human_assisted": {"$ref": "#/$defs/state"}}
+    },
+    "claims": {
+      "type": "object", "additionalProperties": false,
+      "required": ["retry_executed", "ai_gateway_invoked", "provider_invoked", "external_system_contacted", "exception_approved", "human_decision_obtained", "validated", "parity_passed", "migration_ready", "production_ready", "migration_complete"],
+      "properties": {
+        "retry_executed": {"const": false}, "ai_gateway_invoked": {"const": false},
+        "provider_invoked": {"const": false}, "external_system_contacted": {"const": false},
+        "exception_approved": {"const": false}, "human_decision_obtained": {"const": false},
+        "validated": {"const": false}, "parity_passed": {"const": false},
+        "migration_ready": {"const": false}, "production_ready": {"const": false},
+        "migration_complete": {"const": false}
+      }
+    }
+  }
+}

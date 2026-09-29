@@ -1,0 +1,21 @@
+{
+  "workload_id": "SMF-000001",
+  "name": "synthetic-customer-summary",
+  "description": "Synthetic simple SAS workload for local factory development.",
+  "source_type": "sas",
+  "source_files": [
+    {
+      "path": "examples/simple/example.sas",
+      "type": "sas_program"
+    }
+  ],
+  "dependencies": [],
+  "data_sources": [],
+  "outputs": [],
+  "business_criticality": "low",
+  "regulatory_classification": [],
+  "status": "discovered",
+  "metadata": {
+    "synthetic": true
+  }
+}

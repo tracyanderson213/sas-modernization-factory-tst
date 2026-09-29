@@ -1,0 +1,70 @@
+schema_version: 1
+scenario_id: public-sas-official-language-breadth
+name: SAS-maintained language breadth slice
+domain: language-breadth
+description: Untouched public SAS acquired from a pinned upstream revision for CORPUS-07
+  realism testing.
+source:
+  source_id: sas-code-examples
+  origin: public-open-source
+  license: Apache-2.0
+  upstream_url: https://github.com/sassoftware/sas-code-examples
+  upstream_ref: 579e057f90cd699f744fd6a1c8acaf9243f7ff67
+  notes: Vendored bytes are untouched. SMF must adapt to the upstream source, not
+    the reverse.
+capabilities:
+- data-step
+- select-statement
+- proc-format
+- by-group
+- proc-http
+- external-http
+artifacts:
+- path: ../workloads/public/sas-code-examples/create-column-select.sas
+  role: sas-program
+  sha256: 77dc81ec6df2e6996380a2c92148ef7ee9c80864f7728fa4d78ca6ae6c209927
+  source_id: sas-code-examples
+  upstream_path: By Syntax/DATA Step/Create new column with the SELECT statement.sas
+- path: ../workloads/public/sas-code-examples/by-groupformat.sas
+  role: sas-program
+  sha256: 574ae686cae9e5b81e65da1a4d2e3565d5b100f75fa6550087047b842381c1de
+  source_id: sas-code-examples
+  upstream_path: By Syntax/FORMAT Procedure/Using the By Groupformat Statement to
+    Process Data.sas
+- path: ../workloads/public/sas-code-examples/proc-http-intro.sas
+  role: sas-program
+  sha256: b0241625974fae257900ecc90a91594253bf96c016b0902da66e416320e7bb4a
+  source_id: sas-code-examples
+  upstream_path: By Syntax/HTTP Procedure/1_Intro to PROC HTTP.sas
+metadata:
+  tier: untouched-public
+  private_data: false
+  modification_status: untouched
+  acquisition_date: '2026-09-04'
+  independent_authorship: true
+workload:
+  root: ../workloads/public
+  entrypoints:
+  - ../workloads/public/sas-code-examples/create-column-select.sas
+  - ../workloads/public/sas-code-examples/by-groupformat.sas
+  - ../workloads/public/sas-code-examples/proc-http-intro.sas
+  relationships: []
+regression:
+  version: 1
+  subjects:
+  - subject_id: public-sas-select-statement
+    workload_id: public-sas-official-language-breadth
+    entrypoint: ../workloads/public/sas-code-examples/create-column-select.sas
+    target: pyspark
+    source_closure:
+    - ../workloads/public/sas-code-examples/create-column-select.sas
+    stages:
+    - admission
+    - conversion
+    - static-validation
+    validation_policy:
+      policy_id: smf-static-validation
+      policy_version: '1'
+      validation_kind: static
+    evidence_scope: shared-regression
+    environment: test-only

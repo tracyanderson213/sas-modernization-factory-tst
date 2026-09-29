@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://smf.local/schemas/target-resolution-result.schema.json",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "contract_version", "result_id", "content_digest", "canonical_evidence_reference", "identity", "status", "terminal_disposition", "resolution", "blockers", "implementation_manifest", "claims"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "contract_version": {"const": "base-03.1.0"},
+    "result_id": {"$ref": "#/$defs/id"},
+    "content_digest": {"$ref": "#/$defs/sha"},
+    "canonical_evidence_reference": {"type": "string", "pattern": "^runs/[A-Za-z0-9._:-]+/workloads/[A-Za-z0-9._:-]+/target-resolution-attempts/[A-Za-z0-9._:-]+/target-resolution\\.result\\.json$"},
+    "identity": {
+      "type": "object", "additionalProperties": false,
+      "required": ["client_id", "deployment_id", "environment_id", "environment_class", "workload_id", "source_id", "run_id", "attempt_id", "artifact_id", "logical_dataset", "access_mode", "evaluation_time", "configuration_reference", "configuration_digest", "implementation_digest", "policy_id", "policy_version"],
+      "properties": {
+        "client_id": {"$ref": "#/$defs/id"}, "deployment_id": {"$ref": "#/$defs/id"}, "environment_id": {"$ref": "#/$defs/id"},
+        "environment_class": {"enum": ["evaluation", "production"]}, "workload_id": {"$ref": "#/$defs/id"}, "source_id": {"$ref": "#/$defs/id"},
+        "run_id": {"$ref": "#/$defs/id"}, "attempt_id": {"$ref": "#/$defs/id"}, "artifact_id": {"$ref": "#/$defs/id"},
+        "logical_dataset": {"$ref": "#/$defs/logical"}, "access_mode": {"enum": ["read", "write"]}, "evaluation_time": {"$ref": "#/$defs/time"},
+        "configuration_reference": {"type": "string", "pattern": "^[A-Za-z0-9._/-]+$"}, "configuration_digest": {"$ref": "#/$defs/sha"}, "implementation_digest": {"$ref": "#/$defs/sha"},
+        "policy_id": {"$ref": "#/$defs/id"}, "policy_version": {"$ref": "#/$defs/id"}
+      }
+    },
+    "status": {"enum": ["resolved", "blocked"]},
+    "terminal_disposition": {"enum": ["qualified_offline", "blocked"]},
+    "resolution": {
+      "oneOf": [
+        {"type": "null"},
+        {"type": "object", "additionalProperties": false,
+          "required": ["binding_id", "binding_version", "logical_dataset", "catalog", "schema", "table", "qualified_name", "environment_id", "environment_class", "namespace_source", "authority_reference", "access_mode"],
+          "properties": {
+            "binding_id": {"$ref": "#/$defs/id"}, "binding_version": {"$ref": "#/$defs/id"}, "logical_dataset": {"$ref": "#/$defs/logical"},
+            "catalog": {"$ref": "#/$defs/namespace"}, "schema": {"$ref": "#/$defs/namespace"}, "table": {"$ref": "#/$defs/namespace"},
+            "qualified_name": {"type": "string", "pattern": "^[A-Za-z_][A-Za-z0-9_]{0,127}\\.[A-Za-z_][A-Za-z0-9_]{0,127}\\.[A-Za-z_][A-Za-z0-9_]{0,127}$"},
+            "environment_id": {"$ref": "#/$defs/id"}, "environment_class": {"enum": ["evaluation", "production"]},
+            "namespace_source": {"const": "explicit_governed_binding"}, "authority_reference": {"$ref": "#/$defs/id"}, "access_mode": {"enum": ["read", "write"]}
+          }
+        }
+      ]
+    },
+    "blockers": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["code", "state"], "properties": {"code": {"$ref": "#/$defs/id"}, "state": {"enum": ["pending", "blocked"]}}}},
+    "implementation_manifest": {"type": "array", "minItems": 1, "items": {"type": "object", "additionalProperties": false, "required": ["path", "sha256"], "properties": {"path": {"type": "string"}, "sha256": {"$ref": "#/$defs/sha"}}}},
+    "claims": {
+      "type": "object", "additionalProperties": false,
+      "required": ["live_catalog_contacted", "target_exists", "access_authorized", "write_performed", "humana_ready", "production_ready", "migration_complete", "semantic_parity"],
+      "properties": {
+        "live_catalog_contacted": {"const": false}, "target_exists": {"const": false}, "access_authorized": {"const": false}, "write_performed": {"const": false},
+        "humana_ready": {"const": false}, "production_ready": {"const": false}, "migration_complete": {"const": false}, "semantic_parity": {"const": false}
+      }
+    }
+  },
+  "allOf": [
+    {"if": {"properties": {"status": {"const": "resolved"}}}, "then": {"properties": {"terminal_disposition": {"const": "qualified_offline"}, "resolution": {"type": "object"}, "blockers": {"maxItems": 0}}}},
+    {"if": {"properties": {"status": {"const": "blocked"}}}, "then": {"properties": {"terminal_disposition": {"const": "blocked"}, "resolution": {"type": "null"}, "blockers": {"minItems": 1}}}}
+  ],
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"},
+    "sha": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "namespace": {"type": "string", "pattern": "^[A-Za-z_][A-Za-z0-9_]{0,127}$"},
+    "logical": {"type": "string", "pattern": "^[A-Za-z_][A-Za-z0-9_]{0,31}\\.[A-Za-z_][A-Za-z0-9_]{0,127}$"},
+    "time": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"}
+  }
+}

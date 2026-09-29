@@ -1,0 +1,48 @@
+{
+  "policy_id": "smf.base02.public-fixture",
+  "version": "1.0.0",
+  "authority_scope": "licensed-public-fixture-qualification",
+  "issued_at": "2026-09-20T20:01:00Z",
+  "valid_until": "2027-09-20T20:00:00Z",
+  "source_dataset_id": "ag121a-supp-sample",
+  "source_dataset_version": "1.0.0",
+  "source_snapshot_sha256": "bc7867bb33bbf238b7085a370f59e9a91a76ff1f61f6df7c74e3b66d47f5b277",
+  "canonical_descriptor_digest": "4b5accc9dae753eb029a9558bd09dc3eb2188d63d05346af907eb6e06c07fa71",
+  "canonical_descriptor_version": "base04-canonical-physical-v1",
+  "source_encoding": "WINDOWS-1252",
+  "target_encoding": "UTF-8",
+  "ordinary_missing_policy": "provider_null_to_target_null",
+  "special_missing_policy": "blocked_unless_qualified",
+  "numeric_precision_policy": "binary64_no_narrowing_tolerance_pending",
+  "temporal_timezone_policy": "blocked_without_explicit_utc_policy",
+  "yearcutoff_policy": "blocked_for_two_digit_year_semantics",
+  "format_informat_policy": "metadata_only_no_executable_projection",
+  "source_key_policy": "descriptor_declared_keys_only",
+  "target_key_policy": "pending_business_owner",
+  "executable_format_allowlist": [],
+  "semantic_contract_digests": {
+    "temporal_policy_digest": "5316c7e5b91d84fb0f373a4478671657457d3ef0355f98eab1c08d3edfaef4dd",
+    "value_policy_digest": "2b44972f3bdbbccc5cd6edda3dbba78e9bd1891b49959a323194be1b973064ea",
+    "format_function_policy_digest": "4dd077f344d97424f132fdc0a827a8f201bbc9073c32968264e61f43c63ba7fc"
+  },
+  "targets": [
+    {
+      "target_dataset_id": "smf-qualification-ag121a",
+      "target_dataset_version": "1.0.0",
+      "target_namespace": "local-qualification",
+      "transformation_id": "smf.identity-underlying",
+      "transformation_version": "1.0.0",
+      "rationale": "Bounded one-to-one qualification of underlying values in the licensed public fixture.",
+      "columns": [
+        {"source_name":"SURVYEAR","source_position":0,"source_physical_type":"string","target_name":"SURVYEAR","target_physical_type":"string","mapping_kind":"identity_underlying_value","rename_rationale":null,"expected_format":"$4","expected_informat":"$4","expected_storage_width":4,"format_disposition":"metadata_only_projection_blocked","informat_disposition":"metadata_only_application_blocked","encoding_disposition":"provider_decoded_unicode_to_utf8","precision_disposition":"not_applicable","length_disposition":"preserve_storage_width_no_truncation","temporal_disposition":"not_temporal_observation","missing_disposition":"ordinary_null_only_special_missing_blocked"},
+        {"source_name":"LEAID","source_position":1,"source_physical_type":"string","target_name":"LEAID","target_physical_type":"string","mapping_kind":"identity_underlying_value","rename_rationale":null,"expected_format":"$7","expected_informat":"$7","expected_storage_width":7,"format_disposition":"metadata_only_projection_blocked","informat_disposition":"metadata_only_application_blocked","encoding_disposition":"provider_decoded_unicode_to_utf8","precision_disposition":"not_applicable","length_disposition":"preserve_storage_width_no_truncation","temporal_disposition":"not_temporal_observation","missing_disposition":"ordinary_null_only_special_missing_blocked"},
+        {"source_name":"NAME","source_position":2,"source_physical_type":"string","target_name":"NAME","target_physical_type":"string","mapping_kind":"identity_underlying_value","rename_rationale":null,"expected_format":null,"expected_informat":null,"expected_storage_width":60,"format_disposition":"metadata_only_projection_blocked","informat_disposition":"metadata_only_application_blocked","encoding_disposition":"provider_decoded_unicode_to_utf8","precision_disposition":"not_applicable","length_disposition":"preserve_storage_width_no_truncation","temporal_disposition":"not_temporal_observation","missing_disposition":"ordinary_null_only_special_missing_blocked"},
+        {"source_name":"PHONE","source_position":3,"source_physical_type":"string","target_name":"PHONE","target_physical_type":"string","mapping_kind":"identity_underlying_value","rename_rationale":null,"expected_format":null,"expected_informat":null,"expected_storage_width":10,"format_disposition":"metadata_only_projection_blocked","informat_disposition":"metadata_only_application_blocked","encoding_disposition":"provider_decoded_unicode_to_utf8","precision_disposition":"not_applicable","length_disposition":"preserve_storage_width_no_truncation","temporal_disposition":"not_temporal_observation","missing_disposition":"ordinary_null_only_special_missing_blocked"},
+        {"source_name":"LATCOD","source_position":4,"source_physical_type":"double","target_name":"LATCOD","target_physical_type":"double","mapping_kind":"identity_underlying_value","rename_rationale":null,"expected_format":"9.6","expected_informat":"9.6","expected_storage_width":8,"format_disposition":"metadata_only_projection_blocked","informat_disposition":"metadata_only_application_blocked","encoding_disposition":"not_applicable","precision_disposition":"binary64_no_narrowing_tolerance_pending","length_disposition":"preserve_storage_width_no_truncation","temporal_disposition":"not_temporal_observation","missing_disposition":"ordinary_null_only_special_missing_blocked"},
+        {"source_name":"LONCOD","source_position":5,"source_physical_type":"double","target_name":"LONCOD","target_physical_type":"double","mapping_kind":"identity_underlying_value","rename_rationale":null,"expected_format":"11.6","expected_informat":"11.6","expected_storage_width":8,"format_disposition":"metadata_only_projection_blocked","informat_disposition":"metadata_only_application_blocked","encoding_disposition":"not_applicable","precision_disposition":"binary64_no_narrowing_tolerance_pending","length_disposition":"preserve_storage_width_no_truncation","temporal_disposition":"not_temporal_observation","missing_disposition":"ordinary_null_only_special_missing_blocked"},
+        {"source_name":"PKTCH","source_position":6,"source_physical_type":"double","target_name":"PKTCH","target_physical_type":"double","mapping_kind":"identity_underlying_value","rename_rationale":null,"expected_format":"8.2","expected_informat":"8.2","expected_storage_width":8,"format_disposition":"metadata_only_projection_blocked","informat_disposition":"metadata_only_application_blocked","encoding_disposition":"not_applicable","precision_disposition":"binary64_no_narrowing_tolerance_pending","length_disposition":"preserve_storage_width_no_truncation","temporal_disposition":"not_temporal_observation","missing_disposition":"ordinary_null_only_special_missing_blocked"},
+        {"source_name":"AMPKM","source_position":7,"source_physical_type":"double","target_name":"AMPKM","target_physical_type":"double","mapping_kind":"identity_underlying_value","rename_rationale":null,"expected_format":"7","expected_informat":"7","expected_storage_width":8,"format_disposition":"metadata_only_projection_blocked","informat_disposition":"metadata_only_application_blocked","encoding_disposition":"not_applicable","precision_disposition":"binary64_no_narrowing_tolerance_pending","length_disposition":"preserve_storage_width_no_truncation","temporal_disposition":"not_temporal_observation","missing_disposition":"ordinary_null_only_special_missing_blocked"}
+      ]
+    }
+  ]
+}

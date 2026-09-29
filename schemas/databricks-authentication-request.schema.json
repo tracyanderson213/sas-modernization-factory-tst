@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SMF Databricks Authentication Request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "client_id", "deployment_id", "environment_id",
+    "configuration_digest", "bundle_digest", "workspace_binding_id", "workspace_origin",
+    "identity_binding_id", "expected_principal_ref", "workload_id", "workload_digest",
+    "boundary_id", "subject_id", "qualified_snapshot_ref", "source_sha256",
+    "generated_sha256", "source_closure_digest", "target", "run_id",
+    "workflow_attempt_id", "authentication_attempt_id", "retry_ordinal",
+    "readiness_result_id", "readiness_manifest_digest", "readiness_policy_id",
+    "readiness_policy_version", "readiness_policy_digest", "security_policy_id",
+    "security_policy_version", "security_policy_digest", "permission_policy_digest",
+    "activation_evidence_id", "activation_evidence_digest", "secret_resolution_id",
+    "secret_resolution_digest", "secret_binding_id", "consumer_id",
+    "consumer_contract_version", "provider_version", "adapter_version", "permission_probes"
+  ],
+  "$defs": {
+    "safe_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"},
+    "digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "client_id": {"$ref": "#/$defs/safe_id"},
+    "deployment_id": {"$ref": "#/$defs/safe_id"},
+    "environment_id": {"$ref": "#/$defs/safe_id"},
+    "configuration_digest": {"$ref": "#/$defs/digest"},
+    "bundle_digest": {"$ref": "#/$defs/digest"},
+    "workspace_binding_id": {"$ref": "#/$defs/safe_id"},
+    "workspace_origin": {"type": "string", "pattern": "^https://[A-Za-z0-9.-]+$"},
+    "identity_binding_id": {"$ref": "#/$defs/safe_id"},
+    "expected_principal_ref": {"$ref": "#/$defs/safe_id"},
+    "workload_id": {"$ref": "#/$defs/safe_id"},
+    "workload_digest": {"$ref": "#/$defs/digest"},
+    "boundary_id": {"$ref": "#/$defs/safe_id"},
+    "subject_id": {"$ref": "#/$defs/safe_id"},
+    "qualified_snapshot_ref": {"type": "string", "pattern": "^evidence://"},
+    "source_sha256": {"$ref": "#/$defs/digest"},
+    "generated_sha256": {"$ref": "#/$defs/digest"},
+    "source_closure_digest": {"$ref": "#/$defs/digest"},
+    "target": {"enum": ["pyspark", "sparksql"]},
+    "run_id": {"$ref": "#/$defs/safe_id"},
+    "workflow_attempt_id": {"$ref": "#/$defs/safe_id"},
+    "authentication_attempt_id": {"$ref": "#/$defs/safe_id"},
+    "retry_ordinal": {"type": "integer", "minimum": 0},
+    "readiness_result_id": {"$ref": "#/$defs/safe_id"},
+    "readiness_manifest_digest": {"$ref": "#/$defs/digest"},
+    "readiness_policy_id": {"$ref": "#/$defs/safe_id"},
+    "readiness_policy_version": {"$ref": "#/$defs/safe_id"},
+    "readiness_policy_digest": {"$ref": "#/$defs/digest"},
+    "security_policy_id": {"$ref": "#/$defs/safe_id"},
+    "security_policy_version": {"$ref": "#/$defs/safe_id"},
+    "security_policy_digest": {"$ref": "#/$defs/digest"},
+    "permission_policy_digest": {"$ref": "#/$defs/digest"},
+    "activation_evidence_id": {"$ref": "#/$defs/safe_id"},
+    "activation_evidence_digest": {"$ref": "#/$defs/digest"},
+    "secret_resolution_id": {"$ref": "#/$defs/safe_id"},
+    "secret_resolution_digest": {"$ref": "#/$defs/digest"},
+    "secret_binding_id": {"$ref": "#/$defs/safe_id"},
+    "consumer_id": {"$ref": "#/$defs/safe_id"},
+    "consumer_contract_version": {"$ref": "#/$defs/safe_id"},
+    "provider_version": {"$ref": "#/$defs/safe_id"},
+    "adapter_version": {"$ref": "#/$defs/safe_id"},
+    "permission_probes": {
+      "type": "array", "minItems": 5, "maxItems": 5,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["probe_id", "kind", "resource_binding_id"],
+        "properties": {
+          "probe_id": {"$ref": "#/$defs/safe_id"},
+          "kind": {"enum": ["workspace_access", "catalog_use", "schema_use", "source_read", "output_write"]},
+          "resource_binding_id": {"$ref": "#/$defs/safe_id"}
+        }
+      }
+    }
+  }
+}

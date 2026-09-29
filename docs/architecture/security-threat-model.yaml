@@ -1,0 +1,502 @@
+schema_version: "1.0"
+model_id: smf-competition-threat-model
+model_version: 1.0.0
+assessed_revision: c551be7640c5694ed8d605be4f1682f5cba4b21c
+scope: Humana competition critical loop offline architecture and control contract
+review_status: draft
+content_digest: 34b68e659cd5b13a97a3c2f6baaf45308b83e733476e6d0ad8b891acf48e1ec4
+lifecycle_claim: architecture_evidence_only
+
+referenced_bindings:
+  - id: humana-security-policy
+    path: deployments/humana/security-policy.yaml
+    sha256: 5ea21a253bca9e962f19d8bc22cf4b691b080157855dd1094883a1b8ff49d863
+    status: pending
+  - id: humana-factory-binding
+    path: deployments/humana/factory.yaml
+    sha256: 2c1a0667f9641709f98fbba7be108621c30743297f24761a629a04d4887b9936
+    status: unresolved
+  - id: humana-compute-policy
+    path: deployments/humana/compute-policy.yaml
+    sha256: aeca4073c6446f19e3650311084d19c03b33a90616dd44bffaca3a09b88977f5
+    status: pending
+  - id: humana-readiness-policy
+    path: deployments/humana/readiness-policy.yaml
+    sha256: e70e755e7b5c099ec78cde6b2236267d264c251a2e5e8068958a8eceddff1ea8
+    status: pending
+  - id: humana-validation-policy
+    path: deployments/humana/validation-policy.yaml
+    sha256: ee3145279162b7e62fc57866d87d51efe62b15c882e4db2201458234de051afe
+    status: pending
+  - id: competition-requirements
+    path: competition/requirements.yaml
+    sha256: 9f780cf1d8ffc38c93dc6db512b115c91b9720225f84cdbbf367bc049dd4f2b0
+    status: unresolved
+
+owners:
+  - {id: security-owner, role: SMF security owner}
+  - {id: discovery-owner, role: SMF discovery owner}
+  - {id: ai-owner, role: AIP-01 provider boundary owner}
+  - {id: evidence-owner, role: SMF evidence and telemetry owner}
+  - {id: runtime-owner, role: Humana runtime owner}
+  - {id: validation-owner, role: Humana validation owner}
+  - {id: approval-owner, role: Named Humana approval authority}
+  - {id: engineering-owner, role: SMF engineering workflow owner}
+
+data_classes:
+  - public
+  - internal
+  - client_confidential
+  - protected_data
+  - credential_reference
+  - sanitized_evidence
+  - runtime_result
+  - approval_record
+
+boundaries:
+  - id: untrusted-source
+    kind: source_ingestion
+    name: Untrusted repositories manifests scheduler metadata and embedded instructions
+    accepted_data_classes: [public, client_confidential, protected_data]
+    authority: untrusted_data
+    implementation_state: partial
+    blocked_operations: [protected_data_ingestion]
+  - id: canonical-discovery
+    kind: canonical_evidence
+    name: Canonical workload discovery sanitization identity and lineage evidence
+    accepted_data_classes: [sanitized_evidence, client_confidential]
+    authority: governed_control
+    implementation_state: implemented
+    blocked_operations: []
+  - id: advisory-recall
+    kind: advisory_recall
+    name: Advisory review learning and future estate recall
+    accepted_data_classes: [sanitized_evidence, internal]
+    authority: advisory_only
+    implementation_state: partial
+    blocked_operations: [estate_recall_authority]
+  - id: ai-provider
+    kind: ai_transport
+    name: Bounded model context and approved provider transport
+    accepted_data_classes: [sanitized_evidence, client_confidential]
+    authority: untrusted_data
+    implementation_state: target
+    blocked_operations: [ai_submission, ai_repair]
+  - id: evidence-store
+    kind: durable_storage
+    name: Append-only evidence and bounded telemetry storage
+    accepted_data_classes: [sanitized_evidence, runtime_result, approval_record]
+    authority: governed_control
+    implementation_state: partial
+    blocked_operations: [end_to_end_certification]
+  - id: identity-secret-plane
+    kind: identity_secrets
+    name: Entra identity and Vault secret resolution boundary
+    accepted_data_classes: [credential_reference, sanitized_evidence]
+    authority: governed_control
+    implementation_state: partial
+    blocked_operations: [live_authentication, protected_data_execution]
+  - id: execution-runtimes
+    kind: runtime
+    name: Independent SAS baseline and isolated Databricks target runtimes
+    accepted_data_classes: [protected_data, runtime_result, credential_reference]
+    authority: external_runtime
+    implementation_state: unresolved
+    blocked_operations: [baseline_execution, databricks_execution, parity_qualification]
+  - id: parity-decision
+    kind: validation
+    name: Independent validation and parity decision boundary
+    accepted_data_classes: [runtime_result, sanitized_evidence]
+    authority: governed_control
+    implementation_state: partial
+    blocked_operations: [humana_parity_qualification, certification]
+  - id: approval-promotion
+    kind: human_approval
+    name: Attempt-bound human approval and production promotion
+    accepted_data_classes: [approval_record, sanitized_evidence]
+    authority: human_authority
+    implementation_state: partial
+    blocked_operations: [competition_acceptance, production_promotion]
+  - id: isolated-engineering
+    kind: engineering_worktree
+    name: Isolated worktrees protected paths deterministic gates and final integration
+    accepted_data_classes: [internal, sanitized_evidence]
+    authority: governed_control
+    implementation_state: implemented
+    blocked_operations: []
+
+flows:
+  - id: source-to-discovery
+    origin_boundary_id: untrusted-source
+    destination_boundary_id: canonical-discovery
+    payload_classes: [client_confidential, protected_data]
+    trust: untrusted
+    sanitization: at_ingress
+    immutable_input: snapshot
+    required_identity_fields: [client_id, deployment_id, environment_id, workload_id, subject_id, source_digest, policy_id, policy_version, provider_id, strategy_version, run_id, attempt_id, decision_id, artifact_id]
+    implementation_state: partial
+    blocked_operations: [protected_data_ingestion]
+    grants_authority: false
+  - id: discovery-to-evidence
+    origin_boundary_id: canonical-discovery
+    destination_boundary_id: evidence-store
+    payload_classes: [sanitized_evidence]
+    trust: governed
+    sanitization: before_persistence
+    immutable_input: snapshot
+    required_identity_fields: [client_id, deployment_id, environment_id, workload_id, subject_id, source_digest, policy_id, policy_version, provider_id, strategy_version, run_id, attempt_id, decision_id, artifact_id]
+    implementation_state: implemented
+    blocked_operations: []
+    grants_authority: false
+  - id: recall-to-context
+    origin_boundary_id: advisory-recall
+    destination_boundary_id: ai-provider
+    payload_classes: [sanitized_evidence, internal]
+    trust: advisory
+    sanitization: before_persistence
+    immutable_input: snapshot
+    required_identity_fields: [client_id, deployment_id, environment_id, workload_id, subject_id, source_digest, policy_id, policy_version, provider_id, strategy_version, run_id, attempt_id, decision_id, artifact_id]
+    implementation_state: target
+    blocked_operations: [ai_submission, ai_repair]
+    grants_authority: false
+  - id: discovery-to-ai
+    origin_boundary_id: canonical-discovery
+    destination_boundary_id: ai-provider
+    payload_classes: [sanitized_evidence, client_confidential]
+    trust: governed
+    sanitization: before_persistence
+    immutable_input: snapshot
+    required_identity_fields: [client_id, deployment_id, environment_id, workload_id, subject_id, source_digest, policy_id, policy_version, provider_id, strategy_version, run_id, attempt_id, decision_id, artifact_id]
+    implementation_state: target
+    blocked_operations: [ai_submission]
+    grants_authority: false
+  - id: identity-to-runtime
+    origin_boundary_id: identity-secret-plane
+    destination_boundary_id: execution-runtimes
+    payload_classes: [credential_reference]
+    trust: governed
+    sanitization: not_applicable
+    immutable_input: digest_reverification
+    required_identity_fields: [client_id, deployment_id, environment_id, workload_id, subject_id, source_digest, policy_id, policy_version, provider_id, strategy_version, run_id, attempt_id, decision_id, artifact_id]
+    implementation_state: partial
+    blocked_operations: [live_authentication, protected_data_execution]
+    grants_authority: false
+  - id: generated-to-runtime
+    origin_boundary_id: ai-provider
+    destination_boundary_id: execution-runtimes
+    payload_classes: [client_confidential, sanitized_evidence]
+    trust: untrusted
+    sanitization: before_persistence
+    immutable_input: snapshot
+    required_identity_fields: [client_id, deployment_id, environment_id, workload_id, subject_id, source_digest, policy_id, policy_version, provider_id, strategy_version, run_id, attempt_id, decision_id, artifact_id]
+    implementation_state: target
+    blocked_operations: [databricks_execution]
+    grants_authority: false
+  - id: runtime-to-validation
+    origin_boundary_id: execution-runtimes
+    destination_boundary_id: parity-decision
+    payload_classes: [runtime_result]
+    trust: external
+    sanitization: before_persistence
+    immutable_input: digest_reverification
+    required_identity_fields: [client_id, deployment_id, environment_id, workload_id, subject_id, source_digest, policy_id, policy_version, provider_id, strategy_version, run_id, attempt_id, decision_id, artifact_id]
+    implementation_state: unresolved
+    blocked_operations: [humana_parity_qualification, certification]
+    grants_authority: false
+  - id: validation-to-evidence
+    origin_boundary_id: parity-decision
+    destination_boundary_id: evidence-store
+    payload_classes: [sanitized_evidence, runtime_result]
+    trust: governed
+    sanitization: before_persistence
+    immutable_input: digest_reverification
+    required_identity_fields: [client_id, deployment_id, environment_id, workload_id, subject_id, source_digest, policy_id, policy_version, provider_id, strategy_version, run_id, attempt_id, decision_id, artifact_id]
+    implementation_state: partial
+    blocked_operations: [end_to_end_certification]
+    grants_authority: false
+  - id: evidence-to-approval
+    origin_boundary_id: evidence-store
+    destination_boundary_id: approval-promotion
+    payload_classes: [sanitized_evidence, approval_record]
+    trust: governed
+    sanitization: not_applicable
+    immutable_input: digest_reverification
+    required_identity_fields: [client_id, deployment_id, environment_id, workload_id, subject_id, source_digest, policy_id, policy_version, provider_id, strategy_version, run_id, attempt_id, decision_id, artifact_id]
+    implementation_state: partial
+    blocked_operations: [competition_acceptance, production_promotion]
+    grants_authority: false
+  - id: approval-to-evidence
+    origin_boundary_id: approval-promotion
+    destination_boundary_id: evidence-store
+    payload_classes: [approval_record]
+    trust: human
+    sanitization: before_persistence
+    immutable_input: digest_reverification
+    required_identity_fields: [client_id, deployment_id, environment_id, workload_id, subject_id, source_digest, policy_id, policy_version, provider_id, strategy_version, run_id, attempt_id, decision_id, artifact_id]
+    implementation_state: partial
+    blocked_operations: [production_promotion]
+    grants_authority: false
+  - id: worktree-to-evidence
+    origin_boundary_id: isolated-engineering
+    destination_boundary_id: evidence-store
+    payload_classes: [internal, sanitized_evidence]
+    trust: governed
+    sanitization: before_persistence
+    immutable_input: snapshot
+    required_identity_fields: [client_id, deployment_id, environment_id, workload_id, subject_id, source_digest, policy_id, policy_version, provider_id, strategy_version, run_id, attempt_id, decision_id, artifact_id]
+    implementation_state: implemented
+    blocked_operations: []
+    grants_authority: false
+
+controls:
+  - id: discovery-sanitization
+    owner_id: discovery-owner
+    description: Recursive sanitization before canonical discovery evidence persistence
+    implementation_state: implemented
+    implementation_refs: [src/smf/workload/sanitization.py]
+    evidence_refs: [tests/unit/test_sec05_acceptance_regressions.py]
+    authorizes_success: false
+  - id: canonical-identity
+    owner_id: discovery-owner
+    description: Canonical workload identity and source-byte binding reject ambiguity
+    implementation_state: implemented
+    implementation_refs: [src/smf/workload/identity.py]
+    evidence_refs: [tests/unit/test_workload_identity.py]
+    authorizes_success: false
+  - id: readiness-evidence
+    owner_id: security-owner
+    description: Readiness requires attributable governed evidence and explicit blockers
+    implementation_state: implemented
+    implementation_refs: [src/smf/readiness/engine.py, src/smf/readiness/attestation.py]
+    evidence_refs: [tests/unit/test_readiness_engine.py, tests/unit/test_readiness_conversion_guard.py]
+    authorizes_success: false
+  - id: secret-receipts
+    owner_id: security-owner
+    description: Attempt-bound activation and sanitized secret-resolution receipts
+    implementation_state: implemented
+    implementation_refs: [src/smf/security/attestation.py, src/smf/security/manifest.py]
+    evidence_refs: [tests/unit/test_security_configuration.py, tests/integration/test_secret_provider_admission.py]
+    authorizes_success: false
+  - id: source-snapshot
+    owner_id: evidence-owner
+    description: Regression admission snapshots exact source and reconciles source closure
+    implementation_state: implemented
+    implementation_refs: [src/smf/corpus/regression.py]
+    evidence_refs: [tests/integration/test_corpus_regression.py]
+    authorizes_success: false
+  - id: separated-claims
+    owner_id: evidence-owner
+    description: Telemetry derives separate generated executed validated parity and blocked claims
+    implementation_state: implemented
+    implementation_refs: [src/smf/pilot/telemetry.py]
+    evidence_refs: [tests/unit/test_corpus_regression_evidence.py]
+    authorizes_success: false
+  - id: bounded-ai-authority
+    owner_id: ai-owner
+    description: AI and recalled text remain data and cannot select tools endpoints credentials or approvals
+    implementation_state: partial
+    implementation_refs: [src/smf/conversion/providers/ai.py, src/smf/security/ai_admission.py, src/smf/security/ai_policy.py]
+    evidence_refs: [tests/unit/test_sec01_threat_model.py, tests/unit/test_ai_context_admission.py, tests/unit/test_ai_context_policy.py]
+    authorizes_success: false
+  - id: independent-validation
+    owner_id: validation-owner
+    description: Source generated artifacts and independent validation evidence remain distinct
+    implementation_state: partial
+    implementation_refs: [src/smf/validation/engine.py, src/smf/corpus/oracle.py]
+    evidence_refs: [tests/unit/test_structural_parity.py, tests/unit/test_semantic_corpus.py]
+    authorizes_success: false
+  - id: human-approval-binding
+    owner_id: approval-owner
+    description: Human decisions bind exact workload run attempt decision source and policy identities
+    implementation_state: partial
+    implementation_refs: [src/smf/readiness/attestation.py]
+    evidence_refs: [tests/unit/test_readiness_engine.py]
+    authorizes_success: false
+  - id: protected-worktrees
+    owner_id: engineering-owner
+    description: Isolated worktrees protected paths deterministic gates and reviewer separation
+    implementation_state: implemented
+    implementation_refs: [src/smf/engineering_agent/workspace.py, src/smf/engineering_agent/policy.py]
+    evidence_refs: [tests/unit/test_engineering_agent.py, tests/unit/test_review_closure.py]
+    authorizes_success: false
+  - id: immutable-evidence-recovery
+    owner_id: evidence-owner
+    description: Canonical decisions remain immutable while missing derived telemetry is recovered idempotently
+    implementation_state: partial
+    implementation_refs: [src/smf/readiness/manifest.py, src/smf/corpus/regression.py]
+    evidence_refs: [tests/unit/test_readiness_engine.py, tests/unit/test_corpus_regression_evidence.py]
+    authorizes_success: false
+
+threats:
+  - id: prompt-injection
+    title: Embedded source or recalled instructions acquire authority
+    severity: critical
+    flow_ids: [source-to-discovery, recall-to-context, discovery-to-ai]
+    scenario: Untrusted text attempts to select tools endpoints credentials protected paths approval or promotion
+    owner_id: ai-owner
+    control_ids: [discovery-sanitization, bounded-ai-authority, protected-worktrees]
+    evidence_requirements: [authority-negative-tests, protected-path-review, provider-policy-proof]
+    residual_status: unresolved
+    review_disposition: review_blocker
+    blocked_operations: [ai_submission, ai_repair]
+  - id: cross-client-retrieval
+    title: Advice or evidence crosses client workload or attempt scope
+    severity: critical
+    flow_ids: [recall-to-context, evidence-to-approval]
+    scenario: Stale or unrelated client knowledge is retrieved and treated as authoritative current evidence
+    owner_id: evidence-owner
+    control_ids: [canonical-identity, bounded-ai-authority, human-approval-binding]
+    evidence_requirements: [cross-client-negative-test, provenance-envelope, conflict-and-rejection-test]
+    residual_status: unresolved
+    review_disposition: review_blocker
+    blocked_operations: [estate_recall_authority, ai_submission, competition_acceptance]
+  - id: forged-attestation
+    title: Caller-authored assertions manufacture a successful state
+    severity: critical
+    flow_ids: [evidence-to-approval, validation-to-evidence]
+    scenario: An optional pass boolean or unverified locator is accepted in place of attributable evidence
+    owner_id: security-owner
+    control_ids: [readiness-evidence, separated-claims, human-approval-binding]
+    evidence_requirements: [signature-verification, exact-identity-binding, assertion-mutation-test]
+    residual_status: partially_mitigated
+    review_disposition: review_blocker
+    blocked_operations: [humana_parity_qualification, certification, production_promotion]
+  - id: mutable-qualified-input
+    title: Qualified source or policy bytes mutate before downstream use
+    severity: high
+    flow_ids: [source-to-discovery, generated-to-runtime, runtime-to-validation]
+    scenario: Downstream processing uses bytes that differ from the immutable qualification snapshot
+    owner_id: evidence-owner
+    control_ids: [source-snapshot, readiness-evidence]
+    evidence_requirements: [mutation-after-admission-test, source-and-policy-digest-reverification]
+    residual_status: partially_mitigated
+    review_disposition: review_blocker
+    blocked_operations: [protected_data_execution, humana_parity_qualification]
+  - id: secret-persistence
+    title: Credentials or protected canaries enter durable artifacts
+    severity: critical
+    flow_ids: [source-to-discovery, identity-to-runtime, validation-to-evidence]
+    scenario: Sensitive material survives in evidence telemetry errors model context or an unsanitized digest
+    owner_id: security-owner
+    control_ids: [discovery-sanitization, secret-receipts]
+    evidence_requirements: [multi-boundary-canary-tests, sanitized-error-test, no-plaintext-inspection]
+    residual_status: partially_mitigated
+    review_disposition: review_blocker
+    blocked_operations: [protected_data_ingestion, protected_data_execution, ai_submission]
+  - id: boundary-escape
+    title: References escape workload client environment or storage scope
+    severity: high
+    flow_ids: [discovery-to-evidence, validation-to-evidence, evidence-to-approval]
+    scenario: Traversal absolute or cross-scope references hide dependencies outputs mappings or evidence
+    owner_id: evidence-owner
+    control_ids: [canonical-identity, source-snapshot, immutable-evidence-recovery]
+    evidence_requirements: [traversal-negative-tests, closure-reconciliation, cross-attempt-test]
+    residual_status: partially_mitigated
+    review_disposition: review_blocker
+    blocked_operations: [humana_parity_qualification, certification]
+  - id: ambiguous-subject
+    title: Empty nonconvertible or duplicate source identity passes admission
+    severity: high
+    flow_ids: [source-to-discovery, generated-to-runtime]
+    scenario: No meaningful SAS entry point or multiple case-ambiguous matches are treated as eligible
+    owner_id: discovery-owner
+    control_ids: [canonical-identity, source-snapshot]
+    evidence_requirements: [empty-subject-test, nonconvertible-subject-test, duplicate-identity-test]
+    residual_status: mitigated
+    review_disposition: no_blocker
+    blocked_operations: []
+  - id: skipped-as-success
+    title: Incomplete lifecycle states are counted as parity success
+    severity: critical
+    flow_ids: [validation-to-evidence, evidence-to-approval]
+    scenario: Generated skipped blocked unexecuted or unvalidated work inflates competition success
+    owner_id: validation-owner
+    control_ids: [separated-claims, independent-validation]
+    evidence_requirements: [lifecycle-mutation-tests, terminal-telemetry-reconstruction]
+    residual_status: partially_mitigated
+    review_disposition: review_blocker
+    blocked_operations: [humana_parity_qualification, competition_acceptance]
+  - id: approval-replay
+    title: Human approval is replayed across a different attempt
+    severity: critical
+    flow_ids: [evidence-to-approval, approval-to-evidence]
+    scenario: A valid approval record authorizes unrelated source policy run attempt or decision identities
+    owner_id: approval-owner
+    control_ids: [human-approval-binding, readiness-evidence]
+    evidence_requirements: [cross-attempt-replay-test, denial-versus-pending-test]
+    residual_status: partially_mitigated
+    review_disposition: review_blocker
+    blocked_operations: [competition_acceptance, production_promotion]
+  - id: evidence-corruption
+    title: Interrupted publication overwrites or strands canonical evidence
+    severity: high
+    flow_ids: [discovery-to-evidence, validation-to-evidence, approval-to-evidence]
+    scenario: Retry changes decision identity or cannot recreate missing derived telemetry after interruption
+    owner_id: evidence-owner
+    control_ids: [immutable-evidence-recovery]
+    evidence_requirements: [restart-test, immutable-conflict-test, derived-recovery-test]
+    residual_status: partially_mitigated
+    review_disposition: review_blocker
+    blocked_operations: [end_to_end_certification]
+  - id: workload-state-corruption
+    title: One workload failure mutates another workload evidence
+    severity: high
+    flow_ids: [discovery-to-evidence, worktree-to-evidence]
+    scenario: Shared mutable paths or global serialization mix independent workload state and outcomes
+    owner_id: engineering-owner
+    control_ids: [canonical-identity, protected-worktrees, immutable-evidence-recovery]
+    evidence_requirements: [two-workload-isolation-test, failure-isolation-test]
+    residual_status: partially_mitigated
+    review_disposition: review_blocker
+    blocked_operations: [end_to_end_certification]
+  - id: weak-validation
+    title: Generated target or static checks substitute for independent parity evidence
+    severity: critical
+    flow_ids: [runtime-to-validation, validation-to-evidence]
+    scenario: Generated artifacts mocks or source-derived expectations are treated as authoritative SAS parity
+    owner_id: validation-owner
+    control_ids: [independent-validation, separated-claims]
+    evidence_requirements: [independent-baseline-proof, mutation-test, real-environment-evidence]
+    residual_status: unresolved
+    review_disposition: review_blocker
+    blocked_operations: [humana_parity_qualification, certification]
+  - id: unapproved-runtime
+    title: Runtime or AI use proceeds without approved client bindings
+    severity: critical
+    flow_ids: [discovery-to-ai, identity-to-runtime, generated-to-runtime]
+    scenario: Placeholder pending or unsupported endpoint policy identity or operating limits are bypassed
+    owner_id: runtime-owner
+    control_ids: [readiness-evidence, secret-receipts, bounded-ai-authority]
+    evidence_requirements: [approved-binding-proof, malformed-enum-tests, fail-closed-preflight]
+    residual_status: unresolved
+    review_disposition: review_blocker
+    blocked_operations: [ai_submission, protected_data_execution, production_promotion]
+
+evidence_contract:
+  required_identity_bindings: [client_id, deployment_id, environment_id, workload_id, subject_id, source_digest, policy_id, policy_version, provider_id, strategy_version, run_id, attempt_id, decision_id, artifact_id]
+  claim_states: [generated, executed, validated, parity_passed, certified, human_approved, blocked, skipped, failed, pending, denied]
+  meaningful_eligible_subject_required: true
+  source_snapshot_or_reverification_required: true
+  immutable_canonical_evidence: true
+  idempotent_derived_recovery: true
+  cross_workload_isolation: true
+  secret_handling: sanitize_before_persistence_or_hashing
+
+advisory_recall:
+  authority: advisory_only
+  required_provenance_fields: [origin, client_scope, applicability, version, selection_reason, conflicts, supersession, rejection_state]
+  cross_client_default: excluded
+
+unresolved_inputs:
+  - {id: hc-req-01, owner_id: approval-owner, blocks: [competition_acceptance], state: pending}
+  - {id: hc-req-02, owner_id: discovery-owner, blocks: [protected_data_ingestion, competition_acceptance], state: pending}
+  - {id: hc-req-03, owner_id: runtime-owner, blocks: [baseline_execution, humana_parity_qualification], state: pending}
+  - {id: hc-req-04, owner_id: validation-owner, blocks: [humana_parity_qualification, certification], state: pending}
+  - {id: hc-req-05, owner_id: runtime-owner, blocks: [databricks_execution, protected_data_execution], state: pending}
+  - {id: hc-req-06, owner_id: security-owner, blocks: [ai_submission, protected_data_execution], state: pending}
+  - {id: hc-req-07, owner_id: runtime-owner, blocks: [databricks_execution, competition_acceptance], state: pending}
+  - {id: hc-req-08, owner_id: ai-owner, blocks: [ai_repair, competition_acceptance], state: pending}
+  - {id: hc-req-09, owner_id: approval-owner, blocks: [competition_acceptance, production_promotion], state: pending}
+  - {id: hc-req-10, owner_id: security-owner, blocks: [live_authentication, protected_data_execution], state: pending}
+  - {id: exact-runtime-bindings, owner_id: runtime-owner, blocks: [live_authentication, protected_data_execution], state: unresolved}
+  - {id: approval-promotion-bindings, owner_id: approval-owner, blocks: [certification, production_promotion], state: unresolved}

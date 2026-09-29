@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://smf.example/schemas/prompt-model-governance-result.schema.json",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "result_id", "content_digest", "canonical_evidence_reference", "identity", "status", "terminal_disposition", "evidence_class", "policy", "prompt_template", "evaluation", "instruction_boundary", "selected_evidence", "blockers", "implementation_manifest", "claims"],
+  "properties": {
+    "schema_version": {"const": "1.0"}, "result_id": {"$ref": "#/$defs/id"},
+    "content_digest": {"$ref": "#/$defs/sha"},
+    "canonical_evidence_reference": {"type": "string", "pattern": "^runs/[A-Za-z0-9._-]+/workloads/[A-Za-z0-9._-]+/attempts/[A-Za-z0-9._-]+/ai-governance/result\\.json$"},
+    "identity": {"type": "object", "additionalProperties": false, "required": ["client_id", "deployment_id", "environment_id", "workload_id", "source_digest", "run_id", "attempt_id", "evaluation_time", "policy_sha256", "template_sha256", "evaluation_sha256", "implementation_digest"], "properties": {"client_id": {"$ref": "#/$defs/id"}, "deployment_id": {"$ref": "#/$defs/id"}, "environment_id": {"$ref": "#/$defs/id"}, "workload_id": {"$ref": "#/$defs/id"}, "source_digest": {"$ref": "#/$defs/sha"}, "run_id": {"$ref": "#/$defs/id"}, "attempt_id": {"$ref": "#/$defs/id"}, "evaluation_time": {"type": "string", "format": "date-time"}, "policy_sha256": {"$ref": "#/$defs/sha"}, "template_sha256": {"$ref": "#/$defs/sha"}, "evaluation_sha256": {"$ref": "#/$defs/sha"}, "implementation_digest": {"$ref": "#/$defs/sha"}}},
+    "status": {"const": "blocked_external_authority"},
+    "terminal_disposition": {"const": "live_model_and_evaluation_authority_required"},
+    "evidence_class": {"const": "synthetic_contract"},
+    "policy": {"$ref": "https://smf.example/schemas/prompt-model-governance-policy.schema.json"},
+    "prompt_template": {"type": "object", "additionalProperties": false, "required": ["template_id", "version", "evidence_ref", "sha256", "byte_count", "raw_prompt_persisted"], "properties": {"template_id": {"$ref": "#/$defs/id"}, "version": {"$ref": "#/$defs/id"}, "evidence_ref": {"$ref": "#/$defs/ref"}, "sha256": {"$ref": "#/$defs/sha"}, "byte_count": {"type": "integer", "minimum": 1}, "raw_prompt_persisted": {"const": false}}},
+    "evaluation": {"type": "object", "additionalProperties": false, "required": ["suite_id", "suite_version", "evidence_ref", "sha256", "state", "case_count"], "properties": {"suite_id": {"$ref": "#/$defs/id"}, "suite_version": {"$ref": "#/$defs/id"}, "evidence_ref": {"$ref": "#/$defs/ref"}, "sha256": {"$ref": "#/$defs/sha"}, "state": {"const": "pending"}, "case_count": {"type": "integer", "minimum": 1}}},
+    "instruction_boundary": {"type": "object", "additionalProperties": false, "required": ["system_policy_immutable", "source_role", "source_can_authorize_tools", "source_can_change_endpoint_or_model"], "properties": {"system_policy_immutable": {"const": true}, "source_role": {"const": "untrusted_data"}, "source_can_authorize_tools": {"const": false}, "source_can_change_endpoint_or_model": {"const": false}}},
+    "selected_evidence": {"type": "array", "minItems": 1, "items": {"type": "object", "additionalProperties": false, "required": ["kind", "evidence_ref", "evidence_digest", "origin_id", "applicability_id", "version", "selection_reason_id", "client_id", "source_digest", "conflict_disposition"], "properties": {"kind": {"enum": ["source", "dependency", "conversion_failure", "validation_failure", "approved_advisory"]}, "evidence_ref": {"$ref": "#/$defs/ref"}, "evidence_digest": {"$ref": "#/$defs/sha"}, "origin_id": {"$ref": "#/$defs/id"}, "applicability_id": {"$ref": "#/$defs/id"}, "version": {"$ref": "#/$defs/id"}, "selection_reason_id": {"$ref": "#/$defs/id"}, "client_id": {"$ref": "#/$defs/id"}, "source_digest": {"$ref": "#/$defs/sha"}, "conflict_disposition": {"enum": ["none", "resolved"]}}}},
+    "blockers": {"type": "array", "minItems": 2, "maxItems": 2, "prefixItems": [{"const": "trusted_model_binding_authority_required"}, {"const": "trusted_evaluation_authority_required"}], "items": false},
+    "implementation_manifest": {"type": "array", "minItems": 6, "maxItems": 6, "items": {"type": "object", "additionalProperties": false, "required": ["path", "sha256"], "properties": {"path": {"type": "string", "minLength": 1}, "sha256": {"$ref": "#/$defs/sha"}}}},
+    "claims": {"$ref": "#/$defs/claims"}
+  },
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"},
+    "sha": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "ref": {"type": "string", "pattern": "^evidence://[A-Za-z0-9][A-Za-z0-9._/-]{0,511}$"},
+    "claims": {"type": "object", "additionalProperties": false, "required": ["live_model_authorized", "gateway_invoked", "provider_invoked", "generated", "executed", "validated", "parity_passed", "humana_ready", "production_ready", "migration_complete"], "properties": {"live_model_authorized": {"const": false}, "gateway_invoked": {"const": false}, "provider_invoked": {"const": false}, "generated": {"const": false}, "executed": {"const": false}, "validated": {"const": false}, "parity_passed": {"const": false}, "humana_ready": {"const": false}, "production_ready": {"const": false}, "migration_complete": {"const": false}}}
+  }
+}

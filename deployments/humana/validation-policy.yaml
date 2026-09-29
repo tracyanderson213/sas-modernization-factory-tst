@@ -1,0 +1,22 @@
+version: 1
+deployment_identity:
+  client_id: humana
+  deployment_id: humana-competition-pilot
+  environment_id: humana-databricks-pilot
+
+defaults:
+  minimum_validation_level: 3
+  require_compile: true
+  require_execution: true
+  require_provenance: true
+
+by_complexity:
+  simple:
+    minimum_validation_level: 3
+  moderate:
+    minimum_validation_level: 4
+  complex:
+    minimum_validation_level: 4
+  highly_complex:
+    minimum_validation_level: 5
+    require_human_review: true

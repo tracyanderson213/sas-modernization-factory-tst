@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://smf.example/schemas/prompt-model-governance-policy.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "policy_id", "policy_version", "evidence_ref", "prompt_template", "model_binding", "context_budget", "evidence_selection", "deterministic_first", "fallback_only", "tools_allowed", "persist_raw_prompt", "evaluation", "authority"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "policy_id": {"$ref": "#/$defs/id"},
+    "policy_version": {"$ref": "#/$defs/id"},
+    "evidence_ref": {"$ref": "#/$defs/ref"},
+    "prompt_template": {
+      "type": "object", "additionalProperties": false,
+      "required": ["template_id", "version", "evidence_ref", "sha256", "max_bytes"],
+      "properties": {
+        "template_id": {"$ref": "#/$defs/id"}, "version": {"$ref": "#/$defs/id"},
+        "evidence_ref": {"$ref": "#/$defs/ref"}, "sha256": {"$ref": "#/$defs/sha"},
+        "max_bytes": {"type": "integer", "minimum": 1, "maximum": 1048576}
+      }
+    },
+    "model_binding": {
+      "type": "object", "additionalProperties": false,
+      "required": ["binding_id", "provider_id", "gateway_route_id", "model_alias", "model_version", "endpoint_binding_id", "direct_provider_allowed"],
+      "properties": {
+        "binding_id": {"$ref": "#/$defs/id"}, "provider_id": {"$ref": "#/$defs/id"},
+        "gateway_route_id": {"$ref": "#/$defs/id"}, "model_alias": {"$ref": "#/$defs/id"},
+        "model_version": {"$ref": "#/$defs/id"}, "endpoint_binding_id": {"$ref": "#/$defs/id"},
+        "direct_provider_allowed": {"const": false}
+      }
+    },
+    "context_budget": {
+      "type": "object", "additionalProperties": false,
+      "required": ["max_input_bytes", "max_input_tokens", "max_output_tokens", "max_evidence_items"],
+      "properties": {
+        "max_input_bytes": {"type": "integer", "minimum": 1, "maximum": 10485760},
+        "max_input_tokens": {"type": "integer", "minimum": 1, "maximum": 1000000},
+        "max_output_tokens": {"type": "integer", "minimum": 1, "maximum": 1000000},
+        "max_evidence_items": {"type": "integer", "minimum": 1, "maximum": 1024}
+      }
+    },
+    "evidence_selection": {
+      "type": "object", "additionalProperties": false,
+      "required": ["allowed_kinds", "cross_client_allowed", "raw_source_persisted"],
+      "properties": {
+        "allowed_kinds": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["source", "dependency", "conversion_failure", "validation_failure", "approved_advisory"]}},
+        "cross_client_allowed": {"const": false}, "raw_source_persisted": {"const": false}
+      }
+    },
+    "deterministic_first": {"const": true}, "fallback_only": {"const": true},
+    "tools_allowed": {"const": false}, "persist_raw_prompt": {"const": false},
+    "evaluation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["suite_id", "suite_version", "evidence_ref", "evidence_sha256"],
+      "properties": {"suite_id": {"$ref": "#/$defs/id"}, "suite_version": {"$ref": "#/$defs/id"}, "evidence_ref": {"$ref": "#/$defs/ref"}, "evidence_sha256": {"$ref": "#/$defs/sha"}}
+    },
+    "authority": {
+      "type": "object", "additionalProperties": false,
+      "required": ["state", "authority_ref", "issued_at", "valid_until"],
+      "properties": {"state": {"const": "pending"}, "authority_ref": {"type": "null"}, "issued_at": {"type": "string", "format": "date-time"}, "valid_until": {"type": "string", "format": "date-time"}}
+    }
+  },
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"},
+    "sha": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "ref": {"type": "string", "pattern": "^evidence://[A-Za-z0-9][A-Za-z0-9._/-]{0,511}$"}
+  }
+}

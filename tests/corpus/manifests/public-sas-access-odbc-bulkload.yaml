@@ -1,0 +1,50 @@
+schema_version: 1
+scenario_id: public-sas-access-odbc-bulkload
+name: SAS ACCESS ODBC bulk-load sample
+domain: connectivity
+description: Untouched public SAS acquired from a pinned upstream revision for CORPUS-07
+  realism testing.
+source:
+  source_id: sas-access-samples
+  origin: public-open-source
+  license: Apache-2.0
+  upstream_url: https://github.com/sascommunities/sas-access-samples
+  upstream_ref: 6e2fb148ee64aeda1e8e0a5d49689a0145afee13
+  notes: Vendored bytes are untouched. SMF must adapt to the upstream source, not
+    the reverse.
+capabilities:
+- sas-access
+- libname
+- macro-variable-reference
+- data-step
+- external-database-write
+artifacts:
+- path: ../workloads/public/sas-access-odbc/bulkload.sas
+  role: sas-program
+  sha256: 7b54c8967085073ccd76e4db9834b560cceccd0641223bd4a303e4dfc7f17156
+  source_id: sas-access-samples
+  upstream_path: SAS Foundation/ODBC/bulkload.sas
+metadata:
+  tier: untouched-public
+  private_data: false
+  modification_status: untouched
+  acquisition_date: '2026-09-04'
+  independent_authorship: true
+expected:
+  discovery:
+    reads:
+    - work.dublkdat
+    - mybulk.dublktab
+    writes:
+    - work.dublkdat
+    - mybulk.dublktab
+    libraries:
+    - mybulk
+    macro_variables:
+    - connopt
+    - dbms
+workload:
+  root: ../workloads/public
+  entrypoints:
+  - ../workloads/public/sas-access-odbc/bulkload.sas
+  relationships: []

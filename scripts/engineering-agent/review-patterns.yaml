@@ -1,0 +1,104 @@
+patterns:
+- id: FAIL_OPEN_OPTIONAL_ATTESTATION
+  instruction: Reject optional or caller-supplied attestations that can authorize
+    success without attributable evidence.
+  match_terms:
+  - optional
+  - attestation
+  - missing checksum
+  - missing source_checksum
+- id: UNBOUND_EVIDENCE
+  instruction: Bind evidence to exact workload, subject, source bytes/digest, policy,
+    authority, and execution/decision identity where applicable.
+  match_terms:
+  - not bound
+  - unbound
+  - source checksum
+  - exact source
+  - provenance
+  - replayable
+  - unrelated runs
+  - unrelated run
+- id: MALFORMED_ENUM_BYPASS
+  instruction: Probe unknown, misspelled, or unsupported enum/type values that could
+    skip mandatory downstream checks.
+  match_terms:
+  - unknown relationship
+  - misspelled
+  - enum
+  - readz
+  - writse
+- id: EMPTY_OR_NONCONVERTIBLE_SUCCESS
+  instruction: Probe empty inputs and workloads with no convertible entry point; success
+    must require a meaningful eligible subject.
+  match_terms:
+  - empty workload
+  - no convertible
+  - without a convertible
+  - configuration-only
+  - configuration only
+- id: TOCTOU_MUTABLE_INPUT
+  instruction: Probe mutation between qualification/admission and execution; downstream
+    work must use immutable or reverified qualified bytes.
+  match_terms:
+  - after admission
+  - mutable
+  - toctou
+  - source bytes can change
+  - changed content
+- id: ASSERTION_NOT_EVIDENCE
+  instruction: Verify evidence is reconstructable and governed, not merely a pass/approved
+    boolean with no concrete target identity or provenance.
+  match_terms:
+  - no actual mapping
+  - assertion
+  - approved boolean
+  - reconstruct
+  - target dataset
+  - reconstructable
+  - retrievable baseline
+  - baseline artifact
+- id: DENIAL_VS_PENDING
+  instruction: Distinguish explicit denial/failure from missing or pending human approval
+    in state and telemetry semantics.
+  match_terms:
+  - denial
+  - denied
+  - pending human
+  - human_required
+  - human required
+- id: DUPLICATE_IDENTITY
+  instruction: Probe duplicate canonical IDs and ambiguous subject identity; never
+    silently accept multiple matches.
+  match_terms:
+  - duplicate
+  - multiple matches
+  - ambiguous identity
+- id: SKIPPED_AS_SUCCESS
+  instruction: Ensure blocked, skipped, generated-only, unvalidated, or unexecuted
+    work cannot be counted as successful completion.
+  match_terms:
+  - skipped
+  - generated-only
+  - generated only
+  - unvalidated
+  - unexecuted
+- id: BOUNDARY_ESCAPE
+  instruction: Probe cross-boundary references and incomplete scopes that could hide
+    dependencies, mappings, outputs, or evidence.
+  match_terms:
+  - cross-boundary
+  - boundary
+  - incomplete scope
+- id: IDEMPOTENT_PERSISTENCE_RECOVERY
+  instruction: Probe interrupted multi-artifact publication and retry/restart paths.
+    Existing immutable state must remain canonical, and missing derived artifacts
+    must be recoverable idempotently without reevaluation changing decision identity.
+  match_terms:
+  - interrupted manifest
+  - cannot recover
+  - crash recovery
+  - missing telemetry
+  - retry repairs
+  - idempotently
+  - publication

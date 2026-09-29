@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SMF Conversion Manifest",
+  "type": "object",
+  "$defs": {
+    "telemetry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["generated", "executed", "validated", "parity_passed", "certified", "human_assisted", "human_pending", "human_denied", "blocked", "unsupported", "failed"],
+      "properties": {
+        "generated": {"type": "boolean"},
+        "executed": {"type": "boolean"},
+        "validated": {"type": "boolean"},
+        "parity_passed": {"type": "boolean"},
+        "certified": {"type": "boolean"},
+        "human_assisted": {"type": "boolean"},
+        "human_pending": {"type": "boolean"},
+        "human_denied": {"type": "boolean"},
+        "blocked": {"type": "boolean"},
+        "unsupported": {"type": "boolean"},
+        "failed": {"type": "boolean"}
+      }
+    }
+  },
+  "required": ["source_file", "target", "route", "provider", "status", "output_files", "warnings", "metadata"],
+  "properties": {
+    "source_file": {"type": "string"},
+    "target": {"enum": ["pyspark", "sparksql"]},
+    "route": {"enum": ["deterministic", "ai_assisted", "human_supervised"]},
+    "provider": {"type": "string"},
+    "status": {"enum": ["converted", "review_required", "failed", "unsupported", "blocked", "human_pending", "human_denied"]},
+    "output_files": {"type": "array", "items": {"type": "string"}},
+    "warnings": {"type": "array", "items": {"type": "string"}},
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "rule_plan": {
+          "type": "object",
+          "required": ["disposition"],
+          "properties": {
+            "disposition": {"enum": ["qualified", "unsupported", "blocked", "human_pending", "human_denied"]}
+          }
+        },
+        "telemetry": {"$ref": "#/$defs/telemetry"}
+      }
+    }
+  },
+  "additionalProperties": true,
+  "allOf": [
+    {
+      "if": {"properties": {"provider": {"const": "smf-deterministic"}}, "required": ["provider"]},
+      "then": {
+        "properties": {
+          "status": {"enum": ["converted", "failed", "unsupported", "blocked", "human_pending", "human_denied"]},
+          "metadata": {"required": ["rule_plan", "telemetry"]}
+        }
+      }
+    }
+  ]
+}

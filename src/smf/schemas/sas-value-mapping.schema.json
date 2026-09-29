@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SMF SAS Value Mapping Evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["mappings"],
+  "properties": {
+    "mappings": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["mapping_id", "occurrence_kind", "conversion_direction", "byte_start", "byte_end", "source_token_sha256", "missing_category", "operand_types", "normalized_value", "target_expression", "target_expression_sha256", "policy_id", "policy_version", "policy_digest", "strategy_id", "strategy_version", "reason_code", "plan_id", "workload_id", "source_artifact_id", "run_id", "attempt_id", "source_sha256", "generated_sha256", "registry_digest"],
+        "properties": {
+          "mapping_id": {"type": "string", "minLength": 1},
+          "occurrence_kind": {"const": "implicit_coercion"},
+          "conversion_direction": {"const": "character-to-numeric"},
+          "byte_start": {"type": "integer", "minimum": 0},
+          "byte_end": {"type": "integer", "minimum": 1},
+          "source_token_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "missing_category": {"type": "null"},
+          "operand_types": {"const": ["character-literal", "numeric-literal"]},
+          "normalized_value": {"type": "string", "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?$"},
+          "target_expression": {"type": "string", "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?$"},
+          "target_expression_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "policy_id": {"type": "string", "minLength": 1},
+          "policy_version": {"type": "string", "pattern": "^[1-9][0-9]*\\.[0-9]+\\.[0-9]+$"},
+          "policy_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "strategy_id": {"const": "smf.sas-value-semantics"},
+          "strategy_version": {"const": "1.0.0"},
+          "reason_code": {"type": "null"},
+          "plan_id": {"type": "string", "minLength": 1},
+          "workload_id": {"type": "string", "minLength": 1},
+          "source_artifact_id": {"type": "string", "minLength": 1},
+          "run_id": {"type": "string", "minLength": 1},
+          "attempt_id": {"type": "string", "minLength": 1},
+          "source_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "generated_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "registry_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+        }
+      }
+    }
+  }
+}

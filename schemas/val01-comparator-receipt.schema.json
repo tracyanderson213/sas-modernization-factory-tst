@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.smf.example/val01-comparator-receipt.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "request_digest", "policy_digest", "runtime_manifest_digest", "provider_id", "provider_version", "authority_id", "authority_digest", "state", "reason", "source_count", "target_count", "matched_count", "source_only_count", "target_only_count", "cell_mismatch_count", "duplicate_key_count", "null_key_count", "primary_match", "datacompy_match", "mismatch_references", "proof"],
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"},
+    "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "count": {"type": ["integer", "null"], "minimum": 0},
+    "proof": {"type": ["object", "null"], "additionalProperties": false, "required": ["algorithm", "key_id", "value"], "properties": {"algorithm": {"const": "ed25519"}, "key_id": {"$ref": "#/$defs/id"}, "value": {"type": "string", "minLength": 1}}}
+  },
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "request_digest": {"$ref": "#/$defs/digest"},
+    "policy_digest": {"$ref": "#/$defs/digest"},
+    "runtime_manifest_digest": {"$ref": "#/$defs/digest"},
+    "provider_id": {"$ref": "#/$defs/id"},
+    "provider_version": {"$ref": "#/$defs/id"},
+    "authority_id": {"$ref": "#/$defs/id"},
+    "authority_digest": {"$ref": "#/$defs/digest"},
+    "state": {"enum": ["observed", "unavailable", "unsupported"]},
+    "reason": {"enum": ["observed", "comparator_runtime_unavailable", "policy_unsupported", "duplicate_keys", "null_keys", "provider_failure"]},
+    "source_count": {"$ref": "#/$defs/count"}, "target_count": {"$ref": "#/$defs/count"}, "matched_count": {"$ref": "#/$defs/count"},
+    "source_only_count": {"$ref": "#/$defs/count"}, "target_only_count": {"$ref": "#/$defs/count"}, "cell_mismatch_count": {"$ref": "#/$defs/count"},
+    "duplicate_key_count": {"$ref": "#/$defs/count"}, "null_key_count": {"$ref": "#/$defs/count"},
+    "primary_match": {"type": ["boolean", "null"]}, "datacompy_match": {"type": ["boolean", "null"]},
+    "mismatch_references": {"type": "array", "maxItems": 1000, "items": {"type": "object", "additionalProperties": false, "required": ["key_hmac", "column", "source_value_digest", "target_value_digest"], "properties": {"key_hmac": {"type": "string", "pattern": "^hmac-sha256:[0-9a-f]{64}$"}, "column": {"$ref": "#/$defs/id"}, "source_value_digest": {"type": "string", "pattern": "^hmac-sha256:[0-9a-f]{64}$"}, "target_value_digest": {"type": "string", "pattern": "^hmac-sha256:[0-9a-f]{64}$"}}}},
+    "proof": {"$ref": "#/$defs/proof"}
+  }
+}

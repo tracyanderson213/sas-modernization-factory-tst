@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "acquisition_id", "mode", "workload_id", "workload_revision_id", "closure_digest", "boundary_id", "run_id", "attempt_id"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "acquisition_id": {"$ref": "#/$defs/id"}, "mode": {"enum": ["approved_export", "sas_execution"]}, "workload_id": {"$ref": "#/$defs/id"}, "workload_revision_id": {"$ref": "#/$defs/id"}, "closure_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"}, "boundary_id": {"$ref": "#/$defs/id"}, "run_id": {"$ref": "#/$defs/id"}, "attempt_id": {"$ref": "#/$defs/id"}
+  },
+  "$defs": {"id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"}}
+}

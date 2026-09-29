@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.smf.example/dp02-row-count-result.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "result_id", "request", "request_digest", "source_observation", "source_observation_digest", "target_observation", "target_observation_digest", "policy", "status", "reason", "blockers", "tolerance_result", "claims", "content_digest"],
+  "$defs": {
+    "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "binding": {
+      "type": "object", "additionalProperties": false,
+      "required": ["dataset_id", "snapshot_id", "snapshot_digest", "scope_id", "scope_digest"],
+      "properties": {
+        "dataset_id": {"type": "string", "minLength": 1}, "snapshot_id": {"type": "string", "minLength": 1},
+        "snapshot_digest": {"$ref": "#/$defs/digest"}, "scope_id": {"type": "string", "minLength": 1}, "scope_digest": {"$ref": "#/$defs/digest"}
+      }
+    },
+    "observation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["binding", "adapter_id", "adapter_version", "mode", "state", "count"],
+      "properties": {
+        "binding": {"$ref": "#/$defs/binding"}, "adapter_id": {"type": "string", "minLength": 1}, "adapter_version": {"type": "string", "minLength": 1},
+        "mode": {"enum": ["metadata", "distributed_aggregate"]}, "state": {"enum": ["observed", "unavailable"]}, "count": {"type": ["integer", "null"], "minimum": 0}
+      }
+    }
+  },
+  "properties": {
+    "schema_version": {"const": "1.0"}, "result_id": {"$ref": "#/$defs/digest"}, "content_digest": {"$ref": "#/$defs/digest"},
+    "request_digest": {"$ref": "#/$defs/digest"}, "source_observation_digest": {"$ref": "#/$defs/digest"}, "target_observation_digest": {"$ref": "#/$defs/digest"},
+    "request": {
+      "type": "object", "additionalProperties": false,
+      "required": ["client_id", "workload_id", "run_id", "attempt_id", "evaluated_at", "source", "target", "source_receipt_id", "source_receipt_content_digest", "source_authority_id", "source_authority_digest", "target_adapter_id", "target_adapter_version"],
+      "properties": {
+        "client_id": {"type": "string", "minLength": 1}, "workload_id": {"type": "string", "minLength": 1}, "run_id": {"type": "string", "minLength": 1}, "attempt_id": {"type": "string", "minLength": 1},
+        "evaluated_at": {"type": "string", "format": "date-time"}, "source": {"$ref": "#/$defs/binding"}, "target": {"$ref": "#/$defs/binding"},
+        "source_receipt_id": {"type": "string", "minLength": 1}, "source_receipt_content_digest": {"$ref": "#/$defs/digest"},
+        "source_authority_id": {"type": "string", "minLength": 1}, "source_authority_digest": {"$ref": "#/$defs/digest"},
+        "target_adapter_id": {"const": "spark-dataframe-count"}, "target_adapter_version": {"const": "1.0.0"}
+      }
+    },
+    "source_observation": {"$ref": "#/$defs/observation"}, "target_observation": {"$ref": "#/$defs/observation"},
+    "policy": {"$ref": "row-count-tolerance-policy.schema.json"}, "status": {"enum": ["passed", "failed", "blocked"]},
+    "reason": {"enum": ["within_tolerance", "outside_tolerance", "snapshot_scope_mismatch", "source_count_unavailable", "target_count_unavailable"]},
+    "blockers": {"type": "array", "uniqueItems": true, "items": {"enum": ["snapshot_scope_mismatch", "source_count_unavailable", "target_count_unavailable"]}},
+    "tolerance_result": {"anyOf": [{"$ref": "row-count-tolerance-result.schema.json"}, {"type": "null"}]},
+    "claims": {
+      "type": "object", "additionalProperties": false,
+      "required": ["snapshot_scope_aligned", "distributed_target_count_observed", "row_count_check_passed", "cell_parity_passed", "data_parity_passed", "certified", "humana_validated"],
+      "properties": {
+        "snapshot_scope_aligned": {"type": "boolean"}, "distributed_target_count_observed": {"type": "boolean"}, "row_count_check_passed": {"type": "boolean"},
+        "cell_parity_passed": {"const": false}, "data_parity_passed": {"const": false}, "certified": {"const": false}, "humana_validated": {"const": false}
+      }
+    }
+  }
+}

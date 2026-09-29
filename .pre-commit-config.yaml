@@ -1,0 +1,21 @@
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.12.11
+    hooks:
+      - id: ruff-check
+        args: [--fix]
+      - id: ruff-format
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-yaml
+      - id: check-json
+      - id: end-of-file-fixer
+        # Preserve byte-exact upstream fixtures and licenses used for provenance tests.
+        exclude: ^tests/corpus/workloads/public/|^tests/fixtures/sas_reader/LICENSE\.pyreadstat$|^tests/fixtures/distributed_sas_reader/
+      - id: trailing-whitespace
+        exclude: ^tests/corpus/workloads/public/|^tests/fixtures/distributed_sas_reader/
+      - id: check-added-large-files
+        args: ["--maxkb=5000"]
+      - id: detect-private-key

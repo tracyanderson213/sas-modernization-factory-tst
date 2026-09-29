@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SMF Validation Result",
+  "type": "object",
+  "required": [
+    "source_file",
+    "generated_file",
+    "target",
+    "status",
+    "confidence",
+    "requires_human_review",
+    "checks",
+    "warnings",
+    "metadata",
+    "output_files"
+  ],
+  "properties": {
+    "source_file": {
+      "type": "string"
+    },
+    "generated_file": {
+      "type": "string"
+    },
+    "target": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "passed",
+        "warning",
+        "failed",
+        "human_review"
+      ]
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "requires_human_review": {
+      "type": "boolean"
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "check_id",
+          "name",
+          "status",
+          "message",
+          "weight",
+          "evidence"
+        ],
+        "properties": {
+          "check_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "pass",
+              "warning",
+              "fail",
+              "not_applicable"
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "weight": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "evidence": {
+            "type": "object"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "metadata": {
+      "type": "object"
+    },
+    "output_files": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}

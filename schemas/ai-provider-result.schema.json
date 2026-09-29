@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://smf.example/schemas/ai-provider-result.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "decision_id", "request", "state", "blocker_codes", "evidence_refs", "evidence_class", "response_digest", "response_byte_count", "finish_reason", "input_tokens", "output_tokens", "elapsed_ms", "provider_invoked", "generated", "executed", "validated", "parity_passed", "certified", "human_approved", "human_assisted", "proof"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "decision_id": {"$ref": "#/$defs/id"},
+    "request": {"type": "object", "minProperties": 1},
+    "state": {"enum": ["succeeded", "blocked_missing", "blocked_pending", "denied", "invalid_binding", "unsupported", "failed", "timed_out", "cancelled", "outcome_unknown"]},
+    "blocker_codes": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+    "evidence_refs": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/ref"}},
+    "evidence_class": {"enum": ["synthetic_contract", "operational_verified"]},
+    "response_digest": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/digest"}]},
+    "response_byte_count": {"type": ["integer", "null"], "minimum": 1},
+    "finish_reason": {"type": ["string", "null"], "enum": ["stop", "length", "content_filter", "refusal", null]},
+    "input_tokens": {"type": "integer", "minimum": 0},
+    "output_tokens": {"type": "integer", "minimum": 0},
+    "elapsed_ms": {"type": "integer", "minimum": 0},
+    "provider_invoked": {"type": "boolean"},
+    "generated": {"const": false},
+    "executed": {"const": false},
+    "validated": {"const": false},
+    "parity_passed": {"const": false},
+    "certified": {"const": false},
+    "human_approved": {"const": false},
+    "human_assisted": {"type": "boolean"},
+    "proof": {"$ref": "#/$defs/proof"}
+  },
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"},
+    "digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "ref": {"type": "string", "pattern": "^evidence://[A-Za-z0-9][A-Za-z0-9._/-]{0,511}$"},
+    "proof": {"type": "object", "additionalProperties": false, "required": ["algorithm", "key_id", "value"], "properties": {"algorithm": {"const": "ed25519"}, "key_id": {"$ref": "#/$defs/id"}, "value": {"type": "string", "minLength": 1}}}
+  }
+}

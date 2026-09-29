@@ -1,0 +1,151 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sas-modernization-factory/schemas/readiness-input.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["workload", "evidence", "run_id", "attempt_id", "boundary_id"],
+  "properties": {
+    "workload": {
+      "type": "object",
+      "required": ["workload_id", "artifacts", "datasets", "relationships", "external_dependencies", "dependency_graph", "outputs", "boundaries"],
+      "properties": {
+        "workload_id": {"type": "string", "minLength": 1},
+        "artifacts": {"type": "array", "items": {"$ref": "#/$defs/artifact"}},
+        "datasets": {"type": "array", "items": {"$ref": "#/$defs/dataset"}},
+        "relationships": {"type": "array", "items": {"$ref": "#/$defs/relationship"}},
+        "external_dependencies": {"type": "array", "items": {"$ref": "#/$defs/dependency"}},
+        "dependency_graph": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/dependencyGraph"}]},
+        "outputs": {"type": "array", "items": {"$ref": "#/$defs/output"}},
+        "boundaries": {"type": "array", "items": {"$ref": "#/$defs/boundary"}},
+        "macro_analysis": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/macroAnalysis"}]}
+      }
+    },
+    "evidence": {"type": "array", "items": {"$ref": "#/$defs/evidence"}},
+    "run_id": {"type": "string", "minLength": 1},
+    "attempt_id": {"type": "string", "minLength": 1},
+    "boundary_id": {"type": ["string", "null"]},
+    "result_artifacts": {"type": "array", "items": {"$ref": "#/$defs/resultArtifact"}, "uniqueItems": true}
+  },
+  "$defs": {
+    "nonEmptyId": {"type": "string", "minLength": 1},
+    "stringArray": {"type": "array", "items": {"$ref": "#/$defs/nonEmptyId"}, "uniqueItems": true},
+    "resultArtifact": {"type": "object", "additionalProperties": false, "required": ["evidence_id", "result_uri", "result_digest", "payload"], "properties": {"evidence_id": {"$ref": "#/$defs/nonEmptyId"}, "result_uri": {"type": "string", "pattern": "^results/[A-Za-z0-9._/-]+\\.json$"}, "result_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"}, "payload": {"type": "object"}}},
+    "discoveryEvidence": {"type": "object", "required": ["evidence_id", "method", "source", "confidence"], "properties": {"evidence_id": {"$ref": "#/$defs/nonEmptyId"}, "method": {"enum": ["static_analysis", "filesystem", "runtime_metadata", "scheduler_metadata", "data_system", "ai_inference", "human_confirmation"]}, "source": {"$ref": "#/$defs/nonEmptyId"}, "confidence": {"enum": ["unknown", "low", "medium", "high", "confirmed"]}, "locator": {"type": ["string", "null"]}, "observed_value": {"type": ["string", "null"]}, "confirmed": {"type": "boolean"}, "metadata": {"type": "object"}}},
+    "discoveryEvidenceArray": {"type": "array", "items": {"$ref": "#/$defs/discoveryEvidence"}},
+    "artifact": {"type": "object", "required": ["artifact_id", "kind"], "properties": {"artifact_id": {"$ref": "#/$defs/nonEmptyId"}, "kind": {"$ref": "#/$defs/nonEmptyId"}, "checksum": {"type": ["string", "null"]}, "evidence": {"$ref": "#/$defs/discoveryEvidenceArray"}}},
+    "dataset": {"type": "object", "required": ["dataset_id"], "properties": {"dataset_id": {"$ref": "#/$defs/nonEmptyId"}}},
+    "relationship": {"type": "object", "required": ["source_id", "kind", "target_id"], "properties": {"source_id": {"$ref": "#/$defs/nonEmptyId"}, "kind": {"enum": ["includes", "calls", "reads", "writes", "produces", "consumes", "triggers", "depends_on", "precedes", "consumed_by"]}, "target_id": {"$ref": "#/$defs/nonEmptyId"}}},
+    "dependency": {"type": "object", "required": ["dependency_id"], "properties": {"dependency_id": {"$ref": "#/$defs/nonEmptyId"}}},
+    "dependencyGraph": {"type": "object", "required": ["graph_id", "unresolved"], "properties": {"graph_id": {"$ref": "#/$defs/nonEmptyId"}, "unresolved": {"type": "array", "items": {"type": "object", "required": ["unresolved_id", "source_id", "reference", "reason"], "properties": {"unresolved_id": {"$ref": "#/$defs/nonEmptyId"}, "source_id": {"$ref": "#/$defs/nonEmptyId"}, "reference": {"$ref": "#/$defs/nonEmptyId"}, "reason": {"enum": ["dynamic", "ambiguous", "missing", "external", "recursive", "cyclic", "runtime_dependent", "unsupported", "limit_exceeded"]}}}}}},
+    "macroLocation": {"type": "object", "additionalProperties": false, "required": ["source_artifact_id", "source_checksum", "byte_start", "byte_end", "line", "column", "span_digest"], "properties": {"source_artifact_id": {"$ref": "#/$defs/nonEmptyId"}, "source_checksum": {"type": "string", "pattern": "^[a-f0-9]{64}$"}, "byte_start": {"type": "integer", "minimum": 0}, "byte_end": {"type": "integer", "minimum": 1}, "line": {"type": "integer", "minimum": 1}, "column": {"type": "integer", "minimum": 1}, "span_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"}}},
+    "macroObservation": {"type": "object", "additionalProperties": false, "required": ["observation_id", "kind", "construct_family", "normalized_identity", "location", "logical_artifact_id"], "properties": {"observation_id": {"$ref": "#/$defs/nonEmptyId"}, "kind": {"enum": ["definition", "literal_invocation", "dynamic_invocation", "variable_definition", "variable_reference", "include_reference", "intrinsic_operation", "quoting_operation", "proc_format_definition", "target_template"]}, "construct_family": {"enum": ["sas_macro_processor", "sas_proc_format", "target_template"]}, "normalized_identity": {"$ref": "#/$defs/nonEmptyId"}, "location": {"$ref": "#/$defs/macroLocation"}, "logical_artifact_id": {"type": ["string", "null"]}}},
+    "macroLogicalArtifact": {"type": "object", "additionalProperties": false, "required": ["logical_artifact_id", "artifact_type", "construct_family", "normalized_identity", "location"], "properties": {"logical_artifact_id": {"$ref": "#/$defs/nonEmptyId"}, "artifact_type": {"enum": ["sas_macro_definition", "proc_format_definition", "target_template_definition"]}, "construct_family": {"enum": ["sas_macro_processor", "sas_proc_format", "target_template"]}, "normalized_identity": {"$ref": "#/$defs/nonEmptyId"}, "location": {"$ref": "#/$defs/macroLocation"}}},
+    "macroResolution": {"type": "object", "additionalProperties": false, "required": ["resolution_id", "observation_id", "relationship_kind", "kind", "candidate_definition_ids", "target_definition_id", "target_artifact_id", "blocker_reason"], "properties": {"resolution_id": {"$ref": "#/$defs/nonEmptyId"}, "observation_id": {"$ref": "#/$defs/nonEmptyId"}, "relationship_kind": {"enum": ["sas_macro_call", "sas_macro_variable_reference", "sas_include_reference", "sas_format_reference", "target_template_call"]}, "kind": {"enum": ["unique_static_definition", "intrinsic_system", "missing", "ambiguous", "dynamic", "recursive", "cyclic", "runtime_dependent", "unsupported", "limit_exceeded"]}, "candidate_definition_ids": {"$ref": "#/$defs/stringArray"}, "target_definition_id": {"type": ["string", "null"]}, "target_artifact_id": {"type": ["string", "null"]}, "blocker_reason": {"type": ["string", "null"]}}},
+    "macroBlocker": {"type": "object", "additionalProperties": false, "required": ["blocker_id", "reason", "observation_id", "source_artifact_id", "detail"], "properties": {"blocker_id": {"$ref": "#/$defs/nonEmptyId"}, "reason": {"enum": ["missing", "ambiguous", "dynamic", "recursive", "cyclic", "runtime_dependent", "unsupported", "limit_exceeded"]}, "observation_id": {"type": ["string", "null"]}, "source_artifact_id": {"type": ["string", "null"]}, "detail": {"type": ["string", "null"]}}},
+    "macroAnalysis": {"type": "object", "additionalProperties": false, "required": ["analysis_id", "discovery_id", "workload_id", "strategy_id", "strategy_version", "strategy_digest", "strategy_snapshot", "expansion_mode", "complete", "source_inventory", "logical_artifacts", "observations", "resolutions", "blockers", "limits_applied"], "properties": {"analysis_id": {"$ref": "#/$defs/nonEmptyId"}, "discovery_id": {"$ref": "#/$defs/nonEmptyId"}, "workload_id": {"$ref": "#/$defs/nonEmptyId"}, "strategy_id": {"const": "smf-sas-macro-discovery"}, "strategy_version": {"const": "1.0"}, "strategy_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"}, "strategy_snapshot": {"type": "object"}, "expansion_mode": {"const": "none"}, "complete": {"type": "boolean"}, "source_inventory": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["source_artifact_id", "source_checksum"], "properties": {"source_artifact_id": {"$ref": "#/$defs/nonEmptyId"}, "source_checksum": {"type": "string", "pattern": "^[a-f0-9]{64}$"}}}}, "logical_artifacts": {"type": "array", "items": {"$ref": "#/$defs/macroLogicalArtifact"}}, "observations": {"type": "array", "items": {"$ref": "#/$defs/macroObservation"}}, "resolutions": {"type": "array", "items": {"$ref": "#/$defs/macroResolution"}}, "blockers": {"type": "array", "items": {"$ref": "#/$defs/macroBlocker"}}, "limits_applied": {"type": "object"}}},
+    "output": {"type": "object", "required": ["output_id", "dataset_id"], "properties": {"output_id": {"$ref": "#/$defs/nonEmptyId"}, "dataset_id": {"$ref": "#/$defs/nonEmptyId"}, "consumer_resolution": {"enum": ["unresolved", "partial", "confirmed"]}, "consumer_ids": {"$ref": "#/$defs/stringArray"}}},
+    "boundary": {"type": "object", "required": ["boundary_id"], "properties": {"boundary_id": {"$ref": "#/$defs/nonEmptyId"}, "artifact_ids": {"$ref": "#/$defs/stringArray"}, "dataset_ids": {"$ref": "#/$defs/stringArray"}, "external_dependency_ids": {"$ref": "#/$defs/stringArray"}, "output_ids": {"$ref": "#/$defs/stringArray"}, "evidence": {"$ref": "#/$defs/discoveryEvidenceArray"}}},
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evidence_id", "workload_id", "subject_id", "kind", "status"],
+      "properties": {
+        "schema_version": {"const": "1.0"},
+        "evidence_id": {"$ref": "#/$defs/nonEmptyId"},
+        "workload_id": {"$ref": "#/$defs/nonEmptyId"},
+        "subject_id": {"$ref": "#/$defs/nonEmptyId"},
+        "kind": {"enum": ["discovery_snapshot", "assessment", "dataset_mapping", "baseline", "runtime", "environment", "approval"]},
+        "status": {"enum": ["pass", "fail", "pending"]},
+        "check_id": {"$ref": "#/$defs/nonEmptyId"},
+        "policy_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "source_checksum": {"$ref": "#/$defs/nonEmptyId"},
+        "checksum": {"$ref": "#/$defs/nonEmptyId"},
+        "workload_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "qualified_boundary_id": {"type": ["string", "null"]},
+        "snapshot_uri": {"$ref": "#/$defs/nonEmptyId"},
+        "artifact_uri": {"$ref": "#/$defs/nonEmptyId"},
+        "artifact_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "schema_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "measurement_ids": {"$ref": "#/$defs/stringArray"},
+        "authority": {"$ref": "#/$defs/nonEmptyId"},
+        "source_execution_id": {"$ref": "#/$defs/nonEmptyId"},
+        "acquisition_source": {"$ref": "#/$defs/nonEmptyId"},
+        "execution_id": {"$ref": "#/$defs/nonEmptyId"},
+        "client_id": {"$ref": "#/$defs/nonEmptyId"},
+        "deployment_id": {"$ref": "#/$defs/nonEmptyId"},
+        "environment_id": {"$ref": "#/$defs/nonEmptyId"},
+        "prerequisite_id": {"$ref": "#/$defs/nonEmptyId"},
+        "configuration_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "evidence_run_id": {"$ref": "#/$defs/nonEmptyId"},
+        "evidence_attempt_id": {"$ref": "#/$defs/nonEmptyId"},
+        "result_uri": {"$ref": "#/$defs/nonEmptyId"},
+        "result_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "valid_until": {"type": "string", "format": "date-time"},
+                "owner_assignment_ref": {"$ref": "#/$defs/nonEmptyId"},
+                "workload_revision_id": {"$ref": "#/$defs/nonEmptyId"},
+                "baseline_result_id": {"$ref": "#/$defs/nonEmptyId"},
+                "acquisition_id": {"$ref": "#/$defs/nonEmptyId"},
+                "acquisition_mode": {"enum": ["approved_export", "sas_execution"]},
+                "acquisition_policy_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+                "execution_receipt_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+                "input_snapshot_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+                "runtime_configuration_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+                "output_id": {"$ref": "#/$defs/nonEmptyId"},
+        "reason_code": {"enum": ["access_denied", "approval_pending", "evidence_missing", "evidence_expired", "evidence_conflict", "binding_mismatch", "result_unverifiable"]},
+        "decision_id": {"$ref": "#/$defs/nonEmptyId"},
+        "approver_id": {"$ref": "#/$defs/nonEmptyId"},
+        "qualification_subject_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "approved_workload_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "approved_run_id": {"$ref": "#/$defs/nonEmptyId"},
+        "approved_attempt_id": {"$ref": "#/$defs/nonEmptyId"},
+        "approved_boundary_id": {"type": ["string", "null"]},
+        "direction": {"enum": ["input", "output", "both"]},
+        "approved": {"type": "boolean"},
+        "target_dataset_id": {"$ref": "#/$defs/nonEmptyId"},
+        "target_catalog": {"$ref": "#/$defs/nonEmptyId"},
+        "target_schema": {"$ref": "#/$defs/nonEmptyId"},
+        "mapping_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "complexity": {"enum": ["simple", "moderate", "complex", "highly_complex"]},
+        "risk_factors": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "unsupported_constructs": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "observed_at": {"type": "string", "format": "date-time"},
+        "metadata": {"type": "object"},
+        "proof": {
+          "type": "object", "additionalProperties": false,
+          "required": ["algorithm", "key_id", "value"],
+          "properties": {
+            "algorithm": {"const": "ed25519"},
+            "key_id": {"$ref": "#/$defs/nonEmptyId"},
+            "value": {"type": "string", "minLength": 1}
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"kind": {"const": "discovery_snapshot"}}, "required": ["kind"]},
+          "then": {"required": ["workload_digest", "snapshot_uri", "authority", "acquisition_source", "execution_id", "observed_at"]}
+        },
+        {
+          "if": {"properties": {"kind": {"const": "assessment"}}, "required": ["kind"]},
+          "then": {"required": ["source_checksum", "authority", "acquisition_source", "execution_id", "observed_at"]}
+        },
+        {
+          "if": {"properties": {"kind": {"const": "baseline"}}, "required": ["kind"]},
+          "then": {"required": ["checksum", "workload_digest", "qualified_boundary_id", "authority", "acquisition_source", "observed_at"]}
+        },
+        {
+          "if": {"properties": {"kind": {"const": "dataset_mapping"}}, "required": ["kind"]},
+          "then": {"required": ["direction", "approved", "target_dataset_id", "target_catalog", "target_schema", "mapping_digest", "authority", "acquisition_source", "decision_id", "observed_at"]}
+        },
+        {
+          "if": {"properties": {"kind": {"enum": ["runtime", "environment"]}}, "required": ["kind"]},
+          "then": {"required": ["check_id", "authority", "acquisition_source", "execution_id", "observed_at"]}
+        },
+        {
+          "if": {"properties": {"kind": {"const": "approval"}}, "required": ["kind"]},
+          "then": {"required": ["authority", "acquisition_source", "decision_id", "approver_id", "observed_at"]}
+        }
+      ]
+    }
+  }
+}

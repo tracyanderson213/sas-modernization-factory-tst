@@ -1,0 +1,26 @@
+schema_version: 1
+scenario_id: semantic-temporal-literals
+name: SAS temporal literal values
+domain: semantics
+description: Isolates SAS date/datetime epochs, units, fractional precision, and formatting.
+source: {source_id: smf-semantic-fixtures, origin: smf, license: Internal test fixture}
+capabilities: [proc-sql, sas-date, sas-datetime, temporal-boundary, fractional-seconds]
+artifacts:
+- {path: ../workloads/semantic/adversarial/temporal-literals.sas, role: sas-program, sha256: 9807218d556bf8ef4bba483a4eb7f85e6e4cb8f93f23eab4ed437bac175e0ff5, source_id: smf-semantic-fixtures}
+- {path: ../workloads/semantic/expected/temporal-literals.json, role: expected-output, sha256: 720b2be0e17ad1afb22e4ba52e81f93bd0f0cfcd90d85d89a23771cbc89a8dcc, source_id: smf-semantic-fixtures}
+output_evidence:
+- {evidence_id: temporal-literals-declared, logical_output: work.temporal_literals, artifact: ../workloads/semantic/expected/temporal-literals.json, format: json, evidence_origin: declared-synthetic-expectation, producer: smf-authored-oracle, content_hash: 720b2be0e17ad1afb22e4ba52e81f93bd0f0cfcd90d85d89a23771cbc89a8dcc, deterministic: true, authoritative: true}
+semantic_oracles:
+- oracle_id: temporal-literals-oracle
+  logical_output: work.temporal_literals
+  evidence_id: temporal-literals-declared
+  comparison: ordered
+  authoritative_values: both
+  behavior: Date and UTC datetime literals retain SAS epoch units and exact formatted precision.
+  columns:
+  - {name: epoch_day, logical_type: date, nullable: false}
+  - {name: before_epoch, logical_type: date, nullable: false}
+  - {name: leap_day, logical_type: date, nullable: false}
+  - {name: fractional_ts, logical_type: datetime, nullable: false}
+  session: {yearcutoff: 1920, locale: en_US, encoding: utf-8, sort_sequence: binary, timezone: UTC}
+metadata: {tier: semantic, private_data: false, fixture_kind: smf-authored, primary_behavior: temporal-literals}

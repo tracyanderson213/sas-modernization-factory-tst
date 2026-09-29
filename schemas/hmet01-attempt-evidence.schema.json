@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.smf.example/hmet01-attempt-evidence.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "evidence_id", "evidence_authority_id", "evidence_authority_digest", "client_id", "cohort_id", "workload_id", "source_artifact_id", "source_artifact_digest", "run_id", "attempt_id", "attempt_ordinal", "lifecycle_result_id", "lifecycle_result_digest", "observed_at", "elapsed_ms", "machine_ms", "human_minutes", "repair_attempts", "conversion_path", "human_touch", "outcome", "blocker_codes", "claims", "content_digest"],
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"},
+    "sha": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "time": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"}
+  },
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "evidence_id": {"$ref": "#/$defs/id"}, "evidence_authority_id": {"$ref": "#/$defs/id"}, "evidence_authority_digest": {"$ref": "#/$defs/sha"}, "client_id": {"$ref": "#/$defs/id"},
+    "cohort_id": {"$ref": "#/$defs/id"}, "workload_id": {"$ref": "#/$defs/id"},
+    "source_artifact_id": {"$ref": "#/$defs/id"}, "source_artifact_digest": {"$ref": "#/$defs/sha"},
+    "run_id": {"$ref": "#/$defs/id"}, "attempt_id": {"$ref": "#/$defs/id"},
+    "attempt_ordinal": {"type": "integer", "minimum": 1},
+    "lifecycle_result_id": {"$ref": "#/$defs/id"}, "lifecycle_result_digest": {"$ref": "#/$defs/sha"},
+    "observed_at": {"$ref": "#/$defs/time"},
+    "elapsed_ms": {"type": "integer", "minimum": 0}, "machine_ms": {"type": "integer", "minimum": 0},
+    "human_minutes": {"type": "integer", "minimum": 0}, "repair_attempts": {"type": "integer", "minimum": 0},
+    "conversion_path": {"enum": ["deterministic", "ai_assisted"]},
+    "human_touch": {"enum": ["none", "review", "repair", "business_decision"]},
+    "outcome": {"enum": ["validated_parity", "validated_no_parity", "generated_only", "executed_unvalidated", "blocked", "failed", "unsupported", "cancelled", "outcome_unknown", "skipped"]},
+    "blocker_codes": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+    "claims": {
+      "type": "object", "additionalProperties": false,
+      "required": ["generated", "executed", "validated", "parity_passed"],
+      "properties": {"generated": {"type": "boolean"}, "executed": {"type": "boolean"}, "validated": {"type": "boolean"}, "parity_passed": {"type": "boolean"}}
+    },
+    "content_digest": {"$ref": "#/$defs/sha"}
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "policy_id", "policy_version", "scope_kind", "activity_freshness", "acquisition_provenance", "observer_provenance", "supporting_evidence_provenance", "qualification_provenance", "prerequisite_provenance", "verification_keys", "prerequisite"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "policy_id": {"$ref": "#/$defs/id"},
+    "policy_version": {"$ref": "#/$defs/id"},
+    "scope_kind": {"enum": ["global_program"]},
+    "activity_freshness": {
+      "type": "object", "additionalProperties": false,
+      "required": ["max_age_seconds", "max_future_skew_seconds"],
+      "properties": {
+        "max_age_seconds": {"type": "integer", "minimum": 1},
+        "max_future_skew_seconds": {"type": "integer", "minimum": 0}
+      }
+    },
+    "acquisition_provenance": {"$ref": "#/$defs/provenance"},
+    "observer_provenance": {"$ref": "#/$defs/provenance"},
+    "supporting_evidence_provenance": {"$ref": "#/$defs/provenance"},
+    "qualification_provenance": {"$ref": "#/$defs/provenance"},
+    "prerequisite_provenance": {"$ref": "#/$defs/provenance"},
+    "verification_keys": {"type": "object", "minProperties": 4, "additionalProperties": {"type": "string", "minLength": 40}},
+    "prerequisite": {
+      "type": "object", "additionalProperties": false,
+      "required": ["prerequisite_id", "evidence_path", "acceptance_digest"],
+      "properties": {
+        "prerequisite_id": {"const": "SEC-03"},
+        "evidence_path": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._ /-]{0,255}$"},
+        "acceptance_digest": {"$ref": "#/$defs/sha"}
+      }
+    }
+  },
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"},
+    "sha": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "provenance": {
+      "type": "object", "additionalProperties": false,
+      "required": ["authorities", "key_ids"],
+      "properties": {
+        "authorities": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+        "key_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}}
+      }
+    }
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://smf.local/schemas/private-corpus-policy.schema.json",
+  "title": "SMF Private Client Corpus Policy",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "client_id", "storage", "access", "retention", "execution", "promotion"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "client_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]{1,62}$"},
+    "storage": {
+      "type": "object", "additionalProperties": false,
+      "required": ["root", "repository_storage_prohibited", "encryption_required"],
+      "properties": {
+        "root": {"type": "string", "minLength": 1},
+        "repository_storage_prohibited": {"const": true},
+        "encryption_required": {"const": true}
+      }
+    },
+    "access": {
+      "type": "object", "additionalProperties": false,
+      "required": ["allowed_principals", "cross_client_access_prohibited", "least_privilege_required"],
+      "properties": {
+        "allowed_principals": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "cross_client_access_prohibited": {"const": true},
+        "least_privilege_required": {"const": true}
+      }
+    },
+    "retention": {
+      "type": "object", "additionalProperties": false,
+      "required": ["max_days", "delete_on_engagement_end"],
+      "properties": {
+        "max_days": {"type": "integer", "minimum": 1},
+        "delete_on_engagement_end": {"const": true}
+      }
+    },
+    "execution": {
+      "type": "object", "additionalProperties": false,
+      "required": ["workspace_id", "network_boundary", "shared_execution_prohibited"],
+      "properties": {
+        "workspace_id": {"type": "string", "minLength": 1},
+        "network_boundary": {"type": "string", "minLength": 1},
+        "shared_execution_prohibited": {"const": true}
+      }
+    },
+    "promotion": {
+      "type": "object", "additionalProperties": false,
+      "required": ["shared_bytes_prohibited", "independent_reproduction_required", "sanitization_review_required"],
+      "properties": {
+        "shared_bytes_prohibited": {"const": true},
+        "independent_reproduction_required": {"const": true},
+        "sanitization_review_required": {"const": true}
+      }
+    }
+  }
+}

@@ -1,0 +1,501 @@
+{
+  "$defs": {
+    "approval": {
+      "additionalProperties": false,
+      "properties": {
+        "assessed_revision": {
+          "$ref": "#/$defs/id"
+        },
+        "decision_state": {
+          "enum": [
+            "approved",
+            "pending",
+            "denied"
+          ]
+        },
+        "environment_id": {
+          "$ref": "#/$defs/id"
+        },
+        "owner_role_id": {"$ref": "#/$defs/id"},
+        "requirement_refs": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/id"}},
+        "assignment_decision": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "required": ["state", "evidence_id", "decision_id", "owner_assignment_ref", "authority", "issued_at", "expires_at", "evidence_digest"],
+          "properties": {
+            "state": {"enum": ["verified", "pending", "denied"]},
+            "evidence_id": {"$ref": "#/$defs/id"}, "decision_id": {"$ref": "#/$defs/id"},
+            "owner_assignment_ref": {"$ref": "#/$defs/id"}, "authority": {"$ref": "#/$defs/id"},
+            "issued_at": {"type": "string", "format": "date-time"}, "expires_at": {"type": "string", "format": "date-time"},
+            "evidence_digest": {"$ref": "#/$defs/digest"}
+          }
+        },
+        "unresolved_risk_code": {"type": ["string", "null"], "enum": ["approval_unresolved", null]}
+      },
+      "required": [
+        "requirement_refs",
+        "environment_id",
+        "assessed_revision",
+        "owner_role_id",
+        "assignment_decision",
+        "decision_state",
+        "unresolved_risk_code"
+      ],
+      "type": "object"
+    },
+    "binding": {
+      "additionalProperties": false,
+      "properties": {
+        "binding_id": {
+          "$ref": "#/$defs/id"
+        },
+        "requirement_refs": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/id"}},
+        "role": {
+          "$ref": "#/$defs/id"
+        },
+        "state": {
+          "enum": [
+            "placeholder",
+            "pending",
+            "active",
+            "denied"
+          ]
+        },
+        "value_digest": {
+          "$ref": "#/$defs/digest"
+        }
+      },
+      "required": [
+        "binding_id",
+        "role",
+        "state",
+        "requirement_refs",
+        "value_digest"
+      ],
+      "type": "object"
+    },
+    "digest": {
+      "pattern": "^[a-f0-9]{64}$",
+      "type": "string"
+    },
+    "id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "type": "string"
+    }
+  },
+  "$id": "https://schemas.smf.local/architecture-review-packet.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "approval_requests": {
+      "items": {
+        "$ref": "#/$defs/approval"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "assessed_revision": {
+      "$ref": "#/$defs/id"
+    },
+    "authority": {
+      "const": "non_authorizing"
+    },
+    "blockers": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "enum": [
+              "readiness_evidence_missing",
+              "readiness_not_qualified",
+              "protected_execution_decision_missing",
+              "client_requirement_unresolved",
+              "disclosure_decision_missing"
+            ]
+          },
+          "owner": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "state": {
+            "enum": [
+              "missing",
+              "pending",
+              "denied"
+            ]
+          }
+        },
+        "required": [
+          "code",
+          "state",
+          "owner"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "configuration": {
+      "additionalProperties": false,
+      "properties": {
+        "bundle_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "configuration_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "files": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "path": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "sha256": {
+                "$ref": "#/$defs/digest"
+              }
+            },
+            "required": [
+              "path",
+              "sha256"
+            ],
+            "type": "object"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "requirements_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "threat_model_digest": {
+          "$ref": "#/$defs/digest"
+        }
+      },
+      "required": [
+        "configuration_digest",
+        "bundle_digest",
+        "files",
+        "threat_model_digest",
+        "requirements_digest"
+      ],
+      "type": "object"
+    },
+    "content_digest": {
+      "$ref": "#/$defs/digest"
+    },
+    "controls": {
+      "items": {
+        "type": "object"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "data_flows": {
+      "items": {
+        "type": "object"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "endpoint_bindings": {
+      "items": {
+        "$ref": "#/$defs/binding"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "evidence_handling": {
+      "additionalProperties": false,
+      "properties": {
+        "canonical_immutable": {
+          "const": true
+        },
+        "disclosure_policy_revision": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "disclosure_decision": {
+          "type": "object", "additionalProperties": false,
+          "required": ["state"],
+          "properties": {
+            "state": {"enum": ["missing", "verified", "pending", "denied"]},
+            "evidence_id": {"$ref": "#/$defs/id"}, "decision_id": {"$ref": "#/$defs/id"},
+            "owner_assignment_ref": {"$ref": "#/$defs/id"}, "authority": {"$ref": "#/$defs/id"},
+            "issued_at": {"type": "string", "format": "date-time"}, "expires_at": {"type": "string", "format": "date-time"},
+            "evidence_digest": {"$ref": "#/$defs/digest"}
+          }
+        },
+        "recipient_class": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "retention_policy_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sanitization": {
+          "const": "before_persistence_or_hashing"
+        },
+        "shared_projection": {
+          "const": "allowlist_only"
+        }
+      },
+      "required": [
+        "sanitization",
+        "canonical_immutable",
+        "shared_projection",
+        "retention_policy_ref",
+        "recipient_class",
+        "disclosure_policy_revision",
+        "disclosure_decision"
+      ],
+      "type": "object"
+    },
+    "henv01_readiness": {
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "state": {
+              "const": "missing"
+            }
+          },
+          "required": [
+            "state"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "classification": {
+              "enum": [
+                "READY",
+                "BLOCKED",
+                "NEEDS_EVIDENCE",
+                "UNSUPPORTED",
+                "HUMAN_REQUIRED"
+              ]
+            },
+            "manifest_digest": {
+              "$ref": "#/$defs/digest"
+            },
+            "policy_digest": {
+              "$ref": "#/$defs/digest"
+            },
+            "policy_id": {
+              "$ref": "#/$defs/id"
+            },
+            "policy_version": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "result_id": {
+              "$ref": "#/$defs/id"
+            },
+            "state": {
+              "enum": [
+                "qualified",
+                "pending",
+                "denied"
+              ]
+            }
+          },
+          "required": [
+            "state",
+            "result_id",
+            "manifest_digest",
+            "classification",
+            "policy_id",
+            "policy_version",
+            "policy_digest"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "identity": {
+      "additionalProperties": false,
+      "properties": {
+        "attempt_id": {
+          "$ref": "#/$defs/id"
+        },
+        "boundary_id": {
+          "$ref": "#/$defs/id"
+        },
+        "client_id": {
+          "$ref": "#/$defs/id"
+        },
+        "deployment_id": {
+          "$ref": "#/$defs/id"
+        },
+        "environment_id": {
+          "$ref": "#/$defs/id"
+        },
+        "run_id": {
+          "$ref": "#/$defs/id"
+        },
+        "subject_id": {
+          "$ref": "#/$defs/id"
+        },
+        "workload_id": {
+          "$ref": "#/$defs/id"
+        }
+      },
+      "required": [
+        "client_id",
+        "deployment_id",
+        "environment_id",
+        "workload_id",
+        "subject_id",
+        "boundary_id",
+        "run_id",
+        "attempt_id"
+      ],
+      "type": "object"
+    },
+    "protected_execution_decision": {
+      "additionalProperties": false,
+      "properties": {
+        "authority_contract": {"const": "signed_henv01_exact_subject_v1"},
+        "state": {"enum": ["missing", "verified", "pending", "denied"]},
+        "evidence_id": {"$ref": "#/$defs/id"}, "decision_id": {"$ref": "#/$defs/id"},
+        "owner_assignment_ref": {"$ref": "#/$defs/id"}, "authority": {"$ref": "#/$defs/id"},
+        "issued_at": {"type": "string", "format": "date-time"}, "expires_at": {"type": "string", "format": "date-time"},
+        "evidence_digest": {"$ref": "#/$defs/digest"}
+      },
+      "required": [
+        "state",
+        "authority_contract"
+      ],
+      "type": "object"
+    },
+    "lifecycle": {
+      "additionalProperties": false,
+      "properties": {
+        "blocked": {
+          "type": "boolean"
+        },
+        "certified": {
+          "const": false
+        },
+        "executed": {
+          "const": false
+        },
+        "human_approved": {
+          "const": false
+        },
+        "human_assisted": {
+          "type": "boolean"
+        },
+        "packet_generated": {
+          "const": true
+        },
+        "parity_passed": {
+          "const": false
+        },
+        "validated": {
+          "const": false
+        }
+      },
+      "required": [
+        "packet_generated",
+        "executed",
+        "validated",
+        "parity_passed",
+        "certified",
+        "human_approved",
+        "human_assisted",
+        "blocked"
+      ],
+      "type": "object"
+    },
+    "packet_id": {
+      "$ref": "#/$defs/digest"
+    },
+    "packet_kind": {
+      "const": "architecture_security_review_evidence"
+    },
+    "risks": {
+      "items": {
+        "type": "object"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "1.0"
+    },
+    "source": {
+      "additionalProperties": false,
+      "properties": {
+        "eligible_kind": {
+          "const": "sas_program"
+        },
+        "entry_artifact_id": {"$ref": "#/$defs/id"},
+        "source_closure": {
+          "type": "array", "minItems": 1,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["artifact_id", "logical_path", "locator", "sha256"],
+            "properties": {"artifact_id": {"$ref": "#/$defs/id"}, "logical_path": {"type": "string", "minLength": 1}, "locator": {"type": "string", "minLength": 1}, "sha256": {"$ref": "#/$defs/digest"}}
+          }
+        },
+        "source_closure_digest": {"$ref": "#/$defs/digest"},
+        "workload_digest": {"$ref": "#/$defs/digest"}, "discovery_digest": {"$ref": "#/$defs/digest"},
+        "discovery_provider": {"$ref": "#/$defs/id"}, "discovery_namespace": {"$ref": "#/$defs/id"},
+        "sha256": {
+          "$ref": "#/$defs/digest"
+        }
+      },
+      "required": [
+        "sha256", "eligible_kind", "entry_artifact_id", "source_closure",
+        "source_closure_digest", "workload_digest", "discovery_digest", "discovery_provider", "discovery_namespace"
+      ],
+      "type": "object"
+    },
+    "terminal_disposition": {
+      "enum": [
+        "blocked",
+        "review_ready"
+      ]
+    },
+    "trust_boundaries": {
+      "items": {
+        "type": "object"
+      },
+      "minItems": 1,
+      "type": "array"
+    }
+  },
+  "required": [
+    "schema_version",
+    "packet_id",
+    "packet_kind",
+    "authority",
+    "assessed_revision",
+    "identity",
+    "source",
+    "configuration",
+    "trust_boundaries",
+    "data_flows",
+    "controls",
+    "risks",
+    "endpoint_bindings",
+    "approval_requests",
+    "henv01_readiness",
+    "protected_execution_decision",
+    "evidence_handling",
+    "blockers",
+    "terminal_disposition",
+    "lifecycle",
+    "content_digest"
+  ],
+  "type": "object"
+}

@@ -1,0 +1,124 @@
+schema_version: 1
+scenario_id: cv03-golden-conversion
+name: CV-03 deterministic golden conversion contract
+domain: deterministic-conversion
+description: SMF-owned exact-byte conversion regression fixtures with separate construct families.
+source:
+  source_id: smf-owned
+  origin: smf
+  license: Apache-2.0
+  notes: Synthetic shared regression evidence; contains no client material.
+capabilities:
+- deterministic-conversion
+- proc-sql
+- proc-format
+- sas-macro
+artifacts:
+- path: ../workloads/golden/cv03/source/proc-sql.sas
+  role: sas-program
+  sha256: 97aa37a250637ba7f2b757b371c3409435d839579d146bcefc9a28d0b65928ea
+  source_id: smf-owned
+- path: ../workloads/golden/cv03/source/proc-format.sas
+  role: sas-program
+  sha256: a7e8da93171c29dc27bad7d4e1a21c90ca8b75d2d87ead373d72c61c3f2570a8
+  source_id: smf-owned
+- path: ../workloads/golden/cv03/source/macro.sas
+  role: sas-program
+  sha256: 02a9675d4c1a8a9146b142eb57c63a20c71b018c01cd110afbc4b4c0e6512dd9
+  source_id: smf-owned
+- path: ../workloads/golden/cv03/expected/proc-sql.sql
+  role: expected-conversion
+  sha256: 26e325b035c741496680c3399b9cd15725c782acfdfa04d091283d3d3eaa789f
+  source_id: smf-owned
+workload:
+  root: ../workloads/golden/cv03
+  entrypoints:
+  - ../workloads/golden/cv03/source/proc-sql.sas
+  - ../workloads/golden/cv03/source/proc-format.sas
+  - ../workloads/golden/cv03/source/macro.sas
+  relationships: []
+regression:
+  version: 1
+  subjects:
+  - subject_id: cv03-proc-sql-positive
+    workload_id: cv03-golden-conversion
+    entrypoint: ../workloads/golden/cv03/source/proc-sql.sas
+    target: sparksql
+    source_closure:
+    - ../workloads/golden/cv03/source/proc-sql.sas
+    stages: [admission, conversion, golden-comparison, static-validation]
+    validation_policy:
+      policy_id: smf-static-validation
+      policy_version: '1'
+      validation_kind: static
+    evidence_scope: shared-regression
+    environment: test-only
+    golden:
+      golden_id: cv03-proc-sql-sparksql
+      golden_version: 1.0.0
+      expected_disposition: generated
+      comparison_mode: exact-bytes
+      provider_id: smf-deterministic
+      provider_version: smf-0.1.0
+      strategy_id: smf.deterministic.proc_sql
+      strategy_version: 1.2.0
+      behavioral_expectation_id: cv03-proc-sql-positive
+      behavioral_evidence_digest: 3e29f74d731c9ac8720ca5b3da73c06a6d853f6b1dbcf865c952d5e3b1abf67a
+      artifact: ../workloads/golden/cv03/expected/proc-sql.sql
+      rationale: Pin the independently qualified deterministic PROC SQL subset.
+      review_reference: issue-88-cv03-initial
+      fixture_classification: shared-regression
+  - subject_id: cv03-proc-format-negative
+    workload_id: cv03-golden-conversion
+    entrypoint: ../workloads/golden/cv03/source/proc-format.sas
+    target: sparksql
+    source_closure:
+    - ../workloads/golden/cv03/source/proc-format.sas
+    stages: [admission, conversion, golden-comparison]
+    validation_policy:
+      policy_id: smf-static-validation
+      policy_version: '1'
+      validation_kind: static
+    evidence_scope: shared-regression
+    environment: test-only
+    golden:
+      golden_id: cv03-proc-format-unsupported
+      golden_version: 1.0.0
+      expected_disposition: unsupported
+      comparison_mode: exact-bytes
+      provider_id: smf-deterministic
+      provider_version: smf-0.1.0
+      strategy_id: smf.deterministic.proc_sql
+      strategy_version: 1.2.0
+      rationale: Keep PROC FORMAT separate from SQL conversion.
+      review_reference: issue-88-cv03-initial
+      fixture_classification: shared-regression
+  - subject_id: cv03-macro-negative
+    workload_id: cv03-golden-conversion
+    entrypoint: ../workloads/golden/cv03/source/macro.sas
+    target: sparksql
+    source_closure:
+    - ../workloads/golden/cv03/source/macro.sas
+    stages: [admission, conversion, golden-comparison]
+    validation_policy:
+      policy_id: smf-static-validation
+      policy_version: '1'
+      validation_kind: static
+    evidence_scope: shared-regression
+    environment: test-only
+    golden:
+      golden_id: cv03-macro-human-pending
+      golden_version: 1.0.0
+      expected_disposition: human_pending
+      comparison_mode: exact-bytes
+      provider_id: smf-deterministic
+      provider_version: smf-0.1.0
+      strategy_id: smf.deterministic.proc_sql
+      strategy_version: 1.2.0
+      rationale: Keep SAS macro processing outside deterministic SQL rewrite.
+      review_reference: issue-88-cv03-initial
+      fixture_classification: shared-regression
+metadata:
+  tier: representative
+  private_data: false
+  framework_stage: CV-03

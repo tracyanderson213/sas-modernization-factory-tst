@@ -1,0 +1,127 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.pfx
+*.p12
+
+# VS Code
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.example.json
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
+logs/
+
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+*.tfvars
+*.tfvars.json
+!*.example.tfvars
+.terraformrc
+terraform.rc
+
+# Databricks
+.databrickscfg
+.databricks/
+
+# Azure
+.azure/*
+!.azure/deployment-plan.md
+
+# Local artifacts
+artifacts/
+output/
+tmp/
+temp/
+
+# Test outputs
+test-results/
+coverage/
+
+# Generated conversion output
+generated/
+converted/
+
+# Versioned documentation contract generated from the live CLI parsers.
+!docs/generated/
+docs/generated/*
+!docs/generated/cli-surface.json
+
+# Governed competition acceptance sources only; runtime/generated evidence stays ignored.
+!competition/generated/
+competition/generated/*
+!competition/generated/replan.yaml
+!competition/generated/REPLAN-REPORT.md
+!competition/generated/issue-specs/
+competition/generated/issue-specs/*
+!competition/generated/issue-specs/*.md
+
+# Local workload samples containing protected/client data
+tests/workloads/private/
+examples/private/
+deployments/humana/private/
+.smf-repo-review-capture/
+
+# Generated factory output
+out/
+
+# Project Creation Scripts
+.github/project-bootstrap/
+.project-audit/
+
+# Private client corpus evidence must remain outside the repository.
+tests/corpus/private/
+tests/corpus/workloads/private/
+private-corpus/
+
+# Local supervised engineering-agent run evidence and worktrees
+.smf-agent/
+agent-artifacts/
+
+# Local review / repair bundles
+.humana-*/
+.smf-repo-review-capture/
+_review_metadata/

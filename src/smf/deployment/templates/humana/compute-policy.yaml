@@ -1,0 +1,24 @@
+schema_version: "1.0"
+policy_id: humana-validation-compute
+policy_version: "1.0.0"
+policy_state: pending
+client_id: humana
+deployment_id: humana-competition-pilot
+environment_id: humana-databricks-pilot
+workspace_binding_id: databricks-workspace
+authority_ref: null
+authority_key_id: null
+authority_signature: null
+valid_from: null
+valid_until: null
+supersedes_policy_digest: null
+owner_requirement_refs:
+  - HC-REQ-04
+  - HC-REQ-05
+  - HC-REQ-07
+max_availability_age_seconds: null
+profiles: []
+policy_digest: b33884d52aae7d674e2a665c3010f3e7ad6ff1fb2287df92127650beb853a857
+
+# Deliberately pending: named Humana owners have not supplied the availability freshness bound,
+# runtime matrix, network/access policy, quota, cost, timeout, cancellation or tolerance values.

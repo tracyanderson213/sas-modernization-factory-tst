@@ -1,0 +1,13 @@
+insert_job: LOAD_SOURCE job_type: c
+command: /opt/enterprise/load_source.sh
+machine: batch01
+
+insert_job: RUN_CLAIMS job_type: c
+command: scripts/run_claims.sh
+condition: s(LOAD_SOURCE)
+start_times: "03:00"
+days_of_week: all
+
+insert_job: PUBLISH_AUDIT job_type: c
+command: /bin/true
+condition: s(EXTERNAL_AUDIT_READY)

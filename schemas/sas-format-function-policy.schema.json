@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SMF SAS Format and Function Classification Policy",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["policy_id", "version", "strategy_id", "strategy_version", "executable_mapping_allowlist", "source_encoding", "unknown_label_handling", "ambiguous_context_handling", "custom_semantics_handling", "external_inputs"],
+  "properties": {
+    "policy_id": {"const": "smf.sassem04.classification"},
+    "version": {"const": "1.0.0"},
+    "strategy_id": {"const": "smf.sas-format-function-classifier"},
+    "strategy_version": {"const": "1.0.0"},
+    "executable_mapping_allowlist": {"type": "array", "maxItems": 0},
+    "source_encoding": {"const": "utf-8-strict"},
+    "unknown_label_handling": {"const": "blocked"},
+    "ambiguous_context_handling": {"const": "blocked"},
+    "custom_semantics_handling": {"const": "unsupported"},
+    "external_inputs": {
+      "type": "array",
+      "minItems": 9,
+      "maxItems": 9,
+      "prefixItems": [
+        {"$ref": "#/$defs/pendingSasRuntime"},
+        {"$ref": "#/$defs/pendingSasVersion"},
+        {"$ref": "#/$defs/pendingSessionOptions"},
+        {"$ref": "#/$defs/pendingLocale"},
+        {"$ref": "#/$defs/pendingTimezone"},
+        {"$ref": "#/$defs/pendingYearcutoff"},
+        {"$ref": "#/$defs/pendingOracleAuthority"},
+        {"$ref": "#/$defs/pendingBusinessTolerances"},
+        {"$ref": "#/$defs/pendingHumanaOwnerDecisions"}
+      ],
+      "items": false
+    }
+  },
+  "$defs": {
+    "pending": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "status", "evidence_ref"],
+      "properties": {
+        "name": {"type": "string"},
+        "status": {"enum": ["pending", "denied"]},
+        "evidence_ref": {"type": ["string", "null"]}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"status": {"const": "pending"}}},
+          "then": {"properties": {"evidence_ref": {"type": "null"}}},
+          "else": {"properties": {"evidence_ref": {"type": "string", "minLength": 1}}}
+        }
+      ]
+    },
+    "pendingSasRuntime": {"allOf": [{"$ref": "#/$defs/pending"}, {"properties": {"name": {"const": "sas_runtime"}}}]},
+    "pendingSasVersion": {"allOf": [{"$ref": "#/$defs/pending"}, {"properties": {"name": {"const": "sas_version"}}}]},
+    "pendingSessionOptions": {"allOf": [{"$ref": "#/$defs/pending"}, {"properties": {"name": {"const": "session_options"}}}]},
+    "pendingLocale": {"allOf": [{"$ref": "#/$defs/pending"}, {"properties": {"name": {"const": "locale"}}}]},
+    "pendingTimezone": {"allOf": [{"$ref": "#/$defs/pending"}, {"properties": {"name": {"const": "timezone"}}}]},
+    "pendingYearcutoff": {"allOf": [{"$ref": "#/$defs/pending"}, {"properties": {"name": {"const": "yearcutoff"}}}]},
+    "pendingOracleAuthority": {"allOf": [{"$ref": "#/$defs/pending"}, {"properties": {"name": {"const": "oracle_authority"}}}]},
+    "pendingBusinessTolerances": {"allOf": [{"$ref": "#/$defs/pending"}, {"properties": {"name": {"const": "business_tolerances"}}}]},
+    "pendingHumanaOwnerDecisions": {"allOf": [{"$ref": "#/$defs/pending"}, {"properties": {"name": {"const": "humana_owner_decisions"}}}]}
+  }
+}

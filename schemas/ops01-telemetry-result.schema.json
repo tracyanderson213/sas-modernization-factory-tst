@@ -1,0 +1,304 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.smf.example/ops01-telemetry-result.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "result_id",
+    "schema_version",
+    "policy",
+    "policy_digest",
+    "event_references",
+    "event_set_digest",
+    "streams",
+    "summary",
+    "claims",
+    "content_digest"
+  ],
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+    },
+    "sha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "claims": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "generated",
+        "executed",
+        "validated",
+        "parity_passed",
+        "human_assisted",
+        "blocked",
+        "skipped"
+      ],
+      "properties": {
+        "generated": {
+          "type": "boolean"
+        },
+        "executed": {
+          "type": "boolean"
+        },
+        "validated": {
+          "type": "boolean"
+        },
+        "parity_passed": {
+          "type": "boolean"
+        },
+        "human_assisted": {
+          "type": "boolean"
+        },
+        "blocked": {
+          "type": "boolean"
+        },
+        "skipped": {
+          "type": "boolean"
+        }
+      }
+    },
+    "stream": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "workload_id",
+        "run_id",
+        "attempt_id",
+        "source_artifact_id",
+        "source_artifact_digest",
+        "events",
+        "delivery_sequence",
+        "ingestion_state",
+        "event_count",
+        "missing_sequences",
+        "out_of_order_delivery",
+        "last_event_id",
+        "terminal_disposition",
+        "observed_claims",
+        "qualified_claims",
+        "blocker_codes"
+      ],
+      "properties": {
+        "workload_id": {
+          "$ref": "#/$defs/id"
+        },
+        "run_id": {
+          "$ref": "#/$defs/id"
+        },
+        "attempt_id": {
+          "$ref": "#/$defs/id"
+        },
+        "source_artifact_id": {
+          "$ref": "#/$defs/id"
+        },
+        "source_artifact_digest": {
+          "$ref": "#/$defs/sha"
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "$ref": "ops01-telemetry-event.schema.json"
+          }
+        },
+        "delivery_sequence": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "ingestion_state": {
+          "enum": [
+            "complete",
+            "gapped",
+            "missing"
+          ]
+        },
+        "event_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "missing_sequences": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "out_of_order_delivery": {
+          "type": "boolean"
+        },
+        "last_event_id": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/id"
+            }
+          ]
+        },
+        "terminal_disposition": {
+          "enum": [
+            null,
+            "parity_passed",
+            "validated_no_parity",
+            "blocked",
+            "failed",
+            "unsupported",
+            "cancelled",
+            "outcome_unknown",
+            "skipped",
+            "ingestion_incomplete"
+          ]
+        },
+        "observed_claims": {
+          "$ref": "#/$defs/claims"
+        },
+        "qualified_claims": {
+          "$ref": "#/$defs/claims"
+        },
+        "blocker_codes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        }
+      }
+    }
+  },
+  "properties": {
+    "result_id": {
+      "$ref": "#/$defs/sha"
+    },
+    "schema_version": {
+      "const": "1.0"
+    },
+    "content_digest": {
+      "$ref": "#/$defs/sha"
+    },
+    "policy_digest": {
+      "$ref": "#/$defs/sha"
+    },
+    "event_set_digest": {
+      "$ref": "#/$defs/sha"
+    },
+    "policy": {
+      "$ref": "ops01-telemetry-policy.schema.json"
+    },
+    "event_references": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "workload_id",
+          "run_id",
+          "attempt_id",
+          "event_id",
+          "content_digest",
+          "relative_path"
+        ],
+        "properties": {
+          "workload_id": {
+            "$ref": "#/$defs/id"
+          },
+          "run_id": {
+            "$ref": "#/$defs/id"
+          },
+          "attempt_id": {
+            "$ref": "#/$defs/id"
+          },
+          "event_id": {
+            "$ref": "#/$defs/id"
+          },
+          "content_digest": {
+            "$ref": "#/$defs/sha"
+          },
+          "relative_path": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "streams": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/stream"
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "expected_streams",
+        "complete_streams",
+        "gapped_streams",
+        "missing_streams",
+        "event_count",
+        "out_of_order_streams"
+      ],
+      "properties": {
+        "expected_streams": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "complete_streams": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "gapped_streams": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "missing_streams": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "event_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "out_of_order_streams": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "claims": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "telemetry_aggregated",
+        "parity_certified",
+        "humana_validated",
+        "production_observability",
+        "migration_complete"
+      ],
+      "properties": {
+        "telemetry_aggregated": {
+          "const": true
+        },
+        "parity_certified": {
+          "const": false
+        },
+        "humana_validated": {
+          "const": false
+        },
+        "production_observability": {
+          "const": false
+        },
+        "migration_complete": {
+          "const": false
+        }
+      }
+    }
+  }
+}

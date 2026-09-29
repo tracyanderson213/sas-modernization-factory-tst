@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://smf.local/schemas/corpus-regression-result.schema.json",
+  "title": "SMF Corpus Regression Terminal Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "result_id", "qualification_id", "scenario_id", "workload_id",
+    "subject_id", "source_id", "run_id", "attempt_id", "manifest_digest", "source_digest", "bundle_digest", "policy_digest", "golden_contract_digest",
+    "evidence_scope", "environment", "stage_ids", "missing_stages", "terminal_disposition",
+    "telemetry", "content_digest"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "result_id": {"$ref": "#/$defs/id"},
+    "qualification_id": {"$ref": "#/$defs/id"},
+    "scenario_id": {"$ref": "#/$defs/id"},
+    "workload_id": {"$ref": "#/$defs/id"},
+    "subject_id": {"$ref": "#/$defs/id"},
+    "source_id": {"anyOf": [{"$ref": "#/$defs/id"}, {"type": "null"}]},
+    "run_id": {"$ref": "#/$defs/id"},
+    "attempt_id": {"$ref": "#/$defs/id"},
+    "manifest_digest": {"anyOf": [{"$ref": "#/$defs/digest"}, {"type": "null"}]},
+    "source_digest": {"anyOf": [{"$ref": "#/$defs/digest"}, {"type": "null"}]},
+    "bundle_digest": {"anyOf": [{"$ref": "#/$defs/digest"}, {"type": "null"}]},
+    "policy_digest": {"anyOf": [{"$ref": "#/$defs/digest"}, {"type": "null"}]},
+    "golden_contract_digest": {"anyOf": [{"$ref": "#/$defs/digest"}, {"type": "null"}]},
+    "evidence_scope": {"enum": ["shared-regression", "test-only"]},
+    "environment": {"const": "test-only"},
+    "stage_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+    "missing_stages": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"enum": ["conversion", "execution", "static-validation", "parity-validation", "golden-comparison"]}
+    },
+    "terminal_disposition": {
+      "enum": ["passed", "failed", "blocked", "unsupported", "human_pending", "human_denied", "cancelled"]
+    },
+    "telemetry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["generated", "executed", "validated", "parity_passed", "golden_matched", "human_assisted", "blocked"],
+      "properties": {
+        "generated": {"type": "boolean"},
+        "executed": {"type": "boolean"},
+        "validated": {"type": "boolean"},
+        "parity_passed": {"type": "boolean"},
+        "golden_matched": {"type": "boolean"},
+        "human_assisted": {"type": "boolean"},
+        "blocked": {"type": "boolean"}
+      }
+    },
+    "content_digest": {"$ref": "#/$defs/digest"}
+  },
+  "$defs": {
+    "id": {"type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"},
+    "digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  }
+}

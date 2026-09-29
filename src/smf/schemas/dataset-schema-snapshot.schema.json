@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SMF Dataset Schema Snapshot",
+  "type": "object",
+  "required": ["schema_version", "logical_dataset_id", "engine", "columns", "provenance", "digest", "metadata"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "logical_dataset_id": {"type": "string", "minLength": 1},
+    "engine": {"type": "string", "minLength": 1},
+    "columns": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["ordinal", "name", "logical_type", "native_type", "nullable", "length", "precision", "scale"],
+        "properties": {
+          "ordinal": {"type": "integer", "minimum": 1},
+          "name": {"type": "string", "minLength": 1},
+          "logical_type": {"type": "string", "minLength": 1},
+          "native_type": {"type": "string", "minLength": 1},
+          "nullable": {"type": "boolean"},
+          "length": {"type": ["integer", "null"], "minimum": 1},
+          "precision": {"type": ["integer", "null"], "minimum": 1},
+          "scale": {"type": ["integer", "null"], "minimum": 0}
+        },
+        "allOf": [
+          {
+            "if": {"properties": {"logical_type": {"const": "decimal"}}},
+            "then": {
+              "properties": {
+                "precision": {"type": "integer", "minimum": 1},
+                "scale": {"type": "integer", "minimum": 0}
+              }
+            }
+          }
+        ],
+        "additionalProperties": false
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "required": ["producer", "origin", "reference", "authoritative"],
+      "properties": {
+        "producer": {"type": "string", "minLength": 1},
+        "origin": {"type": "string", "minLength": 1},
+        "reference": {"type": "string", "minLength": 1},
+        "authoritative": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    },
+    "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "metadata": {
+      "type": "object",
+      "additionalProperties": {"type": ["string", "number", "boolean", "null"]}
+    }
+  },
+  "additionalProperties": false
+}

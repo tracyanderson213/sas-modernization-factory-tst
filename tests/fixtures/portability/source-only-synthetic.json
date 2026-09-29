@@ -1,0 +1,70 @@
+{
+  "schema_version": "1.0",
+  "evidence_class": "synthetic_contract",
+  "profile": "source-only",
+  "client_id": "synthetic-client",
+  "workload_id": "synthetic-workload",
+  "source_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+  "upstream_revision": "revision-123",
+  "run_id": "run-001",
+  "attempt_id": "attempt-001",
+  "observed_at": "2026-09-20T12:00:00Z",
+  "evaluated_at": "2026-09-20T12:05:00Z",
+  "freshness_max_age_seconds": 3600,
+  "design_id": "design-001",
+  "runtime_matrix": [
+    {
+      "matrix_id": "linux-x86_64-py312",
+      "os": "linux",
+      "architecture": "x86_64",
+      "python_version": "3.12",
+      "spark_version": null,
+      "scala_binary": null,
+      "jvm_version": null,
+      "databricks_runtime": null
+    }
+  ],
+  "requirements": [
+    {
+      "component_id": "qualified-reader",
+      "kind": "python-wheel",
+      "version": "1.2.3",
+      "platform_id": "linux-x86_64-py312",
+      "artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  ],
+  "observations": [
+    {
+      "component_id": "qualified-reader",
+      "state": "present",
+      "version": "1.2.3",
+      "platform_id": "linux-x86_64-py312",
+      "runtime_matrix_digest": "e989deff1db7fcf476f399108c536f492adc66b406e0d265f5c725b2775ff5be",
+      "artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "authority_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "observed_at": "2026-09-20T11:59:00Z"
+    }
+  ],
+  "offline_artifacts": [
+    {
+      "component_id": "qualified-reader",
+      "kind": "python-wheel",
+      "filename": "qualified_reader-1.2.3-py3-none-any.whl",
+      "version": "1.2.3",
+      "platform_id": "linux-x86_64-py312",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "source_revision": "revision-123",
+      "license_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "notice_digest": "9999999999999999999999999999999999999999999999999999999999999999",
+      "sbom_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "provenance_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "vulnerability_digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "intake_state": "approved"
+    }
+  ],
+  "digests": {
+    "runtime_matrix": "ec9090fd51aebb36c0c21403015809e00b9ae2941483d11dd1ea73f66785d085",
+    "dependency_lock": "cb83687732133f69c91650949a6e391c3c05d678b5a57b2bae21738b78a35f78",
+    "offline_artifact_plan": "2be1e8a1a89a708839116ce8687f2943cc05bbc24d39c69c5d71d88d96b55264"
+  }
+}

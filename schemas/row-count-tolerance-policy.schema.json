@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.smf.example/row-count-tolerance-policy.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "policy_id", "policy_version", "mode", "absolute_tolerance", "relative_tolerance", "relative_denominator", "zero_source_rule"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "policy_id": {"type": "string", "minLength": 1},
+    "policy_version": {"type": "string", "minLength": 1},
+    "mode": {"enum": ["exact", "absolute", "relative"]},
+    "absolute_tolerance": {"type": "integer", "minimum": 0},
+    "relative_tolerance": {"type": "string", "pattern": "^(0|0\\.[0-9]+|1)$"},
+    "relative_denominator": {"const": "source"},
+    "zero_source_rule": {"const": "both_zero_only"}
+  }
+}

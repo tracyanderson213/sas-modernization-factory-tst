@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "result_id", "decision_id", "client_id", "workload_id", "source_digest", "run_id", "attempt_id", "observed_at", "policy_digest", "evidence_class", "evidence_digest", "deployment_profile_digest", "resolution_digest", "environment_digest", "sbom_digest", "upq_result_digest", "sec03_result_digest", "outcome", "blockers", "component_count", "finding_count", "exception_count", "claims", "authority", "proof"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "result_id": {"$ref": "#/$defs/id"}, "decision_id": {"$ref": "#/$defs/id"}, "client_id": {"$ref": "#/$defs/id"}, "workload_id": {"$ref": "#/$defs/id"}, "source_digest": {"$ref": "#/$defs/sha"}, "run_id": {"$ref": "#/$defs/id"}, "attempt_id": {"$ref": "#/$defs/id"}, "observed_at": {"type": "string", "format": "date-time"}, "policy_digest": {"$ref": "#/$defs/sha"}, "evidence_class": {"enum": ["synthetic_contract", "real"]}, "evidence_digest": {"$ref": "#/$defs/sha"}, "deployment_profile_digest": {"$ref": "#/$defs/sha"}, "resolution_digest": {"$ref": "#/$defs/sha"}, "environment_digest": {"$ref": "#/$defs/sha"}, "sbom_digest": {"$ref": "#/$defs/sha"}, "upq_result_digest": {"$ref": "#/$defs/sha"}, "sec03_result_digest": {"$ref": "#/$defs/sha"},
+    "outcome": {"enum": ["contract_pass", "blocked", "pending", "denied", "failed", "ambiguous", "incompatible", "stale", "unavailable_scanner"]},
+    "blockers": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+    "component_count": {"type": "integer", "minimum": 0}, "finding_count": {"type": "integer", "minimum": 0}, "exception_count": {"type": "integer", "minimum": 0},
+    "claims": {"type": "object", "additionalProperties": false, "required": ["real_components_approved", "humana_distribution_approved", "vulnerability_free", "production_ready", "lifecycle_complete"], "properties": {"real_components_approved": {"const": false}, "humana_distribution_approved": {"const": false}, "vulnerability_free": {"const": false}, "production_ready": {"const": false}, "lifecycle_complete": {"const": false}}},
+    "authority": {"$ref": "#/$defs/id"}, "proof": {"$ref": "#/$defs/proof"}
+  },
+  "$defs": {"id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"}, "sha": {"type": "string", "pattern": "^[a-f0-9]{64}$"}, "proof": {"type": "object", "additionalProperties": false, "required": ["algorithm", "key_id", "value"], "properties": {"algorithm": {"const": "ed25519"}, "key_id": {"$ref": "#/$defs/id"}, "value": {"type": "string", "minLength": 1}}}}
+}

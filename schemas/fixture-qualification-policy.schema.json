@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "policy_id", "policy_version", "client_id", "allowed_purposes", "allowed_media_types", "allowed_license_ids", "customer_authorities", "max_evidence_age_seconds", "verification_keys", "manifest_key_ids", "prerequisite_key_ids", "evaluator_key_ids", "manifest_authorities", "prerequisite_authorities", "evaluator_authorities", "prerequisites", "authority", "proof"],
+  "properties": {
+    "schema_version": {"const": "1.0"}, "policy_id": {"$ref": "#/$defs/id"}, "policy_version": {"$ref": "#/$defs/id"}, "client_id": {"$ref": "#/$defs/id"},
+    "allowed_purposes": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["reader_evaluation", "regression", "customer_baseline"]}},
+    "allowed_media_types": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["application/x-sas-data", "application/x-sas-catalog", "application/x-sas-transport"]}},
+    "allowed_license_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}}, "customer_authorities": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+    "max_evidence_age_seconds": {"type": "integer", "minimum": 1}, "verification_keys": {"type": "object", "minProperties": 3, "additionalProperties": {"type": "string", "minLength": 1}},
+    "manifest_key_ids": {"$ref": "#/$defs/ids"}, "prerequisite_key_ids": {"$ref": "#/$defs/ids"}, "evaluator_key_ids": {"$ref": "#/$defs/ids"}, "manifest_authorities": {"$ref": "#/$defs/ids"}, "prerequisite_authorities": {"$ref": "#/$defs/ids"}, "evaluator_authorities": {"$ref": "#/$defs/ids"},
+    "prerequisites": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "object", "additionalProperties": false, "required": ["prerequisite_id", "result_digest"], "properties": {"prerequisite_id": {"enum": ["UPQ-01", "LIC-01"]}, "result_digest": {"$ref": "#/$defs/sha"}}}}, "authority": {"$ref": "#/$defs/id"}, "proof": {"$ref": "#/$defs/proof"}
+  },
+  "$defs": {"id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"}, "sha": {"type": "string", "pattern": "^[a-f0-9]{64}$"}, "ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}}, "proof": {"type": "object", "additionalProperties": false, "required": ["algorithm", "key_id", "value"], "properties": {"algorithm": {"const": "ed25519"}, "key_id": {"$ref": "#/$defs/id"}, "value": {"type": "string", "minLength": 1}}}}
+}

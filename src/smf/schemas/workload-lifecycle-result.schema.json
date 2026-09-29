@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/schemas/workload-lifecycle-result.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "contract_version", "result_id", "content_digest", "canonical_evidence_reference", "identity", "policy", "policy_digest", "state", "terminal", "history", "history_digest", "authority_scope", "last_failure", "next_action", "implementation_manifest", "claims"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "contract_version": {"const": "orch-01.1.0"},
+    "result_id": {"$ref": "#/$defs/id"},
+    "content_digest": {"$ref": "#/$defs/sha"},
+    "canonical_evidence_reference": {"type": "string", "pattern": "^runs/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}/workloads/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}/attempts/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}/orchestration/workload-lifecycle\\.result\\.json$"},
+    "identity": {"$ref": "#/$defs/identity"},
+    "policy": {"$ref": "#/$defs/policy"},
+    "policy_digest": {"$ref": "#/$defs/sha"},
+    "state": {"$ref": "#/$defs/state"},
+    "terminal": {"type": "boolean"},
+    "history": {"type": "array", "maxItems": 256, "items": {"$ref": "#/$defs/history"}},
+    "history_digest": {"$ref": "#/$defs/sha"},
+    "authority_scope": {"const": "synthetic_stage_contract_with_governed_failure_replay"},
+    "last_failure": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/failure"}]},
+    "next_action": {"enum": ["supply_governed_readiness_receipt", "run_deterministic_conversion", "execute_generated_artifact", "run_validation_and_reconciliation", "complete_partition_reconciliation", "create_actionable_exception", "investigate_unknown_gateway_outcome", "obtain_gateway_authority", "obtain_validation_policy", "perform_target_readback_before_retry", "quarantine_and_reconstruct_evidence", "repair_then_reexecute_and_revalidate", "request_bounded_human_disposition", "request_security_decision", "resolve_dependency_evidence", "resolve_execution_authority", "retry_after_external_recovery", "retry_deterministic_conversion", "retry_execution_from_checkpoint", "route_to_bounded_ai_repair", "supply_governed_prerequisite", "stop_and_investigate", "obtain_separate_human_decision", "resolve_blocker_in_new_attempt", "record_actionable_exception", "reconcile_external_side_effects_do_not_retry", "await_separate_completion_or_promotion_decision", "start_new_governed_attempt", "stop"]},
+    "implementation_manifest": {"type": "array", "minItems": 5, "maxItems": 5, "items": {"$ref": "#/$defs/file"}},
+    "claims": {"$ref": "#/$defs/claims"}
+  },
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"},
+    "sha": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "time": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"},
+    "identity": {
+      "type": "object", "additionalProperties": false,
+      "required": ["client_id", "deployment_id", "environment_id", "source_id", "source_artifact_id", "source_artifact_digest", "workload_id", "run_id", "attempt_id", "evaluation_time"],
+      "properties": {
+        "client_id": {"$ref": "#/$defs/id"}, "deployment_id": {"$ref": "#/$defs/id"},
+        "environment_id": {"$ref": "#/$defs/id"}, "source_id": {"$ref": "#/$defs/id"},
+        "source_artifact_id": {"$ref": "#/$defs/id"}, "source_artifact_digest": {"$ref": "#/$defs/sha"},
+        "workload_id": {"$ref": "#/$defs/id"}, "run_id": {"$ref": "#/$defs/id"},
+        "attempt_id": {"$ref": "#/$defs/id"}, "evaluation_time": {"$ref": "#/$defs/time"}
+      }
+    },
+    "authorityPolicy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["authority_id", "key_id", "public_key", "permitted_kinds", "evidence_class"],
+      "properties": {
+        "authority_id": {"$ref": "#/$defs/id"}, "key_id": {"$ref": "#/$defs/id"},
+        "public_key": {"type": "string", "minLength": 40, "maxLength": 64},
+        "permitted_kinds": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/stageKind"}},
+        "evidence_class": {"const": "synthetic_contract"}
+      }
+    },
+    "policy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["policy_id", "version", "issued_at", "valid_until", "max_events", "authorities"],
+      "properties": {
+        "policy_id": {"$ref": "#/$defs/id"}, "version": {"type": "string", "pattern": "^[1-9][0-9]*\\.[0-9]+\\.[0-9]+$"},
+        "issued_at": {"$ref": "#/$defs/time"}, "valid_until": {"$ref": "#/$defs/time"},
+        "max_events": {"type": "integer", "minimum": 1, "maximum": 256},
+        "authorities": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/authorityPolicy"}}
+      }
+    },
+    "stageKind": {"enum": ["readiness_qualified", "conversion_succeeded", "execution_succeeded", "validation_succeeded", "repair_succeeded", "human_approved", "human_denied", "cancellation_requested"]},
+    "state": {"enum": ["pending_readiness", "ready", "converted", "executed", "validated", "blocked", "unsupported", "failed", "human_pending", "outcome_unknown", "human_approved", "human_denied", "cancelled"]},
+    "historyAuthority": {
+      "type": "object", "additionalProperties": false,
+      "required": ["authority_id", "key_id", "evidence_class"],
+      "properties": {
+        "authority_id": {"$ref": "#/$defs/id"},
+        "key_id": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/id"}]},
+        "evidence_class": {"enum": ["synthetic_contract", "governed_failure_classification"]}
+      }
+    },
+    "history": {
+      "type": "object", "additionalProperties": false,
+      "required": ["sequence", "event_id", "event_kind", "observed_at", "evidence_id", "evidence_sha256", "state_before", "state_after", "authority"],
+      "properties": {
+        "sequence": {"type": "integer", "minimum": 1}, "event_id": {"$ref": "#/$defs/id"},
+        "event_kind": {"oneOf": [{"$ref": "#/$defs/stageKind"}, {"const": "failure_classified"}]},
+        "observed_at": {"$ref": "#/$defs/time"}, "evidence_id": {"$ref": "#/$defs/id"},
+        "evidence_sha256": {"$ref": "#/$defs/sha"}, "state_before": {"$ref": "#/$defs/state"},
+        "state_after": {"$ref": "#/$defs/state"}, "authority": {"$ref": "#/$defs/historyAuthority"}
+      }
+    },
+    "failure": {
+      "type": "object", "additionalProperties": false,
+      "required": ["failure_id", "stage", "reason_code", "retryability", "next_action", "side_effect_state"],
+      "properties": {
+        "failure_id": {"$ref": "#/$defs/id"}, "stage": {"type": "string", "minLength": 1, "maxLength": 64},
+        "reason_code": {"type": "string", "minLength": 1, "maxLength": 128},
+        "retryability": {"type": "string", "minLength": 1, "maxLength": 64},
+        "next_action": {"type": "string", "minLength": 1, "maxLength": 128},
+        "side_effect_state": {"type": "string", "minLength": 1, "maxLength": 64}
+      }
+    },
+    "file": {
+      "type": "object", "additionalProperties": false, "required": ["path", "sha256"],
+      "properties": {"path": {"type": "string", "minLength": 1}, "sha256": {"$ref": "#/$defs/sha"}}
+    },
+    "claims": {
+      "type": "object", "additionalProperties": false,
+      "required": ["live_external_execution", "humana_validated", "semantic_parity", "production_ready", "migration_complete", "exception_approved", "promotion_authorized"],
+      "properties": {
+        "live_external_execution": {"const": false}, "humana_validated": {"const": false},
+        "semantic_parity": {"const": false}, "production_ready": {"const": false},
+        "migration_complete": {"const": false}, "exception_approved": {"const": false},
+        "promotion_authorized": {"const": false}
+      }
+    }
+  }
+}

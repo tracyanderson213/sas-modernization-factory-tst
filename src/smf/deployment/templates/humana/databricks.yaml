@@ -1,0 +1,30 @@
+schema_version: "1.0"
+deployment_identity:
+  client_id: humana
+  deployment_id: humana-competition-pilot
+  environment_id: humana-databricks-pilot
+provider: databricks
+
+# Values remain placeholders until named Humana owners publish attributable
+# approvals through the HENV-01 prerequisite-evidence contract.
+bindings:
+  - {binding_id: databricks-workspace, role: workspace, state: placeholder, value: REQUIRED, owner_requirement: HC-REQ-05}
+  - {binding_id: workload-identity, role: identity, state: pending, value: REQUIRED, owner_requirement: HC-REQ-10}
+  - {binding_id: protected-secret-provider, role: secret_provider, state: pending, value: REQUIRED, owner_requirement: HC-REQ-10}
+  - {binding_id: unity-catalog, role: catalog, state: placeholder, value: REQUIRED, owner_requirement: HC-REQ-05}
+  - {binding_id: target-schema, role: target_schema, state: placeholder, value: REQUIRED, owner_requirement: HC-REQ-05}
+  - {binding_id: isolated-scratch-scope, role: scratch_scope, state: placeholder, value: REQUIRED, owner_requirement: HC-REQ-05}
+  - {binding_id: isolated-output-scope, role: output_scope, state: placeholder, value: REQUIRED, owner_requirement: HC-REQ-05}
+  - {binding_id: source-read-scope, role: source_read_scope, state: pending, value: REQUIRED, owner_requirement: HC-REQ-05}
+  - {binding_id: databricks-runtime, role: runtime_version, state: placeholder, value: REQUIRED, owner_requirement: HC-REQ-05}
+  - {binding_id: compute-policy, role: compute_policy, state: pending, value: compute-policy.yaml, owner_requirement: HC-REQ-07}
+  - {binding_id: private-network-policy, role: network_policy, state: pending, value: REQUIRED, owner_requirement: HC-REQ-05}
+  - {binding_id: workload-concurrency-limit, role: concurrency_limit, state: placeholder, value: REQUIRED, owner_requirement: HC-REQ-07}
+  - {binding_id: workload-timeout-seconds, role: timeout_seconds, state: placeholder, value: REQUIRED, owner_requirement: HC-REQ-07}
+  - {binding_id: cleanup-retention-policy, role: cleanup_retention_policy, state: pending, value: REQUIRED, owner_requirement: HC-REQ-06}
+  - {binding_id: logging-audit-policy, role: logging_audit_policy, state: pending, value: REQUIRED, owner_requirement: HC-REQ-09}
+  - {binding_id: workload-validation-policy, role: validation_policy, state: pending, value: validation-policy.yaml, owner_requirement: HC-REQ-04}
+
+protected_data:
+  classification: regulated
+  write_mode: isolated_only

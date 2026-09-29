@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "receipt_id", "upstream_id", "canonical_origin", "revision", "revision_type", "artifact_class", "scope_id", "run_id", "attempt_id", "policy_digest", "inventory_digest", "artifact", "acquisition", "license_evidence", "activity", "capability_evidence", "observed_limitation_ids", "compatibility", "disposition", "permitted_use", "observer_authority", "proof"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "receipt_id": {"$ref": "#/$defs/id"}, "upstream_id": {"$ref": "#/$defs/id"},
+    "canonical_origin": {"type": "string", "format": "uri", "pattern": "^https://"},
+    "revision": {"type": "string", "pattern": "^[a-f0-9]{40,64}$"},
+    "revision_type": {"enum": ["git_commit", "sha256"]},
+    "artifact_class": {"enum": ["source_tree", "python_package", "native_library", "jvm_package", "runtime", "corpus", "research"]},
+    "scope_id": {"$ref": "#/$defs/id"}, "run_id": {"$ref": "#/$defs/id"}, "attempt_id": {"$ref": "#/$defs/id"},
+    "policy_digest": {"$ref": "#/$defs/sha"}, "inventory_digest": {"$ref": "#/$defs/sha"},
+    "artifact": {"$ref": "#/$defs/file"},
+    "acquisition": {"$ref": "#/$defs/acquisition"},
+    "license_evidence": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/license"}},
+    "activity": {"type": "object", "additionalProperties": false, "required": ["source", "revision", "observed_at"], "properties": {"source": {"type": "string", "format": "uri", "pattern": "^https://"}, "revision": {"type": "string", "pattern": "^[a-f0-9]{40,64}$"}, "observed_at": {"type": "string", "format": "date-time"}}},
+    "capability_evidence": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/capability"}},
+    "observed_limitation_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+    "compatibility": {"type": "object", "additionalProperties": false, "required": ["state", "environment_digest", "evidence_id", "evidence"], "properties": {"state": {"enum": ["compatible", "pending", "incompatible", "unsupported"]}, "environment_digest": {"$ref": "#/$defs/sha"}, "evidence_id": {"$ref": "#/$defs/id"}, "evidence": {"$ref": "#/$defs/supporting_file"}}},
+    "disposition": {"$ref": "#/$defs/disposition"},
+    "permitted_use": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/use"}},
+    "observer_authority": {"$ref": "#/$defs/id"}, "proof": {"$ref": "#/$defs/proof"}
+  },
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"},
+    "sha": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "path": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._ /-]{0,255}$"},
+    "proof": {"type": "object", "additionalProperties": false, "required": ["algorithm", "key_id", "value"], "properties": {"algorithm": {"const": "ed25519"}, "key_id": {"$ref": "#/$defs/id"}, "value": {"type": "string", "minLength": 1}}},
+    "file": {"type": "object", "additionalProperties": false, "required": ["relative_path", "artifact_type", "byte_count", "sha256"], "properties": {"relative_path": {"$ref": "#/$defs/path"}, "artifact_type": {"enum": ["source_tree_archive", "wheel", "jar", "runtime_inventory", "corpus_archive", "research_archive", "license"]}, "byte_count": {"type": "integer", "minimum": 1}, "sha256": {"$ref": "#/$defs/sha"}}},
+    "supporting_file": {"type": "object", "additionalProperties": false, "required": ["relative_path", "artifact_type", "byte_count", "sha256"], "properties": {"relative_path": {"$ref": "#/$defs/path"}, "artifact_type": {"enum": ["execution_record", "environment_manifest", "command_output", "negative_case_record", "compatibility_record"]}, "byte_count": {"type": "integer", "minimum": 1}, "sha256": {"$ref": "#/$defs/sha"}}},
+    "license": {"type": "object", "additionalProperties": false, "required": ["relative_path", "artifact_type", "byte_count", "sha256", "evidence_id", "license_id"], "properties": {"relative_path": {"$ref": "#/$defs/path"}, "artifact_type": {"const": "license"}, "byte_count": {"type": "integer", "minimum": 1}, "sha256": {"$ref": "#/$defs/sha"}, "evidence_id": {"$ref": "#/$defs/id"}, "license_id": {"enum": ["Apache-2.0", "MIT", "BSD-3-Clause", "Unlicense", "Databricks-License", "NOASSERTION"]}}},
+    "acquisition": {"type": "object", "additionalProperties": false, "required": ["acquisition_id", "upstream_id", "canonical_origin", "revision", "revision_type", "artifact", "authority", "acquired_at", "proof"], "properties": {"acquisition_id": {"$ref": "#/$defs/id"}, "upstream_id": {"$ref": "#/$defs/id"}, "canonical_origin": {"type": "string", "format": "uri", "pattern": "^https://"}, "revision": {"type": "string", "pattern": "^[a-f0-9]{40,64}$"}, "revision_type": {"enum": ["git_commit", "sha256"]}, "artifact": {"$ref": "#/$defs/file"}, "authority": {"$ref": "#/$defs/id"}, "acquired_at": {"type": "string", "format": "date-time"}, "proof": {"$ref": "#/$defs/proof"}}},
+    "capability": {"type": "object", "additionalProperties": false, "required": ["capability_id", "evidence_id", "evidence_type", "command", "expected_outcome", "actual_outcome", "exit_status", "execution_state", "environment_digest", "output_digest", "execution_evidence", "environment_evidence", "output_evidence", "negative_case_evidence", "mocked", "generated_only"], "properties": {"capability_id": {"$ref": "#/$defs/id"}, "evidence_id": {"$ref": "#/$defs/id"}, "evidence_type": {"enum": ["command", "test", "review"]}, "command": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1, "maxLength": 500}}, "expected_outcome": {"enum": ["pass", "fail", "unsupported"]}, "actual_outcome": {"enum": ["pass", "fail", "unsupported"]}, "exit_status": {"type": "integer"}, "execution_state": {"enum": ["executed", "failed", "skipped", "not_executed"]}, "environment_digest": {"$ref": "#/$defs/sha"}, "output_digest": {"$ref": "#/$defs/sha"}, "execution_evidence": {"$ref": "#/$defs/supporting_file"}, "environment_evidence": {"$ref": "#/$defs/supporting_file"}, "output_evidence": {"$ref": "#/$defs/supporting_file"}, "negative_case_evidence": {"$ref": "#/$defs/supporting_file"}, "mocked": {"type": "boolean"}, "generated_only": {"type": "boolean"}}},
+    "disposition": {"enum": ["adopt_directly", "wrap", "reuse_transitively", "reuse_selected_licensed_components", "patterns_only", "reject", "fork_and_harden"]},
+    "use": {"enum": ["runtime", "provider_wrapper", "transitive_dependency", "licensed_component", "evaluation_in_place", "public_corpus", "design_patterns", "dataframe_layer", "optional_quality_policy", "fixture_research", "none"]}
+  }
+}

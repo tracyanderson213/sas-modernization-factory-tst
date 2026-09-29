@@ -1,0 +1,4 @@
+insert_job: RUN_MAIN job_type: c
+command: scripts/run_main.sh
+condition: s(LOAD_SOURCE)
+start_times: "03:00"

@@ -1,0 +1,11 @@
+# Default repository owner
+* @tbarry3c
+
+# Architecture decisions
+/docs/architecture/ @tbarry3c
+
+# Schemas and contracts
+/schemas/ @tbarry3c
+
+# Deployment-specific policy
+/deployments/ @tbarry3c

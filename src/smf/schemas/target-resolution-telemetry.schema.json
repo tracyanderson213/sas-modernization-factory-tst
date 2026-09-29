@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://smf.local/schemas/target-resolution-telemetry.schema.json",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "result_id", "status", "terminal_disposition", "blocker_codes", "claims"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "result_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"},
+    "status": {"enum": ["resolved", "blocked"]},
+    "terminal_disposition": {"enum": ["qualified_offline", "blocked"]},
+    "blocker_codes": {"type": "array", "items": {"type": "string"}},
+    "claims": {
+      "type": "object", "additionalProperties": false,
+      "required": ["live_catalog_contacted", "target_exists", "access_authorized", "write_performed", "humana_ready", "production_ready", "migration_complete", "semantic_parity"],
+      "properties": {
+        "live_catalog_contacted": {"const": false}, "target_exists": {"const": false}, "access_authorized": {"const": false}, "write_performed": {"const": false},
+        "humana_ready": {"const": false}, "production_ready": {"const": false}, "migration_complete": {"const": false}, "semantic_parity": {"const": false}
+      }
+    }
+  }
+}

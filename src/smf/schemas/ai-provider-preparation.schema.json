@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://smf.example/schemas/ai-provider-preparation.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "decision_id", "request_digest", "request", "state", "evidence_refs", "proof"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "decision_id": {"$ref": "#/$defs/id"},
+    "request_digest": {"$ref": "#/$defs/digest"},
+    "request": {"type": "object", "minProperties": 1},
+    "state": {"const": "prepared"},
+    "evidence_refs": {"type": "array", "minItems": 7, "maxItems": 7, "uniqueItems": true, "items": {"$ref": "#/$defs/ref"}},
+    "proof": {"$ref": "#/$defs/proof"}
+  },
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"},
+    "digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "ref": {"type": "string", "pattern": "^evidence://[A-Za-z0-9][A-Za-z0-9._/-]{0,511}$"},
+    "proof": {"type": "object", "additionalProperties": false, "required": ["algorithm", "key_id", "value"], "properties": {"algorithm": {"const": "ed25519"}, "key_id": {"$ref": "#/$defs/id"}, "value": {"type": "string", "minLength": 1}}}
+  }
+}

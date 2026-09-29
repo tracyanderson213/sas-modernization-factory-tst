@@ -1,0 +1,17 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"https://schemas.smf.example/dp03-aggregate-receipt.schema.json",
+  "type":"object","additionalProperties":false,
+  "required":["schema_version","receipt_id","binding","policy_digest","groups","provider_id","provider_version","authority_id","authority_digest","content_digest","proof"],
+  "$defs":{
+    "id":{"type":"string","pattern":"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"},
+    "digest":{"type":"string","pattern":"^sha256:[0-9a-f]{64}$"},
+    "binding":{"type":"object","additionalProperties":false,"required":["dataset_id","snapshot_id","snapshot_digest","scope_id","scope_digest"],"properties":{"dataset_id":{"$ref":"#/$defs/id"},"snapshot_id":{"$ref":"#/$defs/id"},"snapshot_digest":{"$ref":"#/$defs/digest"},"scope_id":{"$ref":"#/$defs/id"},"scope_digest":{"$ref":"#/$defs/digest"}}},
+    "group":{"type":"object","additionalProperties":false,"required":["group","value","null_count"],"properties":{"group":{"type":"object","minProperties":1,"maxProperties":32,"additionalProperties":{"type":"string","minLength":1,"maxLength":128}},"value":{"type":["string","null"],"pattern":"^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?$"},"null_count":{"type":"integer","minimum":0}}},
+    "proof":{"type":"object","additionalProperties":false,"required":["algorithm","key_id","value"],"properties":{"algorithm":{"const":"ed25519"},"key_id":{"$ref":"#/$defs/id"},"value":{"type":"string","minLength":1}}}
+  },
+  "properties":{
+    "schema_version":{"const":"1.0"},"receipt_id":{"$ref":"#/$defs/id"},"binding":{"$ref":"#/$defs/binding"},"policy_digest":{"$ref":"#/$defs/digest"},
+    "groups":{"type":"array","items":{"$ref":"#/$defs/group"}},"provider_id":{"$ref":"#/$defs/id"},"provider_version":{"$ref":"#/$defs/id"},"authority_id":{"$ref":"#/$defs/id"},"authority_digest":{"$ref":"#/$defs/digest"},"content_digest":{"$ref":"#/$defs/digest"},"proof":{"$ref":"#/$defs/proof"}
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://smf.local/schemas/databricks-runtime-evidence.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version","contract_version","receipt_id","content_digest","request","request_digest","execution_plan","observation","state","blockers","implementation_manifest","claims"],
+  "properties": {
+    "schema_version": {"const":"1.0"},
+    "contract_version": {"const":"dbx-04.1.0"},
+    "receipt_id": {"$ref":"#/$defs/id"},
+    "content_digest": {"$ref":"#/$defs/sha"},
+    "request": {"type":"object","additionalProperties":false,"required":["client_id","deployment_id","environment_id","workload_id","source_id","run_id","attempt_id","package_id","package_digest","execution_plan_id","execution_plan_digest","evaluation_time"],"properties":{
+      "client_id":{"$ref":"#/$defs/id"},"deployment_id":{"$ref":"#/$defs/id"},"environment_id":{"$ref":"#/$defs/id"},"workload_id":{"$ref":"#/$defs/id"},"source_id":{"$ref":"#/$defs/id"},"run_id":{"$ref":"#/$defs/id"},"attempt_id":{"$ref":"#/$defs/id"},"package_id":{"$ref":"#/$defs/id"},"package_digest":{"$ref":"#/$defs/sha"},"execution_plan_id":{"$ref":"#/$defs/id"},"execution_plan_digest":{"$ref":"#/$defs/sha"},"evaluation_time":{"$ref":"#/$defs/time"}
+    }},
+    "request_digest":{"$ref":"#/$defs/sha"},
+    "execution_plan":{"type":"object","additionalProperties":false,"required":["result_id","content_digest","state"],"properties":{"result_id":{"$ref":"#/$defs/id"},"content_digest":{"$ref":"#/$defs/sha"},"state":{"const":"blocked_external_authority"}}},
+    "observation":{"type":"object","additionalProperties":false,"required":["evidence_class","observation_id","remote_run_id","remote_task_id","tasks","safe_logs","outputs","elapsed_seconds","machine_seconds"],"properties":{
+      "evidence_class":{"const":"synthetic_contract"},"observation_id":{"$ref":"#/$defs/id"},"remote_run_id":{"oneOf":[{"$ref":"#/$defs/id"},{"type":"null"}]},"remote_task_id":{"oneOf":[{"$ref":"#/$defs/id"},{"type":"null"}]},
+      "tasks":{"type":"array","maxItems":1000,"items":{"type":"object","additionalProperties":false,"required":["state","observed_at"],"properties":{"state":{"enum":["queued","running","succeeded","failed","cancelled","outcome_unknown"]},"observed_at":{"$ref":"#/$defs/time"}}}},
+      "safe_logs":{"type":"array","maxItems":100,"items":{"type":"string","minLength":1,"maxLength":512}},
+      "outputs":{"type":"array","maxItems":100,"items":{"type":"object","additionalProperties":false,"required":["reference","content_digest","valid_until"],"properties":{"reference":{"type":"string","pattern":"^evidence://[A-Za-z0-9][A-Za-z0-9._/-]{0,255}$"},"content_digest":{"$ref":"#/$defs/sha"},"valid_until":{"$ref":"#/$defs/time"}}}},
+      "elapsed_seconds":{"type":["integer","null"],"minimum":0},"machine_seconds":{"type":["integer","null"],"minimum":0}
+    }},
+    "state":{"const":"blocked_evidence_gaps"},
+    "blockers":{"type":"array","minItems":1,"uniqueItems":true,"items":{"enum":["live_runtime_evidence_required","missing_task_observations","missing_terminal_outcome","missing_safe_logs","missing_output_references","contradictory_task_states","outcome_unknown","expired_output_reference"]}},
+    "implementation_manifest":{"type":"array","minItems":4,"maxItems":4,"items":{"type":"object","additionalProperties":false,"required":["path","sha256"],"properties":{"path":{"type":"string","minLength":1},"sha256":{"$ref":"#/$defs/sha"}}}},
+    "claims":{"type":"object","additionalProperties":false,"required":["captured","generated","blocked","submitted","executed","validated","parity_passed","human_assisted","humana_ready","production_ready","migration_complete"],"properties":{"captured":{"const":true},"generated":{"const":true},"blocked":{"const":true},"submitted":{"const":false},"executed":{"const":false},"validated":{"const":false},"parity_passed":{"const":false},"human_assisted":{"const":false},"humana_ready":{"const":false},"production_ready":{"const":false},"migration_complete":{"const":false}}}
+  },
+  "$defs":{"id":{"type":"string","pattern":"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"},"sha":{"type":"string","pattern":"^[0-9a-f]{64}$"},"time":{"type":"string","pattern":"^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"}}
+}

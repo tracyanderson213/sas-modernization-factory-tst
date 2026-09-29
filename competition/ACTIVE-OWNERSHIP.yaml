@@ -1,0 +1,35 @@
+schema_version: 1
+refreshed_at: '2026-09-22T14:00:28-04:00'
+baseline:
+  ref: origin/main
+  commit: 70963c8b604b277196313a71405c009bc761ee9d
+active_integration_train:
+  name: competition/integration-day1-val01
+  release_pr: null
+  state: implementation_in_progress
+  rule: one active competition integration train and at most one release PR to main
+assignments:
+- work_id: VAL-01
+  kind: backlog_record
+  assignee: autonomous-agent
+  backlog_record: VAL-01
+  project_state: In Progress / Partial
+  state: implementation_in_progress
+  dependencies:
+  - SCHEMA-INT-01
+  - DP-02
+  - DP-03
+  - DP-04
+  - DP-05
+  - DBX-04
+  integration_target: competition/integration-day1-val01
+  branch: agent/val-01-v1
+  worktree: /private/tmp/smf-val-01-v1
+  files:
+  - src/smf/validation/val01.py
+  - schemas/val01-*.schema.json
+  - src/smf/schemas/val01-*.schema.json
+  - tests/unit/test_val01_*.py
+  - tests/integration/test_val01_*.py
+  - scripts/test-val01-confidence.sh
+  - docs/VAL-01_ACCEPTANCE.md

@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://smf.local/schemas/migration-cli-result.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "contract_version", "command", "request_id", "decision_id", "result_id", "artifact_id", "content_digest", "canonical_evidence_reference", "identity", "source_snapshot", "configuration_manifest", "request_artifacts", "status", "terminal_disposition", "backend_state", "evidence_class", "blockers", "next_permitted_action", "lifecycle"],
+  "properties": {
+    "schema_version": {"const": "1.0"}, "contract_version": {"const": "1.0"},
+    "command": {"enum": ["convert", "modernize", "status", "resume", "exceptions.list", "exceptions.submit", "exceptions.decide", "approve", "promote", "ai-gateway.preflight"]},
+    "request_id": {"$ref": "#/$defs/stable_id"}, "decision_id": {"$ref": "#/$defs/stable_id"}, "result_id": {"$ref": "#/$defs/stable_id"}, "artifact_id": {"$ref": "#/$defs/stable_id"},
+    "content_digest": {"$ref": "#/$defs/digest"}, "canonical_evidence_reference": {"type": "string", "pattern": "^runs/[^/]+/(workloads/[^/]+/)?contract-attempts/[^/]+/migration-cli\\.result\\.json$"},
+    "identity": {"type": "object", "additionalProperties": false, "required": ["contract_version", "command", "client_id", "deployment_id", "environment_id", "workload_id", "subject_id", "source_closure_digest", "workload_configuration_digest", "configuration_bundle_digest", "request_artifact_bundle_digest", "upstream_qualification_id", "upstream_revision", "run_id", "attempt_id", "invocation_id", "action_target"], "properties": {
+      "contract_version": {"const": "1.0"}, "command": {"type": "string", "minLength": 1},
+      "client_id": {"$ref": "#/$defs/nullable"}, "deployment_id": {"$ref": "#/$defs/nullable"}, "environment_id": {"$ref": "#/$defs/nullable"}, "workload_id": {"$ref": "#/$defs/nullable"}, "subject_id": {"$ref": "#/$defs/nullable"},
+      "source_closure_digest": {"oneOf": [{"$ref": "#/$defs/digest"}, {"type": "null"}]}, "workload_configuration_digest": {"oneOf": [{"$ref": "#/$defs/digest"}, {"type": "null"}]}, "configuration_bundle_digest": {"oneOf": [{"$ref": "#/$defs/digest"}, {"type": "null"}]}, "request_artifact_bundle_digest": {"oneOf": [{"$ref": "#/$defs/digest"}, {"type": "null"}]},
+      "upstream_qualification_id": {"$ref": "#/$defs/nullable"}, "upstream_revision": {"$ref": "#/$defs/nullable"}, "run_id": {"type": "string", "minLength": 1}, "attempt_id": {"$ref": "#/$defs/nullable"}, "invocation_id": {"type": "string", "minLength": 1}, "action_target": {"$ref": "#/$defs/nullable"}
+    }},
+    "source_snapshot": {"oneOf": [{"$ref": "migration-source-snapshot.schema.json"}, {"type": "null"}]},
+    "configuration_manifest": {"oneOf": [{"$ref": "migration-configuration-manifest.schema.json"}, {"type": "null"}]},
+    "request_artifacts": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["role", "reference", "sha256", "byte_count"], "properties": {"role": {"type": "string", "pattern": "^[a-z][a-z0-9_-]{0,63}$"}, "reference": {"type": "string", "minLength": 1}, "sha256": {"$ref": "#/$defs/digest"}, "byte_count": {"type": "integer", "minimum": 1}}}},
+    "status": {"const": "blocked"}, "terminal_disposition": {"const": "not_implemented"}, "backend_state": {"const": "not_implemented"}, "evidence_class": {"const": "offline_contract_scaffold"},
+    "blockers": {"type": "array", "minItems": 1, "items": {"type": "object", "additionalProperties": false, "required": ["code", "state"], "properties": {"code": {"type": "string", "minLength": 1}, "state": {"enum": ["missing", "pending", "denied", "failed", "unsupported", "not_implemented", "outcome_unknown"]}}}},
+    "next_permitted_action": {"const": "resolve_prerequisites_or_implement_owned_backend"},
+    "lifecycle": {"type": "object", "additionalProperties": false, "required": ["generated", "executed", "validated", "parity_passed", "certified", "human_approved", "promoted", "provider_invoked"], "properties": {"generated": {"const": false}, "executed": {"const": false}, "validated": {"const": false}, "parity_passed": {"const": false}, "certified": {"const": false}, "human_approved": {"const": false}, "promoted": {"const": false}, "provider_invoked": {"const": false}}}
+  },
+  "$defs": {"stable_id": {"type": "string", "pattern": "^[A-Z]+-[a-f0-9]{16}$"}, "digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"}, "nullable": {"oneOf": [{"type": "string", "minLength": 1}, {"type": "null"}]}}
+}

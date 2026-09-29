@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.smf.example/dp02-source-count-receipt.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "receipt_id", "binding", "count", "provider_id", "provider_version", "authority_id", "authority_digest", "content_digest"],
+  "$defs": {
+    "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dataset_id", "snapshot_id", "snapshot_digest", "scope_id", "scope_digest"],
+      "properties": {
+        "dataset_id": {"type": "string", "minLength": 1},
+        "snapshot_id": {"type": "string", "minLength": 1},
+        "snapshot_digest": {"$ref": "#/$defs/digest"},
+        "scope_id": {"type": "string", "minLength": 1},
+        "scope_digest": {"$ref": "#/$defs/digest"}
+      }
+    }
+  },
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "receipt_id": {"type": "string", "minLength": 1},
+    "binding": {"$ref": "#/$defs/binding"},
+    "count": {"type": ["integer", "null"], "minimum": 0},
+    "provider_id": {"type": "string", "minLength": 1},
+    "provider_version": {"type": "string", "minLength": 1},
+    "authority_id": {"type": "string", "minLength": 1},
+    "authority_digest": {"$ref": "#/$defs/digest"},
+    "content_digest": {"$ref": "#/$defs/digest"}
+  }
+}

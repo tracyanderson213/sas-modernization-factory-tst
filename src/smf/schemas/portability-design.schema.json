@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://smf.local/schemas/portability-design.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "evidence_class", "profile", "client_id", "workload_id", "source_digest", "upstream_revision", "run_id", "attempt_id", "observed_at", "evaluated_at", "freshness_max_age_seconds", "design_id", "runtime_matrix", "requirements", "observations", "offline_artifacts", "digests"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "evidence_class": {"enum": ["synthetic_contract", "real"]},
+    "profile": {"enum": ["source-only", "offline-packaged"]},
+    "client_id": {"$ref": "#/$defs/id"},
+    "workload_id": {"$ref": "#/$defs/id"},
+    "source_digest": {"$ref": "#/$defs/sha"},
+    "upstream_revision": {"type": "string", "minLength": 7, "maxLength": 128, "pattern": "^[A-Za-z0-9._:-]+$"},
+    "run_id": {"$ref": "#/$defs/id"},
+    "attempt_id": {"$ref": "#/$defs/id"},
+    "observed_at": {"type": "string", "format": "date-time"},
+    "evaluated_at": {"type": "string", "format": "date-time"},
+    "freshness_max_age_seconds": {"type": "integer", "minimum": 1, "maximum": 31536000},
+    "design_id": {"$ref": "#/$defs/id"},
+    "runtime_matrix": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/runtime"}},
+    "requirements": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/requirement"}},
+    "observations": {"type": "array", "items": {"$ref": "#/$defs/observation"}},
+    "offline_artifacts": {"type": "array", "items": {"$ref": "#/$defs/artifact"}},
+    "digests": {
+      "type": "object", "additionalProperties": false,
+      "required": ["runtime_matrix", "dependency_lock", "offline_artifact_plan"],
+      "properties": {"runtime_matrix": {"$ref": "#/$defs/sha"}, "dependency_lock": {"$ref": "#/$defs/sha"}, "offline_artifact_plan": {"$ref": "#/$defs/sha"}}
+    }
+  },
+  "$defs": {
+    "id": {"type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"},
+    "sha": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "nullableVersion": {"type": ["string", "null"], "maxLength": 128},
+    "runtime": {
+      "type": "object", "additionalProperties": false,
+      "required": ["matrix_id", "os", "architecture", "python_version", "spark_version", "scala_binary", "jvm_version", "databricks_runtime"],
+      "properties": {
+        "matrix_id": {"$ref": "#/$defs/id"}, "os": {"type": "string", "minLength": 1, "maxLength": 64},
+        "architecture": {"enum": ["x86_64", "aarch64", "platform-independent"]},
+        "python_version": {"type": "string", "pattern": "^3\\.(11|12)(\\.[0-9]+)?$"},
+        "spark_version": {"$ref": "#/$defs/nullableVersion"}, "scala_binary": {"$ref": "#/$defs/nullableVersion"},
+        "jvm_version": {"$ref": "#/$defs/nullableVersion"}, "databricks_runtime": {"$ref": "#/$defs/nullableVersion"}
+      }
+    },
+    "requirement": {
+      "type": "object", "additionalProperties": false,
+      "required": ["component_id", "kind", "version", "platform_id", "artifact_sha256"],
+      "properties": {
+        "component_id": {"$ref": "#/$defs/id"}, "kind": {"enum": ["python-wheel", "jar", "native", "runtime-supplied", "smf-source"]},
+        "version": {"type": "string", "minLength": 1, "maxLength": 128}, "platform_id": {"$ref": "#/$defs/id"}, "artifact_sha256": {"$ref": "#/$defs/sha"}
+      }
+    },
+    "observation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["component_id", "state", "version", "platform_id", "runtime_matrix_digest", "artifact_sha256", "authority_digest", "observed_at"],
+      "properties": {
+        "component_id": {"$ref": "#/$defs/id"}, "state": {"enum": ["present", "missing", "incompatible", "unapproved", "stale", "ambiguous"]},
+        "version": {"$ref": "#/$defs/nullableVersion"}, "platform_id": {"$ref": "#/$defs/id"},
+        "runtime_matrix_digest": {"$ref": "#/$defs/sha"}, "artifact_sha256": {"anyOf": [{"$ref": "#/$defs/sha"}, {"type": "null"}]},
+        "authority_digest": {"anyOf": [{"$ref": "#/$defs/sha"}, {"type": "null"}]}, "observed_at": {"type": "string", "format": "date-time"}
+      }
+    },
+    "artifact": {
+      "type": "object", "additionalProperties": false,
+      "required": ["component_id", "kind", "filename", "version", "platform_id", "sha256", "source_revision", "license_digest", "notice_digest", "sbom_digest", "provenance_digest", "vulnerability_digest", "intake_state"],
+      "properties": {
+        "component_id": {"$ref": "#/$defs/id"}, "kind": {"enum": ["python-wheel", "jar", "native", "runtime-supplied", "smf-source"]},
+        "filename": {"type": "string", "minLength": 1, "maxLength": 255, "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]*$"},
+        "version": {"type": "string", "minLength": 1, "maxLength": 128}, "platform_id": {"$ref": "#/$defs/id"}, "sha256": {"$ref": "#/$defs/sha"},
+        "source_revision": {"type": "string", "minLength": 7, "maxLength": 128, "pattern": "^[A-Za-z0-9._:-]+$"},
+        "license_digest": {"$ref": "#/$defs/sha"}, "notice_digest": {"$ref": "#/$defs/sha"},
+        "sbom_digest": {"$ref": "#/$defs/sha"}, "provenance_digest": {"$ref": "#/$defs/sha"}, "vulnerability_digest": {"$ref": "#/$defs/sha"},
+        "intake_state": {"enum": ["approved", "pending", "denied", "blocked", "stale", "ambiguous"]}
+      }
+    }
+  }
+}

@@ -1,0 +1,25 @@
+schema_version: 1
+scenario_id: semantic-dynamic-macro
+name: SAS dynamic macro resolution
+domain: semantics
+description: Isolates nested indirect macro resolution, generated dataset naming, and conditional code.
+source: {source_id: smf-semantic-fixtures, origin: smf, license: Internal test fixture}
+capabilities: [macro-definition, macro-variable-reference, macro-invocation, indirect-macro-resolution, macro-quoting]
+artifacts:
+- {path: ../workloads/semantic/adversarial/dynamic-macro.sas, role: sas-program, sha256: 0f59b5041fcb69b72af3a3e8d4ec5803ac43025f52f2138fa614b6e35f969140, source_id: smf-semantic-fixtures}
+- {path: ../workloads/semantic/expected/dynamic-macro.json, role: expected-output, sha256: ec45d30177d2eeb7139265afd13f9c4386be124b8b36e4c26baad0e170d31b8c, source_id: smf-semantic-fixtures}
+output_evidence:
+- {evidence_id: dynamic-macro-declared, logical_output: work.west_selected, artifact: ../workloads/semantic/expected/dynamic-macro.json, format: json, evidence_origin: declared-synthetic-expectation, producer: smf-authored-oracle, content_hash: ec45d30177d2eeb7139265afd13f9c4386be124b8b36e4c26baad0e170d31b8c, deterministic: true, authoritative: true}
+semantic_oracles:
+- oracle_id: dynamic-macro-oracle
+  logical_output: work.west_selected
+  evidence_id: dynamic-macro-declared
+  comparison: keyed
+  keys: [id]
+  behavior: Indirect macro variables resolve a limit and generate a named, conditionally filtered dataset.
+  columns:
+  - {name: id, logical_type: numeric, nullable: false}
+  - {name: region, logical_type: character, nullable: false, length: 8}
+  - {name: amount, logical_type: numeric, nullable: false}
+  session: {yearcutoff: 1920, locale: en_US, encoding: utf-8, sort_sequence: binary, timezone: UTC}
+metadata: {tier: semantic, private_data: false, fixture_kind: smf-authored, primary_behavior: dynamic-macro}

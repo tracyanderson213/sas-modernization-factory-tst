@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://smf.local/schemas/migration-cli-telemetry.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "result_id", "decision_id", "command", "status", "terminal_disposition", "blocker_states", "lifecycle"],
+  "properties": {
+    "schema_version": {"const": "1.0"}, "result_id": {"type": "string", "pattern": "^MRES-[a-f0-9]{16}$"}, "decision_id": {"type": "string", "pattern": "^MDEC-[a-f0-9]{16}$"}, "command": {"type": "string", "minLength": 1}, "status": {"const": "blocked"}, "terminal_disposition": {"const": "not_implemented"},
+    "blocker_states": {"type": "array", "minItems": 1, "items": {"enum": ["missing", "pending", "denied", "failed", "unsupported", "not_implemented", "outcome_unknown"]}},
+    "lifecycle": {"type": "object", "additionalProperties": false, "required": ["generated", "executed", "validated", "parity_passed", "certified", "human_approved", "promoted", "provider_invoked"], "properties": {"generated": {"const": false}, "executed": {"const": false}, "validated": {"const": false}, "parity_passed": {"const": false}, "certified": {"const": false}, "human_approved": {"const": false}, "promoted": {"const": false}, "provider_invoked": {"const": false}}}
+  }
+}

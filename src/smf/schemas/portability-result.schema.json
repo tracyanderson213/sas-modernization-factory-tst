@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://smf.local/schemas/portability-result.schema.json",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "result_id", "design_id", "client_id", "workload_id", "source_digest", "upstream_revision", "run_id", "attempt_id", "profile", "contract_digest", "outcome", "blockers", "required_offline_artifacts", "claims", "content_digest"],
+  "properties": {
+    "schema_version": {"const": "1.0"}, "result_id": {"$ref": "#/$defs/id"}, "design_id": {"$ref": "#/$defs/id"},
+    "client_id": {"$ref": "#/$defs/id"}, "workload_id": {"$ref": "#/$defs/id"}, "source_digest": {"$ref": "#/$defs/sha"},
+    "upstream_revision": {"type": "string", "minLength": 7, "maxLength": 128}, "run_id": {"$ref": "#/$defs/id"}, "attempt_id": {"$ref": "#/$defs/id"},
+    "profile": {"enum": ["source-only", "offline-packaged"]}, "contract_digest": {"$ref": "#/$defs/sha"},
+    "outcome": {"enum": ["contract_pass", "denied", "failed", "ambiguous", "incompatible", "stale", "pending", "blocked"]},
+    "blockers": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^[a-z0-9_:-]+$"}},
+    "required_offline_artifacts": {"type": "array", "items": {"$ref": "#/$defs/offlineRequirement"}},
+    "claims": {
+      "type": "object", "additionalProperties": false,
+      "required": ["authorizes_installation", "authorizes_distribution", "authorizes_runtime", "qualifies_final_bundle", "establishes_humana_readiness"],
+      "properties": {"authorizes_installation": {"const": false}, "authorizes_distribution": {"const": false}, "authorizes_runtime": {"const": false}, "qualifies_final_bundle": {"const": false}, "establishes_humana_readiness": {"const": false}}
+    },
+    "content_digest": {"$ref": "#/$defs/sha"}
+  },
+  "$defs": {
+    "id": {"type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"},
+    "sha": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "offlineRequirement": {
+      "type": "object", "additionalProperties": false,
+      "required": ["component_id", "filename", "kind", "version", "platform_id", "runtime_matrix", "expected_sha256", "source_revision", "license_digest", "notice_digest", "sbom_digest", "provenance_digest", "vulnerability_digest", "intake_state"],
+      "properties": {
+        "component_id": {"$ref": "#/$defs/id"}, "filename": {"type": "string", "minLength": 1, "maxLength": 255, "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]*$"},
+        "kind": {"enum": ["python-wheel", "jar", "native", "runtime-supplied", "smf-source"]}, "version": {"type": "string", "minLength": 1, "maxLength": 128},
+        "platform_id": {"$ref": "#/$defs/id"}, "runtime_matrix": {"$ref": "#/$defs/runtime"}, "expected_sha256": {"$ref": "#/$defs/sha"},
+        "source_revision": {"type": "string", "minLength": 7, "maxLength": 128, "pattern": "^[A-Za-z0-9._:-]+$"}, "license_digest": {"$ref": "#/$defs/sha"},
+        "notice_digest": {"$ref": "#/$defs/sha"}, "sbom_digest": {"$ref": "#/$defs/sha"},
+        "provenance_digest": {"$ref": "#/$defs/sha"}, "vulnerability_digest": {"$ref": "#/$defs/sha"},
+        "intake_state": {"enum": ["approved", "pending", "denied", "blocked", "stale", "ambiguous"]}
+      }
+    },
+    "runtime": {
+      "type": "object", "additionalProperties": false,
+      "required": ["matrix_id", "os", "architecture", "python_version", "spark_version", "scala_binary", "jvm_version", "databricks_runtime"],
+      "properties": {
+        "matrix_id": {"$ref": "#/$defs/id"}, "os": {"type": "string", "minLength": 1, "maxLength": 64},
+        "architecture": {"enum": ["x86_64", "aarch64", "platform-independent"]}, "python_version": {"type": "string", "pattern": "^3\\.(11|12)(\\.[0-9]+)?$"},
+        "spark_version": {"type": ["string", "null"], "maxLength": 128}, "scala_binary": {"type": ["string", "null"], "maxLength": 128},
+        "jvm_version": {"type": ["string", "null"], "maxLength": 128}, "databricks_runtime": {"type": ["string", "null"], "maxLength": 128}
+      }
+    }
+  }
+}

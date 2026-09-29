@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://smf.example/schemas/deployment-configuration.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "deployment_identity", "provider", "bindings", "protected_data"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "deployment_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["client_id", "deployment_id", "environment_id"],
+      "properties": {
+        "client_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9.-]{0,127}$"},
+        "deployment_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9.-]{0,127}$"},
+        "environment_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9.-]{0,127}$"}
+      }
+    },
+    "provider": {"const": "databricks"},
+    "bindings": {
+      "type": "array",
+      "minItems": 16,
+      "maxItems": 16,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["binding_id", "role", "state", "value", "owner_requirement"],
+        "properties": {
+          "binding_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9.-]{0,127}$"},
+          "role": {"type": "string", "enum": ["workspace", "identity", "secret_provider", "catalog", "target_schema", "scratch_scope", "output_scope", "source_read_scope", "runtime_version", "compute_policy", "network_policy", "concurrency_limit", "timeout_seconds", "cleanup_retention_policy", "logging_audit_policy", "validation_policy"]},
+          "state": {"type": "string", "enum": ["placeholder", "pending", "active", "denied"]},
+          "value": {"type": "string", "minLength": 1, "maxLength": 512},
+          "owner_requirement": {"type": "string", "pattern": "^HC-REQ-[0-9]{2}$"}
+        }
+      }
+    },
+    "protected_data": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["classification", "write_mode"],
+      "properties": {
+        "classification": {"type": "string", "enum": ["restricted", "regulated"]},
+        "write_mode": {"const": "isolated_only"}
+      }
+    }
+  }
+}

@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sas-modernization-factory/schemas/readiness-policy.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["policy_id", "policy_version", "classification_precedence", "supported_artifact_kinds", "unresolved_dependencies", "required_environment_checks", "required_runtime_checks", "evidence_provenance", "verification_keys", "baseline", "mappings", "human_review", "owners", "next_actions"],
+  "properties": {
+    "policy_id": {"type": "string", "minLength": 1},
+    "policy_version": {"type": "string", "minLength": 1},
+    "classification_precedence": {
+      "type": "array",
+      "prefixItems": [
+        {"const": "UNSUPPORTED"}, {"const": "BLOCKED"}, {"const": "NEEDS_EVIDENCE"}, {"const": "HUMAN_REQUIRED"}, {"const": "READY"}
+      ],
+      "items": false,
+      "minItems": 5,
+      "maxItems": 5
+    },
+    "supported_artifact_kinds": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "unresolved_dependencies": {
+      "type": "object", "additionalProperties": false,
+      "required": ["dynamic", "ambiguous", "missing", "external", "recursive", "cyclic", "runtime_dependent", "unsupported", "limit_exceeded"],
+      "properties": {
+        "dynamic": {"enum": ["BLOCKED", "NEEDS_EVIDENCE", "UNSUPPORTED"]},
+        "ambiguous": {"enum": ["BLOCKED", "NEEDS_EVIDENCE", "UNSUPPORTED"]},
+        "missing": {"enum": ["BLOCKED", "NEEDS_EVIDENCE", "UNSUPPORTED"]},
+        "external": {"enum": ["BLOCKED", "NEEDS_EVIDENCE", "UNSUPPORTED"]},
+        "recursive": {"enum": ["BLOCKED", "NEEDS_EVIDENCE", "UNSUPPORTED"]},
+        "cyclic": {"enum": ["BLOCKED", "NEEDS_EVIDENCE", "UNSUPPORTED"]},
+        "runtime_dependent": {"enum": ["BLOCKED", "NEEDS_EVIDENCE", "UNSUPPORTED"]},
+        "unsupported": {"enum": ["BLOCKED", "NEEDS_EVIDENCE", "UNSUPPORTED"]},
+        "limit_exceeded": {"enum": ["BLOCKED", "NEEDS_EVIDENCE", "UNSUPPORTED"]}
+      }
+    },
+    "required_environment_checks": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "required_runtime_checks": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "prerequisite_binding": {"$ref": "#/$defs/prerequisiteBinding"},
+    "prerequisites": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/prerequisite"}},
+    "evidence_provenance": {
+      "type": "object", "additionalProperties": false,
+      "required": ["discovery_snapshot", "assessment", "dataset_mapping", "baseline", "environment", "runtime", "approval"],
+      "properties": {
+        "discovery_snapshot": {"$ref": "#/$defs/trustedProvenance"},
+        "assessment": {"$ref": "#/$defs/trustedProvenance"},
+        "dataset_mapping": {"$ref": "#/$defs/trustedProvenance"},
+        "baseline": {"$ref": "#/$defs/trustedProvenance"},
+        "environment": {"$ref": "#/$defs/trustedProvenance"},
+        "runtime": {"$ref": "#/$defs/trustedProvenance"},
+        "approval": {"$ref": "#/$defs/trustedProvenance"}
+      }
+    },
+    "verification_keys": {
+      "type": "object", "minProperties": 1,
+      "additionalProperties": {"type": "string", "minLength": 1}
+    },
+    "baseline": {
+      "type": "object", "additionalProperties": false, "required": ["authorities", "require_source_execution_id", "trusted_acquisition_policies"],
+      "properties": {
+        "authorities": {"type": "array", "items": {"type": "string"}, "minItems": 1, "uniqueItems": true},
+        "require_source_execution_id": {"type": "boolean"},
+        "trusted_acquisition_policies": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/trustedBaselineAcquisitionPolicy"}}
+      }
+    },
+    "mappings": {
+      "type": "object", "additionalProperties": false, "required": ["require_inputs", "require_outputs"],
+      "properties": {"require_inputs": {"type": "boolean"}, "require_outputs": {"type": "boolean"}}
+    },
+    "human_review": {
+      "type": "object", "additionalProperties": false, "required": ["complexities", "risk_factors"],
+      "properties": {
+        "complexities": {"type": "array", "items": {"enum": ["simple", "moderate", "complex", "highly_complex"]}, "uniqueItems": true},
+        "risk_factors": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+      }
+    },
+    "max_evidence_age_seconds": {"type": ["integer", "null"], "minimum": 1},
+    "owners": {"$ref": "#/$defs/categoryMap"},
+    "next_actions": {"$ref": "#/$defs/categoryMap"}
+  },
+  "allOf": [
+    {"if": {"required": ["prerequisites"]}, "then": {"required": ["prerequisite_binding"], "properties": {"required_environment_checks": {"maxItems": 0}, "required_runtime_checks": {"maxItems": 0}}}},
+    {"if": {"required": ["prerequisite_binding"]}, "then": {"required": ["prerequisites"]}}
+  ],
+  "$defs": {
+    "trustedBaselineAcquisitionPolicy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["policy_digest", "producer_authorities", "producer_key_ids", "approval_authorities", "approval_key_ids"],
+      "properties": {
+        "policy_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "producer_authorities": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1, "uniqueItems": true},
+        "producer_key_ids": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1, "uniqueItems": true},
+        "approval_authorities": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1, "uniqueItems": true},
+        "approval_key_ids": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1, "uniqueItems": true}
+      }
+    },
+    "prerequisiteBinding": {
+      "type": "object", "additionalProperties": false,
+      "required": ["client_id", "deployment_id", "environment_id", "configuration_digest"],
+      "properties": {
+        "client_id": {"type": "string", "minLength": 1},
+        "deployment_id": {"type": "string", "minLength": 1},
+        "environment_id": {"type": "string", "minLength": 1},
+        "configuration_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+      }
+    },
+    "prerequisite": {
+      "type": "object", "additionalProperties": false,
+      "required": ["prerequisite_id", "domain", "evidence_kind", "owner_role", "requirement_refs", "owner_assignment_ref", "max_age_seconds", "next_action"],
+      "properties": {
+        "prerequisite_id": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"},
+        "domain": {"enum": ["sas_baseline", "databricks", "data_scope", "network", "identity", "quota", "validation", "retention", "audit"]},
+        "evidence_kind": {"enum": ["environment", "runtime"]},
+        "owner_role": {"type": "string", "minLength": 1},
+        "requirement_refs": {"type": "array", "items": {"type": "string", "pattern": "^HC-REQ-[0-9]{2}$"}, "minItems": 1, "uniqueItems": true},
+        "owner_assignment_ref": {"type": ["string", "null"], "minLength": 1},
+        "max_age_seconds": {"type": "integer", "minimum": 1},
+        "next_action": {"type": "string", "minLength": 1}
+      }
+    },
+    "trustedProvenance": {
+      "type": "object", "additionalProperties": false,
+      "required": ["authorities", "acquisition_sources", "key_ids"],
+      "properties": {
+        "authorities": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1, "uniqueItems": true},
+        "acquisition_sources": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1, "uniqueItems": true},
+        "key_ids": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1, "uniqueItems": true}
+      }
+    },
+    "categoryMap": {
+      "type": "object", "additionalProperties": false,
+      "required": ["discovery", "dependency", "assessment", "unsupported_construct", "dataset_mapping", "baseline", "runtime", "environment", "human_approval", "evidence_integrity"],
+      "properties": {
+        "discovery": {"type": "string", "minLength": 1}, "dependency": {"type": "string", "minLength": 1},
+        "assessment": {"type": "string", "minLength": 1}, "unsupported_construct": {"type": "string", "minLength": 1},
+        "dataset_mapping": {"type": "string", "minLength": 1}, "baseline": {"type": "string", "minLength": 1},
+        "runtime": {"type": "string", "minLength": 1}, "environment": {"type": "string", "minLength": 1},
+        "human_approval": {"type": "string", "minLength": 1}, "evidence_integrity": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

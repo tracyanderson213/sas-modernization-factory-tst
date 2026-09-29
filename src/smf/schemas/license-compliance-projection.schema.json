@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "projection_type", "result_id", "decision_id", "client_id", "workload_id", "source_digest", "run_id", "attempt_id", "policy_digest", "evidence_digest", "outcome", "blockers", "synthetic_contract_pass", "authorizes_real_components", "authorizes_distribution", "content_digest"],
+  "properties": {
+    "schema_version": {"const": "1.0"}, "projection_type": {"const": "license_compliance_non_authorizing"},
+    "result_id": {"$ref": "#/$defs/id"}, "decision_id": {"$ref": "#/$defs/id"}, "client_id": {"$ref": "#/$defs/id"}, "workload_id": {"$ref": "#/$defs/id"}, "source_digest": {"$ref": "#/$defs/sha"}, "run_id": {"$ref": "#/$defs/id"}, "attempt_id": {"$ref": "#/$defs/id"}, "policy_digest": {"$ref": "#/$defs/sha"}, "evidence_digest": {"$ref": "#/$defs/sha"},
+    "outcome": {"enum": ["contract_pass", "blocked", "pending", "denied", "failed", "ambiguous", "incompatible", "stale", "unavailable_scanner"]}, "blockers": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+    "synthetic_contract_pass": {"type": "boolean"}, "authorizes_real_components": {"const": false}, "authorizes_distribution": {"const": false}, "content_digest": {"$ref": "#/$defs/sha"}
+  },
+  "$defs": {"id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"}, "sha": {"type": "string", "pattern": "^[a-f0-9]{64}$"}}
+}

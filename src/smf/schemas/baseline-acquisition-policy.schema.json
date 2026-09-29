@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "policy_id", "policy_version", "client_id", "provider", "provider_version", "allowed_modes", "allowed_output_formats", "max_export_age_seconds", "max_output_bytes", "producer_provenance", "approval_provenance", "verification_keys"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "policy_id": {"$ref": "#/$defs/id"},
+    "policy_version": {"$ref": "#/$defs/id"},
+    "client_id": {"$ref": "#/$defs/id"},
+    "provider": {"const": "approved_export"},
+    "provider_version": {"$ref": "#/$defs/id"},
+    "allowed_modes": {"type": "array", "items": {"enum": ["approved_export", "sas_execution"]}, "minItems": 1, "uniqueItems": true},
+    "allowed_output_formats": {"type": "array", "items": {"enum": ["csv", "json", "parquet", "sas7bdat"]}, "minItems": 1, "uniqueItems": true},
+    "max_export_age_seconds": {"type": "integer", "minimum": 1},
+    "max_output_bytes": {"type": "integer", "minimum": 1},
+    "producer_provenance": {"$ref": "#/$defs/provenance"},
+    "approval_provenance": {"$ref": "#/$defs/provenance"},
+    "verification_keys": {"type": "object", "minProperties": 2, "additionalProperties": {"type": "string", "minLength": 1}}
+  },
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"},
+    "provenance": {
+      "type": "object", "additionalProperties": false, "required": ["authorities", "key_ids"],
+      "properties": {
+        "authorities": {"type": "array", "items": {"$ref": "#/$defs/id"}, "minItems": 1, "uniqueItems": true},
+        "key_ids": {"type": "array", "items": {"$ref": "#/$defs/id"}, "minItems": 1, "uniqueItems": true}
+      }
+    }
+  }
+}

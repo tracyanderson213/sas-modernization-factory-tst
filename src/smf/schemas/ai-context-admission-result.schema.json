@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://smf.example/schemas/ai-context-admission-result.schema.json",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "decision_id", "request", "state", "blocker_codes", "checks", "evidence_refs", "permitted_artifact_ids", "permitted_fields", "context_digest", "context_byte_count", "terminal_disposition", "context_qualified", "transport_attempted", "submission_authorized", "generated", "executed", "validated", "parity_passed", "certified", "human_approved", "human_assisted", "content_digest", "proof"],
+  "properties": {
+    "schema_version": {"const": "1.0"}, "decision_id": {"$ref": "#/$defs/id"}, "request": {"type": "object"},
+    "state": {"enum": ["qualified_offline", "blocked_missing", "blocked_pending", "denied", "blocked_ambiguous", "invalid_binding"]},
+    "blocker_codes": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+    "checks": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["check_id", "status"], "properties": {"check_id": {"$ref": "#/$defs/id"}, "status": {"enum": ["pass", "fail", "missing"]}}}},
+    "evidence_refs": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"$ref": "#/$defs/id"}},
+    "permitted_artifact_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}}, "permitted_fields": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+    "context_digest": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/digest"}]}, "context_byte_count": {"type": ["integer", "null"], "minimum": 1},
+    "terminal_disposition": {"enum": ["context_qualified_offline", "context_not_qualified"]}, "context_qualified": {"type": "boolean"},
+    "transport_attempted": {"const": false}, "submission_authorized": {"const": false}, "generated": {"const": false}, "executed": {"const": false}, "validated": {"const": false}, "parity_passed": {"const": false}, "certified": {"const": false}, "human_approved": {"const": false}, "human_assisted": {"const": false}, "content_digest": {"$ref": "#/$defs/digest"},
+    "proof": {"type": "object", "additionalProperties": false, "required": ["algorithm", "key_id", "value"], "properties": {"algorithm": {"const": "ed25519"}, "key_id": {"$ref": "#/$defs/id"}, "value": {"type": "string", "minLength": 1}}}
+  },
+  "$defs": {"id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"}, "digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

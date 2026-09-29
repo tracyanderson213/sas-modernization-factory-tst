@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "github-issue-readback-receipt.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "repository", "backlog_key", "issue_number", "title", "state", "url", "issue_updated_at", "retrieved_at", "retrieval_method", "body_sha256", "canonical_selected_json_stream_sha256", "local_body"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "repository": {"const": "tbarry3c/sas-modernization-factory"},
+    "backlog_key": {"const": "DBX-03"},
+    "issue_number": {"const": 153},
+    "title": {"const": "Validation compute policy"},
+    "state": {"const": "OPEN"},
+    "url": {"const": "https://github.com/tbarry3c/sas-modernization-factory/issues/153"},
+    "issue_updated_at": {"const": "2026-09-18T22:28:47Z"},
+    "retrieved_at": {"const": "2026-09-19T11:20:44Z"},
+    "retrieval_method": {"const": "gh issue view 153 --json number,title,body,url,updatedAt,state"},
+    "body_sha256": {"const": "26186229f117a5199fe89843e8b4438a401dda42719d5dab210fc56e06d2e67e"},
+    "canonical_selected_json_stream_sha256": {"const": "46bf94171e8aaca145b881449404b28b6fb1204a32bfbaa2ee4f75bceff5cef1"},
+    "local_body": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "sha256", "matches_live_body"],
+      "properties": {
+        "path": {"const": "competition/generated/issue-specs/DBX-03.md"},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "matches_live_body": {"type": "boolean"}
+      }
+    }
+  }
+}

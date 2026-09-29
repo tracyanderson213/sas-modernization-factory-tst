@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "policy_id", "policy_version", "required_stages", "producers", "policy_digest"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "policy_id": {"$ref": "#/$defs/safe"},
+    "policy_version": {"$ref": "#/$defs/safe"},
+    "required_stages": {
+      "const": ["source_intake", "strategy", "conversion", "generated_artifact", "execution", "validation", "repair", "human_decision"]
+    },
+    "producers": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["evidence_type", "authority", "key_id", "public_key"],
+        "properties": {
+          "evidence_type": {"$ref": "#/$defs/nodeType"},
+          "authority": {"$ref": "#/$defs/safe"},
+          "key_id": {"$ref": "#/$defs/safe"},
+          "public_key": {"type": "string", "minLength": 40, "maxLength": 128}
+        }
+      }
+    },
+    "policy_digest": {"$ref": "#/$defs/digest"}
+  },
+  "$defs": {
+    "safe": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@+\\-]{0,255}$"},
+    "digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "nodeType": {"enum": ["source_intake", "strategy", "conversion", "generated_artifact", "execution", "validation", "repair", "human_decision"]}
+  }
+}

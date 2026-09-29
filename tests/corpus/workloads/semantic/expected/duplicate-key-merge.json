@@ -1,0 +1,1 @@
+{"schema_version":1,"columns":[{"name":"key","logical_type":"character","nullable":false,"length":8},{"name":"left_value","logical_type":"character","nullable":false,"length":8},{"name":"right_value","logical_type":"character","nullable":false,"length":8}],"rows":[["A","L1","R1"],["A","L2","R2"],["A","L3","R2"]]}

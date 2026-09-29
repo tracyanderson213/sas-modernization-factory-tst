@@ -1,0 +1,44 @@
+schema_version: "1.0"
+mode: preflight
+gateway:
+  state: pending
+  endpoint: https://gateway.example.invalid
+  route: /models/repair/messages
+  model_alias: approved-repair-model
+  api_version: v1
+authentication:
+  mode: pending
+  credential_reference: null
+  audience_reference: null
+headers:
+  - name: X-Correlation-ID
+    value_reference: evidence://correlation-header
+tls:
+  minimum_version: TLS1.2
+  ca_bundle_reference: null
+  client_certificate_reference: null
+  client_key_reference: null
+timeout:
+  connect_seconds: 10
+  request_seconds: 120
+  uncertain_outcome_seconds: 180
+retry:
+  max_attempts: 3
+  base_delay_ms: 250
+  max_delay_ms: 4000
+  retryable_statuses: [429, 502, 503, 504]
+quota:
+  max_concurrency: 2
+  requests_per_minute: 10
+  input_tokens_per_request: 4096
+  output_tokens_per_request: 4096
+retention:
+  persist_prompt: false
+  persist_response: false
+  sanitized_receipt_only: true
+authority:
+  state: pending
+  qualification_time: "2026-09-20T00:00:00Z"
+  valid_until: "2026-09-27T23:59:59Z"
+  configuration_authority_reference: null
+  connectivity_authority_reference: null

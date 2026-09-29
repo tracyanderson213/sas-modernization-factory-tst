@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://smf.example/schemas/environment-plan-result.schema.json",
+  "title": "SMF immutable offline environment plan result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "plan_id", "identity", "implementation_manifest", "policy", "planned_probes", "blockers", "status", "terminal_disposition", "retry", "canonical_evidence_reference", "claims", "content_digest"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "plan_id": {"type": "string", "pattern": "^DBENVPLAN-[a-f0-9]{24}$"},
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["client_id", "deployment_id", "environment_id", "mode", "factory_configuration_digest", "factory_bundle_digest", "environment_configuration_digest", "policy_digest", "implementation_manifest_digest", "run_id", "attempt_id"],
+      "properties": {
+        "client_id": {"type": "string"}, "deployment_id": {"type": "string"},
+        "environment_id": {"type": "string"},
+        "mode": {"enum": ["internal_provision", "customer_validate"]},
+        "factory_configuration_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "factory_bundle_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "environment_configuration_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "policy_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "implementation_manifest_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"}, "run_id": {"type": "string"},
+        "attempt_id": {"type": "string"}
+      }
+    },
+    "implementation_manifest": {
+      "type": "array", "minItems": 7, "maxItems": 7,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["path", "sha256"],
+        "properties": {"path": {"type": "string"}, "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}}
+      }
+    },
+    "policy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["policy_id", "policy_version", "workspace", "catalog", "volumes", "compute", "git", "vault", "ai_gateway", "packages", "sas_programs", "sas7bdat", "source_system"],
+      "properties": {
+        "policy_id": {"type": "string"}, "policy_version": {"type": "string"},
+        "workspace": {"$ref": "#/$defs/probe"}, "catalog": {"$ref": "#/$defs/probe"},
+        "volumes": {"$ref": "#/$defs/probe"}, "compute": {"$ref": "#/$defs/probe"},
+        "git": {"$ref": "#/$defs/optionalProbe"}, "vault": {"$ref": "#/$defs/probe"},
+        "ai_gateway": {"$ref": "#/$defs/probe"}, "packages": {"$ref": "#/$defs/probe"},
+        "sas_programs": {"$ref": "#/$defs/probe"}, "sas7bdat": {"$ref": "#/$defs/probe"},
+        "source_system": {"$ref": "#/$defs/probe"}
+      }
+    },
+    "planned_probes": {
+      "type": "array",
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["probe_id", "kind", "reference_id", "required", "timeout_seconds", "max_retries", "max_evidence_age_seconds", "write_scope", "dependencies", "disposition", "remediation", "provider_operation"],
+        "properties": {
+          "probe_id": {"type": "string"}, "kind": {"type": "string"},
+          "reference_id": {"type": "string"}, "required": {"type": "boolean"},
+          "timeout_seconds": {"type": "integer", "minimum": 1, "maximum": 3600},
+          "max_retries": {"type": "integer", "minimum": 0, "maximum": 3},
+          "max_evidence_age_seconds": {"type": "integer", "minimum": 1, "maximum": 2592000},
+          "write_scope": {"enum": ["none", "read_only", "scoped_internal"]},
+          "dependencies": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+          "disposition": {"enum": ["planned", "blocked", "omitted"]},
+          "remediation": {"enum": ["none", "supply_reference", "resolve_denial", "remove_customer_write_scope", "resolve_reference_dependencies"]},
+          "provider_operation": {"const": false}
+        }
+      }
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["code", "reference_id"],
+        "properties": {"code": {"type": "string"}, "reference_id": {"type": "string"}}
+      }
+    },
+    "status": {"enum": ["complete", "blocked"]},
+    "terminal_disposition": {"enum": ["complete", "blocked"]},
+    "retry": {
+      "type": "object", "additionalProperties": false,
+      "required": ["retryable", "recovery_count", "recovery_source"],
+      "properties": {
+        "retryable": {"type": "boolean"},
+        "recovery_count": {"type": "integer", "minimum": 0, "maximum": 1},
+        "recovery_source": {"type": ["string", "null"]}
+      }
+    },
+    "canonical_evidence_reference": {"type": "string", "pattern": "^runs/[^/]+/environments/[^/]+/plan-attempts/[^/]+/environment-plan\\.result\\.json$"},
+    "claims": {"$ref": "#/$defs/claims"},
+    "content_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  },
+  "$defs": {
+    "probe": {
+      "type": "object", "additionalProperties": false,
+      "required": ["required", "timeout_seconds", "max_retries", "max_evidence_age_seconds", "write_scope"],
+      "properties": {
+        "required": {"type": "boolean"}, "timeout_seconds": {"type": "integer"},
+        "max_retries": {"type": "integer"}, "max_evidence_age_seconds": {"type": "integer"},
+        "write_scope": {"enum": ["none", "read_only", "scoped_internal"]}
+      }
+    },
+    "optionalProbe": {"allOf": [{"$ref": "#/$defs/probe"}, {"properties": {"required": {"const": false}}}]},
+    "claims": {
+      "type": "object", "additionalProperties": false,
+      "required": ["provider_contacted", "authenticated", "infrastructure_mutated", "environment_ready", "source_ready", "generated", "executed", "validated", "reconciled", "parity_passed", "migration_complete", "promoted", "certified", "human_approved", "lifecycle_closed"],
+      "properties": {
+        "provider_contacted": {"const": false}, "authenticated": {"const": false},
+        "infrastructure_mutated": {"const": false}, "environment_ready": {"const": false},
+        "source_ready": {"const": false}, "generated": {"const": false},
+        "executed": {"const": false}, "validated": {"const": false},
+        "reconciled": {"const": false}, "parity_passed": {"const": false},
+        "migration_complete": {"const": false}, "promoted": {"const": false},
+        "certified": {"const": false}, "human_approved": {"const": false},
+        "lifecycle_closed": {"const": false}
+      }
+    }
+  }
+}

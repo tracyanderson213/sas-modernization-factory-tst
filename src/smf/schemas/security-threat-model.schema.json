@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://smf.example/schemas/security-threat-model.schema.json",
+  "title": "SMF offline security threat model",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "model_id", "model_version", "assessed_revision", "scope",
+    "review_status", "content_digest", "lifecycle_claim", "referenced_bindings",
+    "owners", "data_classes", "boundaries", "flows", "controls", "threats",
+    "evidence_contract", "advisory_recall", "unresolved_inputs"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "model_id": {"type": "string", "pattern": "^[a-z][a-z0-9-]{1,63}$"},
+    "model_version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+    "assessed_revision": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "scope": {"type": "string", "minLength": 20},
+    "review_status": {"enum": ["offline_reviewed", "draft", "superseded"]},
+    "content_digest": {"$ref": "#/$defs/digest"},
+    "lifecycle_claim": {"const": "architecture_evidence_only"},
+    "referenced_bindings": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/binding"}},
+    "owners": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/owner"}},
+    "data_classes": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["public", "internal", "client_confidential", "protected_data", "credential_reference", "sanitized_evidence", "runtime_result", "approval_record"]}},
+    "boundaries": {"type": "array", "minItems": 10, "items": {"$ref": "#/$defs/boundary"}},
+    "flows": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/flow"}},
+    "controls": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/control"}},
+    "threats": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/threat"}},
+    "evidence_contract": {"$ref": "#/$defs/evidenceContract"},
+    "advisory_recall": {"$ref": "#/$defs/advisoryRecall"},
+    "unresolved_inputs": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/unresolvedInput"}}
+  },
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[a-z][a-z0-9-]{1,63}$"},
+    "digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "repoPath": {"type": "string", "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)*$"},
+    "stringList": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "operation": {"enum": ["ai_repair", "ai_submission", "baseline_execution", "certification", "competition_acceptance", "databricks_execution", "end_to_end_certification", "estate_recall_authority", "humana_parity_qualification", "live_authentication", "parity_qualification", "production_promotion", "protected_data_execution", "protected_data_ingestion"]},
+    "operationList": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/operation"}},
+    "binding": {"type": "object", "additionalProperties": false, "required": ["id", "path", "sha256", "status"], "properties": {"id": {"$ref": "#/$defs/id"}, "path": {"$ref": "#/$defs/repoPath"}, "sha256": {"$ref": "#/$defs/digest"}, "status": {"enum": ["implemented", "pending", "denied", "unresolved"]}}},
+    "owner": {"type": "object", "additionalProperties": false, "required": ["id", "role"], "properties": {"id": {"$ref": "#/$defs/id"}, "role": {"type": "string", "minLength": 3}}},
+    "boundary": {"type": "object", "additionalProperties": false, "required": ["id", "kind", "name", "accepted_data_classes", "authority", "implementation_state", "blocked_operations"], "properties": {"id": {"$ref": "#/$defs/id"}, "kind": {"enum": ["source_ingestion", "canonical_evidence", "advisory_recall", "ai_transport", "durable_storage", "identity_secrets", "runtime", "validation", "human_approval", "engineering_worktree"]}, "name": {"type": "string", "minLength": 3}, "accepted_data_classes": {"$ref": "#/$defs/stringList"}, "authority": {"enum": ["untrusted_data", "advisory_only", "governed_control", "external_runtime", "human_authority"]}, "implementation_state": {"enum": ["implemented", "partial", "target", "unresolved"]}, "blocked_operations": {"$ref": "#/$defs/operationList"}}},
+    "flow": {"type": "object", "additionalProperties": false, "required": ["id", "origin_boundary_id", "destination_boundary_id", "payload_classes", "trust", "sanitization", "immutable_input", "required_identity_fields", "implementation_state", "blocked_operations", "grants_authority"], "properties": {"id": {"$ref": "#/$defs/id"}, "origin_boundary_id": {"$ref": "#/$defs/id"}, "destination_boundary_id": {"$ref": "#/$defs/id"}, "payload_classes": {"$ref": "#/$defs/stringList"}, "trust": {"enum": ["untrusted", "advisory", "governed", "external", "human"]}, "sanitization": {"enum": ["at_ingress", "before_persistence", "not_applicable", "pending"]}, "immutable_input": {"enum": ["snapshot", "digest_reverification", "not_applicable"]}, "required_identity_fields": {"$ref": "#/$defs/stringList"}, "implementation_state": {"enum": ["implemented", "partial", "target", "unresolved"]}, "blocked_operations": {"$ref": "#/$defs/operationList"}, "grants_authority": {"type": "boolean"}}},
+    "control": {"type": "object", "additionalProperties": false, "required": ["id", "owner_id", "description", "implementation_state", "implementation_refs", "evidence_refs", "authorizes_success"], "properties": {"id": {"$ref": "#/$defs/id"}, "owner_id": {"$ref": "#/$defs/id"}, "description": {"type": "string", "minLength": 10}, "implementation_state": {"enum": ["implemented", "partial", "target", "unresolved"]}, "implementation_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/repoPath"}}, "evidence_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/repoPath"}}, "authorizes_success": {"const": false}}},
+    "threat": {"type": "object", "additionalProperties": false, "required": ["id", "title", "severity", "flow_ids", "scenario", "owner_id", "control_ids", "evidence_requirements", "residual_status", "review_disposition", "blocked_operations"], "properties": {"id": {"$ref": "#/$defs/id"}, "title": {"type": "string", "minLength": 5}, "severity": {"enum": ["low", "medium", "high", "critical"]}, "flow_ids": {"$ref": "#/$defs/stringList"}, "scenario": {"type": "string", "minLength": 15}, "owner_id": {"$ref": "#/$defs/id"}, "control_ids": {"$ref": "#/$defs/stringList"}, "evidence_requirements": {"$ref": "#/$defs/stringList"}, "residual_status": {"enum": ["mitigated", "partially_mitigated", "unresolved", "accepted"]}, "review_disposition": {"enum": ["no_blocker", "review_blocker"]}, "blocked_operations": {"$ref": "#/$defs/operationList"}}},
+    "evidenceContract": {"type": "object", "additionalProperties": false, "required": ["required_identity_bindings", "claim_states", "meaningful_eligible_subject_required", "source_snapshot_or_reverification_required", "immutable_canonical_evidence", "idempotent_derived_recovery", "cross_workload_isolation", "secret_handling"], "properties": {"required_identity_bindings": {"$ref": "#/$defs/stringList"}, "claim_states": {"$ref": "#/$defs/stringList"}, "meaningful_eligible_subject_required": {"const": true}, "source_snapshot_or_reverification_required": {"const": true}, "immutable_canonical_evidence": {"const": true}, "idempotent_derived_recovery": {"const": true}, "cross_workload_isolation": {"const": true}, "secret_handling": {"const": "sanitize_before_persistence_or_hashing"}}},
+    "advisoryRecall": {"type": "object", "additionalProperties": false, "required": ["authority", "required_provenance_fields", "cross_client_default"], "properties": {"authority": {"const": "advisory_only"}, "required_provenance_fields": {"$ref": "#/$defs/stringList"}, "cross_client_default": {"const": "excluded"}}},
+    "unresolvedInput": {"type": "object", "additionalProperties": false, "required": ["id", "owner_id", "blocks", "state"], "properties": {"id": {"$ref": "#/$defs/id"}, "owner_id": {"$ref": "#/$defs/id"}, "blocks": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/operation"}}, "state": {"enum": ["pending", "denied", "unresolved"]}}}
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://smf.example/schemas/environment-plan-telemetry.schema.json",
+  "title": "SMF offline environment plan telemetry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "plan_id", "client_id", "deployment_id", "environment_id", "run_id", "attempt_id", "status", "blocked", "planned_probe_count", "blocker_count", "claims", "result_digest"],
+  "properties": {
+    "schema_version": {"const": "1.0"}, "plan_id": {"type": "string"},
+    "client_id": {"type": "string"}, "deployment_id": {"type": "string"},
+    "environment_id": {"type": "string"}, "run_id": {"type": "string"},
+    "attempt_id": {"type": "string"}, "status": {"enum": ["complete", "blocked"]},
+    "blocked": {"type": "boolean"}, "planned_probe_count": {"type": "integer", "minimum": 1},
+    "blocker_count": {"type": "integer", "minimum": 0},
+    "claims": {
+      "type": "object", "additionalProperties": false,
+      "required": ["provider_contacted", "authenticated", "infrastructure_mutated", "environment_ready", "source_ready", "generated", "executed", "validated", "reconciled", "parity_passed", "migration_complete", "promoted", "certified", "human_approved", "lifecycle_closed"],
+      "properties": {
+        "provider_contacted": {"const": false}, "authenticated": {"const": false},
+        "infrastructure_mutated": {"const": false}, "environment_ready": {"const": false},
+        "source_ready": {"const": false}, "generated": {"const": false},
+        "executed": {"const": false}, "validated": {"const": false},
+        "reconciled": {"const": false}, "parity_passed": {"const": false},
+        "migration_complete": {"const": false}, "promoted": {"const": false},
+        "certified": {"const": false}, "human_approved": {"const": false},
+        "lifecycle_closed": {"const": false}
+      }
+    },
+    "result_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  }
+}

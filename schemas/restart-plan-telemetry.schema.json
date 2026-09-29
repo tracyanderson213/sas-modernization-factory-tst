@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/schemas/restart-plan-telemetry.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "result_id", "workload_id", "run_id", "restart_id", "attempt_count", "latest_attempt_state", "decision_state", "action", "blocked", "claims"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "result_id": {"$ref": "#/$defs/id"}, "workload_id": {"$ref": "#/$defs/id"},
+    "run_id": {"$ref": "#/$defs/id"}, "restart_id": {"$ref": "#/$defs/id"},
+    "attempt_count": {"type": "integer", "minimum": 0, "maximum": 64},
+    "latest_attempt_state": {"oneOf": [{"type": "null"}, {"type": "string", "minLength": 1, "maxLength": 64}]},
+    "decision_state": {"type": "string", "minLength": 1, "maxLength": 64},
+    "action": {"type": "string", "minLength": 1, "maxLength": 128},
+    "blocked": {"type": "boolean"},
+    "claims": {"$ref": "#/$defs/claims"}
+  },
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"},
+    "claims": {
+      "type": "object", "additionalProperties": false,
+      "required": ["retry_executed", "external_submission_performed", "external_effect_reconciled", "generated", "executed", "validated", "parity_passed", "human_assisted", "humana_ready", "production_ready", "migration_complete"],
+      "properties": {
+        "retry_executed": {"const": false}, "external_submission_performed": {"const": false},
+        "external_effect_reconciled": {"const": false}, "generated": {"const": false},
+        "executed": {"const": false}, "validated": {"const": false},
+        "parity_passed": {"const": false}, "human_assisted": {"const": false},
+        "humana_ready": {"const": false}, "production_ready": {"const": false},
+        "migration_complete": {"const": false}
+      }
+    }
+  }
+}

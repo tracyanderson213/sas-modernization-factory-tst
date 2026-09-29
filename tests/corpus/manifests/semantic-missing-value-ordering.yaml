@@ -1,0 +1,26 @@
+schema_version: 1
+scenario_id: semantic-missing-value-ordering
+name: SAS missing-value ordering
+domain: semantics
+description: Isolates ordinary and special numeric missing values, ordering, propagation, and summary behavior.
+source: {source_id: smf-semantic-fixtures, origin: smf, license: Internal test fixture}
+capabilities: [data-step, missing-value, special-missing-value, missing-value-ordering, summary-function]
+artifacts:
+- {path: ../workloads/semantic/adversarial/missing-value-ordering.sas, role: sas-program, sha256: 331d8df3671f0fb84dcf590525dae76565f73220c42a0320c7f006b2c6ff2800, source_id: smf-semantic-fixtures}
+- {path: ../workloads/semantic/expected/missing-value-ordering.json, role: expected-output, sha256: 1e8cf664e8be86bf2fb156134ebd33ceda17e90e8def57c15025912a0c7e1d2f, source_id: smf-semantic-fixtures}
+output_evidence:
+- {evidence_id: missing-value-ordering-declared, logical_output: work.missing_ordering, artifact: ../workloads/semantic/expected/missing-value-ordering.json, format: json, evidence_origin: declared-synthetic-expectation, producer: smf-authored-oracle, content_hash: 1e8cf664e8be86bf2fb156134ebd33ceda17e90e8def57c15025912a0c7e1d2f, deterministic: true, authoritative: true}
+semantic_oracles:
+- oracle_id: missing-value-ordering-oracle
+  logical_output: work.missing_ordering
+  evidence_id: missing-value-ordering-declared
+  comparison: ordered
+  behavior: Special missing values retain identity for ordering, arithmetic produces ordinary missing, and SUM skips all numeric missing values.
+  columns:
+  - {name: label, logical_type: character, nullable: false, length: 9}
+  - {name: value, logical_type: numeric, nullable: true}
+  - {name: less_than_zero, logical_type: boolean, nullable: false}
+  - {name: propagated, logical_type: numeric, nullable: true}
+  - {name: summary_sum, logical_type: numeric, nullable: false}
+  session: {yearcutoff: 1920, locale: en_US, encoding: utf-8, sort_sequence: binary, timezone: UTC}
+metadata: {tier: semantic, private_data: false, fixture_kind: smf-authored, primary_behavior: missing-value-ordering}

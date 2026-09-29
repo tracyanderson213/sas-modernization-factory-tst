@@ -1,0 +1,28 @@
+{
+  "policy_id": "smf.sas-values.bounded-literals",
+  "version": "1.0.0",
+  "sas_semantic_family": "sas-9.4-compatible",
+  "supported_targets": ["sparksql", "pyspark"],
+  "ordinary_missing_mode": "unresolved",
+  "special_missing_mode": "unresolved",
+  "missing_comparison_mode": "unresolved",
+  "missing_ordering_mode": "unresolved",
+  "missing_arithmetic_mode": "unresolved",
+  "missing_summary_mode": "unresolved",
+  "missing_output_mode": "unresolved",
+  "character_to_numeric_mode": "exact-bounded-decimal-literals",
+  "numeric_to_character_mode": "unresolved",
+  "schema_dependent_mode": "unresolved",
+  "malformed_input_mode": "unresolved",
+  "lossy_coercion_mode": "unresolved",
+  "maximum_integer_digits": 18,
+  "maximum_fractional_digits": 9,
+  "unsupported_cases": [
+    "special missing representation",
+    "missing-sensitive comparison ordering arithmetic summary and output",
+    "schema-dependent coercion",
+    "numeric-to-character formatting",
+    "exponent locale date NaN and infinity strings",
+    "lossy range or precision conversion"
+  ]
+}

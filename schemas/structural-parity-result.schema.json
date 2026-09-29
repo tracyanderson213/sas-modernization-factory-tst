@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SMF Structural Parity Result",
+  "type": "object",
+  "required": ["schema_version", "comparison_id", "policy", "source_evidence", "target_evidence", "status", "checks", "warnings", "output_files"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "comparison_id": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "policy": {
+      "type": "object",
+      "required": ["policy_id", "policy_version", "digest"],
+      "properties": {
+        "policy_id": {"type": "string", "minLength": 1},
+        "policy_version": {"type": "string", "minLength": 1},
+        "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+      },
+      "additionalProperties": false
+    },
+    "source_evidence": {"$ref": "#/$defs/evidenceReference"},
+    "target_evidence": {"$ref": "#/$defs/evidenceReference"},
+    "status": {"enum": ["passed", "failed", "blocked"]},
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["code", "path", "expected", "actual", "applied_rule", "status", "blocking", "diagnostic"],
+        "properties": {
+          "code": {"type": "string", "pattern": "^SCHEMA-[A-Z-]+$"},
+          "path": {"type": "string", "minLength": 1},
+          "expected": {},
+          "actual": {},
+          "applied_rule": {"type": "string", "minLength": 1},
+          "status": {"enum": ["pass", "fail", "blocked"]},
+          "blocking": {"type": "boolean"},
+          "diagnostic": {"type": "string", "minLength": 1}
+        },
+        "additionalProperties": false
+      }
+    },
+    "warnings": {"type": "array", "items": {"type": "string"}},
+    "output_files": {"type": "array", "items": {"type": "string"}}
+  },
+  "$defs": {
+    "evidenceReference": {
+      "type": "object",
+      "required": ["logical_dataset_id", "engine", "digest", "producer", "origin", "reference", "authoritative"],
+      "properties": {
+        "logical_dataset_id": {"type": "string", "minLength": 1},
+        "engine": {"type": "string", "minLength": 1},
+        "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "producer": {"type": "string", "minLength": 1},
+        "origin": {"type": "string", "minLength": 1},
+        "reference": {"type": "string", "minLength": 1},
+        "authoritative": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/schemas/restart-plan-result.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "contract_version", "result_id", "content_digest", "canonical_evidence_reference", "request", "request_digest", "policy", "policy_digest", "lineage", "attempts", "decision", "implementation_manifest", "claims"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "contract_version": {"const": "orch-03.1.0"},
+    "result_id": {"$ref": "#/$defs/id"},
+    "content_digest": {"$ref": "#/$defs/sha"},
+    "canonical_evidence_reference": {"type": "string", "pattern": "^runs/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}/workloads/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}/restarts/[A-Za-z0-9][A-Za-z0-9._:-]{0,127}/restart-plan\\.result\\.json$"},
+    "request": {"$ref": "#/$defs/request"},
+    "request_digest": {"$ref": "#/$defs/sha"},
+    "policy": {"$ref": "#/$defs/policy"},
+    "policy_digest": {"$ref": "#/$defs/sha"},
+    "lineage": {"$ref": "#/$defs/lineage"},
+    "attempts": {"type": "array", "maxItems": 64, "items": {"$ref": "#/$defs/attempt"}},
+    "decision": {"$ref": "#/$defs/decision"},
+    "implementation_manifest": {"type": "array", "minItems": 6, "maxItems": 6, "items": {"$ref": "#/$defs/file"}},
+    "claims": {"$ref": "#/$defs/claims"}
+  },
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"},
+    "sha": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "time": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"},
+    "nullableId": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/id"}]},
+    "request": {
+      "type": "object", "additionalProperties": false,
+      "required": ["client_id", "deployment_id", "environment_id", "source_id", "source_artifact_id", "source_artifact_digest", "workload_id", "run_id", "restart_id", "evaluation_time", "expected_latest_attempt_id", "expected_latest_result_id"],
+      "properties": {
+        "client_id": {"$ref": "#/$defs/id"}, "deployment_id": {"$ref": "#/$defs/id"},
+        "environment_id": {"$ref": "#/$defs/id"}, "source_id": {"$ref": "#/$defs/id"},
+        "source_artifact_id": {"$ref": "#/$defs/id"}, "source_artifact_digest": {"$ref": "#/$defs/sha"},
+        "workload_id": {"$ref": "#/$defs/id"}, "run_id": {"$ref": "#/$defs/id"},
+        "restart_id": {"$ref": "#/$defs/id"}, "evaluation_time": {"$ref": "#/$defs/time"},
+        "expected_latest_attempt_id": {"$ref": "#/$defs/nullableId"},
+        "expected_latest_result_id": {"$ref": "#/$defs/nullableId"}
+      }
+    },
+    "authority": {
+      "type": "object", "additionalProperties": false,
+      "required": ["authority_id", "key_id", "public_key", "evidence_class"],
+      "properties": {
+        "authority_id": {"$ref": "#/$defs/id"}, "key_id": {"$ref": "#/$defs/id"},
+        "public_key": {"type": "string", "minLength": 40, "maxLength": 64},
+        "evidence_class": {"const": "synthetic_contract"}
+      }
+    },
+    "policy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["policy_id", "version", "issued_at", "valid_until", "max_attempts", "max_lineage_age_seconds", "authority"],
+      "properties": {
+        "policy_id": {"$ref": "#/$defs/id"},
+        "version": {"type": "string", "pattern": "^[1-9][0-9]*\\.[0-9]+\\.[0-9]+$"},
+        "issued_at": {"$ref": "#/$defs/time"}, "valid_until": {"$ref": "#/$defs/time"},
+        "max_attempts": {"type": "integer", "minimum": 1, "maximum": 64},
+        "max_lineage_age_seconds": {"type": "integer", "minimum": 1, "maximum": 86400},
+        "authority": {"$ref": "#/$defs/authority"}
+      }
+    },
+    "lineage": {
+      "type": "object", "additionalProperties": false,
+      "required": ["lineage_id", "relative_path", "sha256", "authority_scope"],
+      "properties": {
+        "lineage_id": {"$ref": "#/$defs/id"}, "relative_path": {"type": "string", "minLength": 1},
+        "sha256": {"$ref": "#/$defs/sha"}, "authority_scope": {"const": "synthetic_contract"}
+      }
+    },
+    "attempt": {
+      "type": "object", "additionalProperties": false,
+      "required": ["ordinal", "attempt_id", "result_id", "result_digest", "state", "next_action"],
+      "properties": {
+        "ordinal": {"type": "integer", "minimum": 1, "maximum": 64},
+        "attempt_id": {"$ref": "#/$defs/id"}, "result_id": {"$ref": "#/$defs/id"},
+        "result_digest": {"$ref": "#/$defs/sha"}, "state": {"type": "string", "minLength": 1, "maxLength": 64},
+        "next_action": {"type": "string", "minLength": 1, "maxLength": 128}
+      }
+    },
+    "decision": {
+      "type": "object", "additionalProperties": false,
+      "required": ["state", "action", "resume_stage", "new_attempt_id", "side_effect_disposition", "blockers", "idempotency_key"],
+      "properties": {
+        "state": {"enum": ["restart_planned", "no_restart_authorized", "retry_exhausted", "blocked_missing_attempt_evidence", "blocked_unknown_external_effect"]},
+        "action": {"enum": ["supply_governed_attempt_evidence", "reconcile_external_effects_before_retry", "none_validated", "stop", "await_separate_human_decision", "resolve_blocker_in_new_governed_run", "start_new_attempt", "stop_failed", "stop_retry_budget_exhausted"]},
+        "resume_stage": {"oneOf": [{"type": "null"}, {"enum": ["readiness", "deterministic_conversion", "ai_repair", "execution", "validation", "repair_execution_validation"]}]},
+        "new_attempt_id": {"$ref": "#/$defs/nullableId"},
+        "side_effect_disposition": {"enum": ["not_observed", "unknown_must_reconcile", "validated_terminal", "terminal_no_new_side_effect", "human_decision_required", "blocked_no_new_side_effect", "separate_decision_observed", "execution_completed_validation_pending", "governed_failure_action"]},
+        "blockers": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+        "idempotency_key": {"$ref": "#/$defs/id"}
+      }
+    },
+    "file": {
+      "type": "object", "additionalProperties": false, "required": ["path", "sha256"],
+      "properties": {"path": {"type": "string", "minLength": 1}, "sha256": {"$ref": "#/$defs/sha"}}
+    },
+    "claims": {
+      "type": "object", "additionalProperties": false,
+      "required": ["retry_executed", "external_submission_performed", "external_effect_reconciled", "generated", "executed", "validated", "parity_passed", "human_assisted", "humana_ready", "production_ready", "migration_complete"],
+      "properties": {
+        "retry_executed": {"const": false}, "external_submission_performed": {"const": false},
+        "external_effect_reconciled": {"const": false}, "generated": {"const": false},
+        "executed": {"const": false}, "validated": {"const": false},
+        "parity_passed": {"const": false}, "human_assisted": {"const": false},
+        "humana_ready": {"const": false}, "production_ready": {"const": false},
+        "migration_complete": {"const": false}
+      }
+    }
+  }
+}

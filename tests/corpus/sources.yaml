@@ -1,0 +1,90 @@
+schema_version: 1
+sources:
+- source_id: sas-learning-by-example-2e
+  name: Learning SAS by Example, Second Edition sample repository
+  origin: public-open-source
+  upstream_url: https://github.com/sascommunities/learning-sas-by-example-2nd
+  license: Apache-2.0
+  intended_use:
+  - DATA step semantics
+  - PROC SQL
+  - macro language
+  - formats and informats
+  - external data
+  - restructuring and combining data
+  acquisition_status: approved-source
+- source_id: sas-fundamentals-programming
+  name: Fundamentals of Programming in SAS sample repository
+  origin: public-open-source
+  upstream_url: https://github.com/sascommunities/fundamentals-programming-sas
+  license: Apache-2.0
+  intended_use:
+  - case-study workloads
+  - data validation
+  - multi-step SAS programming
+  acquisition_status: approved-source
+- source_id: sas-access-samples
+  name: SAS ACCESS sample repository
+  origin: public-open-source
+  upstream_url: https://github.com/sascommunities/sas-access-samples
+  license: Apache-2.0
+  intended_use:
+  - LIBNAME discovery
+  - external database connectivity
+  - connection option parsing
+  acquisition_status: vendoring-started
+- source_id: cms-de-synpuf
+  name: CMS 2008-2010 Data Entrepreneurs Synthetic Public Use File
+  origin: public-government
+  upstream_url: https://www.cms.gov/data-research/statistics-trends-and-reports/medicare-claims-synthetic-public-use-files
+  license: CMS Data Disclaimer / User Agreement / Public Use Data terms
+  intended_use:
+  - healthcare-shaped synthetic data
+  - beneficiary data
+  - inpatient claims
+  - outpatient claims
+  - carrier claims
+  - prescription drug events
+  - CMS-provided SAS read-in programs
+  acquisition_status: approved-source-review-terms-before-vendoring
+- source_id: sas-code-examples
+  name: SAS Code Examples
+  origin: public-open-source
+  upstream_url: https://github.com/sassoftware/sas-code-examples
+  license: Apache-2.0
+  intended_use:
+  - SAS-maintained syntax coverage
+  - DATA step constructs
+  - procedures
+  - utility macros
+  acquisition_status: pinned-public-portfolio
+  upstream_ref: 579e057f90cd699f744fd6a1c8acaf9243f7ff67
+  modification_status: untouched-required
+- source_id: sasjs-core
+  name: SASjs Core
+  origin: public-open-source
+  upstream_url: https://github.com/sasjs/core
+  license: MIT
+  intended_use:
+  - production-quality macro libraries
+  - macro dependency analysis
+  - generated SAS code
+  - SAS 9 metadata patterns
+  - DDL and utility macros
+  acquisition_status: pinned-public-portfolio
+  upstream_ref: d57fe80b08e3039be4b702aadbccf811c8704552
+  modification_status: untouched-required
+- source_id: cdisc-core-sas
+  name: CDISC CORE SAS
+  origin: public-open-source
+  upstream_url: https://github.com/lexjansen/cdisc-core-sas
+  license: MIT
+  intended_use:
+  - multi-artifact SAS application
+  - SAS 9 workload topology
+  - macros and executable programs
+  - metadata and configuration
+  - JSON and external integration patterns
+  acquisition_status: pinned-public-portfolio
+  upstream_ref: c9928c6819e0064e41c4af6606dc2839ddf750ef
+  modification_status: untouched-required

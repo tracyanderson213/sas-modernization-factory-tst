@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0",
+  "corpus_id": "spike02-sas2databricks-bounded-v1",
+  "corpus_revision": "1",
+  "description": "Bounded attributed construct sample for deterministic sas2databricks coverage characterization.",
+  "subjects": [
+    {
+      "subject_id": "create-column-select",
+      "source_artifact_id": "create-column-select-sas",
+      "source_path": "workloads/public/sas-code-examples/create-column-select.sas",
+      "source_sha256": "77dc81ec6df2e6996380a2c92148ef7ee9c80864f7728fa4d78ca6ae6c209927",
+      "provenance_path": "provenance/spike02/create-column-select.json",
+      "provenance_sha256": "ed14c2ff605f3691287e45b8034e6e5addfc49398f3681e65867667d17849921",
+      "constructs": ["proc-sql-create-table", "proc-sql-select"],
+      "complexity": "low",
+      "target": "pyspark"
+    },
+    {
+      "subject_id": "by-groupformat",
+      "source_artifact_id": "by-groupformat-sas",
+      "source_path": "workloads/public/sas-code-examples/by-groupformat.sas",
+      "source_sha256": "574ae686cae9e5b81e65da1a4d2e3565d5b100f75fa6550087047b842381c1de",
+      "provenance_path": "provenance/spike02/by-groupformat.json",
+      "provenance_sha256": "5b6279a90392f95fec1fe74f820d26a9dbe33728ea4a78a9eb212cab8fa4880e",
+      "constructs": ["by-group-format", "proc-sql-select"],
+      "complexity": "medium",
+      "target": "pyspark"
+    },
+    {
+      "subject_id": "representative-main",
+      "source_artifact_id": "representative-main-sas",
+      "source_path": "workloads/representative/multi-artifact-foundation/source/main.sas",
+      "source_sha256": "2409c6bb32cd2ab95d9cce37da16036b68562decdc48dd75a622ecf398f6fc13",
+      "provenance_path": "provenance/spike02/representative-main.json",
+      "provenance_sha256": "33196ca6c4e5e4961574344dec9d1b40a0bd754b7d3efe0b39405ca076e28f02",
+      "constructs": ["macro-invocation", "percent-include", "data-step"],
+      "complexity": "high",
+      "target": "pyspark"
+    }
+  ]
+}

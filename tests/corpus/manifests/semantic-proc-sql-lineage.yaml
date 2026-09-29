@@ -1,0 +1,68 @@
+schema_version: 1
+scenario_id: semantic-proc-sql-lineage
+name: Core SAS PROC SQL lineage
+domain: semantics
+description: SMF-authored executable semantic fixture for deterministic SAS discovery
+  and future conversion/behavioral validation.
+source:
+  source_id: smf-semantic-fixtures
+  origin: smf
+  license: Internal test fixture
+  upstream_url: https://github.com/sascommunities/learning-sas-by-example-2nd/blob/master/Example%20code/Programs%20Used%20in%20the%20Second%20Edition.sas
+  upstream_ref: 42b0ed32f5825838f366c01463ea708054460d82
+  notes: The fixture code is SMF-authored and does not copy upstream program text.
+    The public SAS Learning by Example source is retained as a semantic reference
+    and provenance aid.
+capabilities:
+- proc-sql
+- create-table
+- join
+- filter
+- aggregation
+- group-by
+- dataset-read
+- dataset-write
+artifacts:
+- path: ../workloads/semantic/core/proc-sql-lineage.sas
+  role: sas-program
+  sha256: 590680491eac4a3a2fe679feb0e468fa64d86c967a08308f6c8840a6ae5b5d74
+  source_id: smf-semantic-fixtures
+- path: ../workloads/semantic/expected/proc-sql-lineage.json
+  role: expected-output
+  sha256: ece9444c206f1baf1732d712550a635f89a0362dc8a81c51bea6f6c86bbb8ff9
+  source_id: smf-semantic-fixtures
+output_evidence:
+- evidence_id: proc-sql-lineage-declared
+  logical_output: work.active_member_cost
+  artifact: ../workloads/semantic/expected/proc-sql-lineage.json
+  format: json
+  evidence_origin: declared-synthetic-expectation
+  producer: smf-authored-oracle
+  content_hash: ece9444c206f1baf1732d712550a635f89a0362dc8a81c51bea6f6c86bbb8ff9
+  deterministic: true
+  authoritative: true
+semantic_oracles:
+- oracle_id: proc-sql-lineage-oracle
+  logical_output: work.active_member_cost
+  evidence_id: proc-sql-lineage-declared
+  comparison: keyed
+  keys: [member_id]
+  behavior: Inner join, filter, grouping, duplicate contribution, and aggregation.
+  columns:
+  - {name: member_id, logical_type: character, nullable: false, length: 8}
+  - {name: region, logical_type: character, nullable: false, length: 8}
+  - {name: total_paid, logical_type: numeric, nullable: false}
+  session: {yearcutoff: 1920, locale: en_US, encoding: utf-8, sort_sequence: binary, timezone: UTC}
+expected:
+  discovery:
+    minimum_artifacts: 1
+    reads:
+    - work.members
+    - work.claims
+    writes:
+    - work.active_member_cost
+metadata:
+  tier: semantic
+  private_data: false
+  fixture_kind: smf-authored-public-reference-backed
+  primary_behavior: proc-sql-lineage

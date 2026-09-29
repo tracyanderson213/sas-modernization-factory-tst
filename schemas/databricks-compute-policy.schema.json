@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "databricks-compute-policy.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "policy_id", "policy_version", "policy_state", "client_id", "deployment_id", "environment_id", "workspace_binding_id", "authority_ref", "authority_key_id", "authority_signature", "valid_from", "valid_until", "supersedes_policy_digest", "owner_requirement_refs", "max_availability_age_seconds", "profiles", "policy_digest"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "policy_id": {"$ref": "#/$defs/id"}, "policy_version": {"$ref": "#/$defs/version"},
+    "policy_state": {"enum": ["active", "pending", "denied", "superseded"]},
+    "client_id": {"$ref": "#/$defs/id"}, "deployment_id": {"$ref": "#/$defs/id"},
+    "environment_id": {"$ref": "#/$defs/id"}, "workspace_binding_id": {"$ref": "#/$defs/id"},
+    "authority_ref": {"oneOf": [{"$ref": "#/$defs/id"}, {"type": "null"}]},
+    "authority_key_id": {"oneOf": [{"$ref": "#/$defs/id"}, {"type": "null"}]},
+    "authority_signature": {"type": ["string", "null"]},
+    "valid_from": {"type": ["string", "null"], "format": "date-time"},
+    "valid_until": {"type": ["string", "null"], "format": "date-time"},
+    "supersedes_policy_digest": {"oneOf": [{"$ref": "#/$defs/digest"}, {"type": "null"}]},
+    "owner_requirement_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+    "max_availability_age_seconds": {"oneOf": [{"$ref": "#/$defs/positive"}, {"type": "null"}]},
+    "profiles": {"type": "array", "items": {"$ref": "#/$defs/profile"}},
+    "policy_digest": {"$ref": "#/$defs/digest"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"policy_state": {"const": "active"}}, "required": ["policy_state"]},
+      "then": {
+        "properties": {
+          "max_availability_age_seconds": {"$ref": "#/$defs/positive"},
+          "profiles": {"minItems": 1},
+          "authority_ref": {"$ref": "#/$defs/id"},
+          "authority_key_id": {"$ref": "#/$defs/id"},
+          "authority_signature": {"type": "string", "minLength": 1},
+          "valid_from": {"type": "string", "format": "date-time"},
+          "valid_until": {"type": "string", "format": "date-time"}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"policy_state": {"const": "pending"}}, "required": ["policy_state"]},
+      "then": {"properties": {
+        "authority_ref": {"type": "null"}, "authority_key_id": {"type": "null"},
+        "authority_signature": {"type": "null"}, "valid_from": {"type": "null"},
+        "valid_until": {"type": "null"}, "max_availability_age_seconds": {"type": "null"},
+        "profiles": {"maxItems": 0}
+      }}
+    },
+    {
+      "if": {"properties": {"profiles": {"maxItems": 0}}, "required": ["profiles"]},
+      "then": {"properties": {"max_availability_age_seconds": {"type": "null"}}}
+    }
+  ],
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"},
+    "version": {"type": "string", "pattern": "^[1-9][0-9]*\\.[0-9]+\\.[0-9]+$"},
+    "digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "positive": {"type": "integer", "minimum": 1},
+    "profile": {
+      "type": "object", "additionalProperties": false,
+      "required": ["profile_id", "priority", "compute_type", "access_mode", "dbr_version", "spark_version", "scala_version", "jvm_version", "node_type", "min_workers", "max_workers", "max_concurrent_workloads", "max_cost_usd", "max_runtime_seconds", "max_retries", "cancellation_deadline_seconds", "forced_termination_deadline_seconds", "network_policy_id", "source_scope_id", "output_scope_id", "target", "workload_class", "single_workload_isolation"],
+      "properties": {
+        "profile_id": {"$ref": "#/$defs/id"}, "priority": {"type": "integer", "minimum": 0},
+        "compute_type": {"const": "job_cluster"}, "access_mode": {"enum": ["single_user", "user_isolation"]},
+        "dbr_version": {"$ref": "#/$defs/id"}, "spark_version": {"$ref": "#/$defs/id"},
+        "scala_version": {"$ref": "#/$defs/id"}, "jvm_version": {"$ref": "#/$defs/id"},
+        "node_type": {"$ref": "#/$defs/id"}, "min_workers": {"$ref": "#/$defs/positive"},
+        "max_workers": {"$ref": "#/$defs/positive"}, "max_concurrent_workloads": {"$ref": "#/$defs/positive"},
+        "max_cost_usd": {"type": "number", "exclusiveMinimum": 0}, "max_runtime_seconds": {"$ref": "#/$defs/positive"},
+        "max_retries": {"type": "integer", "minimum": 0}, "cancellation_deadline_seconds": {"$ref": "#/$defs/positive"},
+        "forced_termination_deadline_seconds": {"$ref": "#/$defs/positive"},
+        "network_policy_id": {"$ref": "#/$defs/id"}, "source_scope_id": {"$ref": "#/$defs/id"},
+        "output_scope_id": {"$ref": "#/$defs/id"}, "target": {"enum": ["pyspark", "sparksql"]},
+        "workload_class": {"$ref": "#/$defs/id"}, "single_workload_isolation": {"const": true}
+      }
+    }
+  }
+}

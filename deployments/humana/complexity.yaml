@@ -1,0 +1,84 @@
+schema_version: "1.0"
+policy_id: POL-HUMANA-WORKLOAD-COMPLEXITY
+policy_version: 0.1.0
+policy_digest: 831aa00b7763d0b8d71379a888ab071bb8db36a8046e1f95cae4d611bc139278
+status: pending
+valid_from: "2026-09-16T00:00:00+00:00"
+valid_until: null
+allowed_clients: [humana]
+strategy: {strategy_id: smf-workload-complexity, strategy_version: 1.0.0}
+dimensions:
+  - dimension_id: static_constructs
+    required: true
+    tier_critical: true
+    cap: 0
+    features:
+      - {feature_id: sas_program, weight: 0, max_count: 1000}
+      - {feature_id: sas_macro_artifact, weight: 0, max_count: 1000}
+      - {feature_id: sas_include_artifact, weight: 0, max_count: 1000}
+      - {feature_id: format_catalog, weight: 0, max_count: 1000}
+  - dimension_id: macro_behavior
+    required: true
+    tier_critical: true
+    cap: 0
+    features:
+      - {feature_id: macro_observation, weight: 0, max_count: 10000}
+      - {feature_id: macro_dynamic, weight: 0, max_count: 10000}
+      - {feature_id: macro_cyclic, weight: 0, max_count: 10000}
+      - {feature_id: macro_runtime_dependent, weight: 0, max_count: 10000}
+      - {feature_id: macro_unsupported, weight: 0, max_count: 10000}
+      - {feature_id: macro_unresolved, weight: 0, max_count: 10000}
+  - dimension_id: dependency_topology
+    required: true
+    tier_critical: true
+    cap: 0
+    features:
+      - {feature_id: dependency_edge, weight: 0, max_count: 10000}
+      - {feature_id: unresolved_dependency, weight: 0, max_count: 10000}
+      - {feature_id: external_dependency, weight: 0, max_count: 10000}
+  - dimension_id: data_access
+    required: true
+    tier_critical: true
+    cap: 0
+    features:
+      - {feature_id: dataset, weight: 0, max_count: 10000}
+      - {feature_id: data_relationship, weight: 0, max_count: 10000}
+  - dimension_id: source_scale
+    required: true
+    tier_critical: true
+    cap: 0
+    features:
+      - {feature_id: eligible_artifact, weight: 0, max_count: 10000}
+      - {feature_id: meaningful_entry_point, weight: 0, max_count: 1}
+  - dimension_id: validation_difficulty
+    required: true
+    tier_critical: true
+    cap: 0
+    features:
+      - {feature_id: macro_blocker, weight: 0, max_count: 10000}
+thresholds:
+  - {tier: simple, min_score: 0}
+  - {tier: moderate, min_score: 1}
+  - {tier: complex, min_score: 2}
+  - {tier: highly_complex, min_score: 3}
+unknown_handling: block_tier
+permitted_evidence_methods: [filesystem, static_analysis]
+authoritative_versions:
+  discovery_providers: [filesystem, sas-content-assessment]
+  # Pending owner approval; this placeholder cannot qualify a real macro analysis.
+  macro_strategy_digests: ["0000000000000000000000000000000000000000000000000000000000000000"]
+deduplication: canonical_observation_identity
+aggregation: capped_sum
+owner_roles:
+  policy_approval: humana-modernization-owner
+  missing_evidence: source-owner
+  classification_exception: modernization-architect
+result_provenance:
+  authorities: [humana-assessment-service]
+  key_ids: [pending-complexity-key]
+verification_keys:
+  pending-complexity-key: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+authorizes_readiness: false
+authorizes_execution: false
+authorizes_parity: false
+authorizes_certification: false

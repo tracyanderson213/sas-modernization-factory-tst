@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sas-modernization-factory/schemas/run-lineage.schema.json",
+  "title": "SMF deterministic run-lineage envelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "workload_id", "source_revision_id", "run_id", "attempt_id",
+    "lineage_id", "client_id", "workload_key", "artifacts", "operation", "target",
+    "policy_digest", "strategy_digest", "configuration_digest", "idempotency_key",
+    "attempt_key", "provider", "provider_version", "qualified_input_digests"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "workload_id": {"$ref": "#/$defs/workloadId"},
+    "source_revision_id": {"$ref": "#/$defs/sourceId"},
+    "run_id": {"$ref": "#/$defs/runId"},
+    "attempt_id": {"$ref": "#/$defs/attemptId"},
+    "lineage_id": {"$ref": "#/$defs/lineageId"},
+    "client_id": {"$ref": "#/$defs/safeValue"},
+    "workload_key": {"$ref": "#/$defs/safeValue"},
+    "artifacts": {
+      "type": "array", "minItems": 1,
+      "items": {"$ref": "#/$defs/artifact"}
+    },
+    "operation": {
+      "enum": ["intake", "discovery", "assessment", "readiness", "conversion", "validation", "execution"]
+    },
+    "target": {"$ref": "#/$defs/safeValue"},
+    "policy_digest": {"$ref": "#/$defs/digest"},
+    "strategy_digest": {"$ref": "#/$defs/digest"},
+    "configuration_digest": {"$ref": "#/$defs/digest"},
+    "idempotency_key": {"$ref": "#/$defs/safeValue"},
+    "attempt_key": {"$ref": "#/$defs/safeValue"},
+    "provider": {"$ref": "#/$defs/safeValue"},
+    "provider_version": {"$ref": "#/$defs/safeValue"},
+    "qualified_input_digests": {
+      "type": "array", "minItems": 1, "uniqueItems": true,
+      "items": {"$ref": "#/$defs/digest"}
+    }
+  },
+  "$defs": {
+    "digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "safeValue": {"type": "string", "minLength": 1, "maxLength": 512},
+    "workloadId": {"type": "string", "pattern": "^WL-v1-[a-f0-9]{64}$"},
+    "sourceId": {"type": "string", "pattern": "^SRC-v1-[a-f0-9]{64}$"},
+    "runId": {"type": "string", "pattern": "^RUN-v1-[a-f0-9]{64}$"},
+    "attemptId": {"type": "string", "pattern": "^ATT-v1-[a-f0-9]{64}$"},
+    "lineageId": {"type": "string", "pattern": "^LIN-v1-[a-f0-9]{64}$"},
+    "artifact": {
+      "type": "object", "additionalProperties": false,
+      "required": ["subject_id", "kind", "logical_path", "sha256", "size_bytes", "entrypoint", "source_locators"],
+      "properties": {
+        "subject_id": {"$ref": "#/$defs/safeValue"},
+        "kind": {"enum": ["sas_program", "sas_macro", "sas_include", "format_catalog", "configuration", "shell_script", "scheduler_job", "other"]},
+        "logical_path": {"type": "string", "minLength": 1},
+        "sha256": {"$ref": "#/$defs/digest"},
+        "size_bytes": {"type": "integer", "minimum": 1},
+        "entrypoint": {"type": "boolean"},
+        "source_locators": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+      }
+    }
+  }
+}

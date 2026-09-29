@@ -1,0 +1,89 @@
+version: 2
+status: local planning baseline; client acceptance approvals pending
+confirmed_by_user:
+  duration_weeks: 10
+  script_inventory_count: 1000
+  complexity: mixed; distribution not yet supplied
+  objective: prove velocity and validation
+  source: user clarification in this planning conversation
+  calendar_start: null
+  calendar_deadline: null
+  customer_ecosystem:
+    secret_platform: HashiCorp Vault
+    identity_provider: Microsoft Entra ID / Active Directory
+    approved_llm_provider: Anthropic
+    source: user clarification in this planning conversation
+    caveat: Exact deployment, workload identity federation mechanism, scopes, endpoints, models and owner approvals remain pending.
+  art_02_implementation_boundary:
+    status: approved
+    approved_scope: Configuration-driven provider-neutral contracts, fail-closed adapters, protected-configuration validation and mocked integration tests may be implemented before live Humana binding values are supplied.
+    activation_boundary: Missing Humana Entra and Vault bindings block network access, live qualification and readiness claims, not isolated offline implementation.
+    source: user clarification in this planning conversation
+planning_arithmetic:
+  scenario: all 1000 distinct scripts validated; not an agreed pass quota
+  average_per_week_over_10_weeks: 100
+  average_per_week_with_2_weeks_setup: 125
+  average_per_week_with_2_weeks_setup_and_1_week_final_evidence: 142.8571428571
+  caveat: Not a throughput claim. Use measured complexity-weighted capacity and available staff/compute.
+requirements:
+  HC-REQ-01:
+    description: Official scoring, required validated coverage, treatment of exclusions and calendar dates
+    status: partially-confirmed
+    known: 10 weeks, 1000 mixed-complexity SAS scripts, velocity and validation
+    owner_role: Humana competition sponsor
+    approval_evidence: null
+  HC-REQ-02:
+    description: Versioned 1000-script manifest, hashes, dependencies, complexity distribution and representative cohorts
+    status: pending
+    owner_role: Humana source estate owner and factory discovery lead
+    approval_evidence: null
+  HC-REQ-03:
+    description: Trusted SAS runtime/version, baseline acquisition or approved exports, input snapshots and owners
+    status: pending
+    owner_role: Humana SAS and source data owners
+    approval_evidence: null
+  HC-REQ-04:
+    description: Per-output keys, alignment, numeric/date/missing-value tolerances and business/semantic acceptance
+    status: pending
+    owner_role: Humana data and validation owners
+    approval_evidence: null
+  HC-REQ-05:
+    description: Approved Databricks workspace, runtime, catalogs, isolated write scope, access and network bindings
+    status: pending
+    owner_role: Humana platform owner
+    approval_evidence: null
+  HC-REQ-06:
+    description: Approved model endpoint and allowed data/context, PHI/PII controls, evidence retention and access
+    status: partially-confirmed
+    known: Anthropic is the allowed LLM provider; exact endpoint, models and data controls remain pending
+    owner_role: Humana security and data governance owners
+    approval_evidence: null
+  HC-REQ-07:
+    description: Available staff, concurrency, compute/model budgets, retry/time limits and operational windows
+    status: pending
+    owner_role: Delivery lead and Humana platform owner
+    approval_evidence: null
+  HC-REQ-08:
+    description: Allowed AI assistance, provider/model configuration, bounded repair and human escalation policy
+    status: partially-confirmed
+    known: Anthropic is allowed inside the Humana ecosystem; exact model and operating limits remain pending
+    owner_role: Humana AI governance owner and delivery lead
+    approval_evidence: null
+  HC-REQ-09:
+    description: Competition acceptance signatories, evidence handoff, exceptions and any separate promotion approval
+    status: pending
+    owner_role: Humana competition sponsor and validation owner
+    approval_evidence: null
+  HC-REQ-10:
+    description: Approved enterprise identity and secret-provider deployment, workload identity federation mechanism, scopes, rotation and evidence authority
+    status: partially-confirmed
+    known: HashiCorp Vault is the secret platform and Microsoft Entra ID / Active Directory is the identity provider
+    owner_role: Humana identity, platform and security owners
+    approval_evidence: null
+gate_policy: Missing inputs block applicable client execution or acceptance, not isolated offline contract development.
+henv03_review_boundary:
+  packet_authority: architecture_security_review_evidence_only
+  protected_execution_authority: separate_signed_henv01_decision
+  required_requirement_refs: [HC-REQ-01, HC-REQ-02, HC-REQ-03, HC-REQ-04, HC-REQ-05, HC-REQ-06, HC-REQ-07, HC-REQ-09, HC-REQ-10]
+  unresolved_disclosure_blocks_shared_projection: true
+  packet_cannot_authorize: [protected_data_execution, competition_acceptance, certification, production_promotion]

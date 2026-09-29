@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://smf.local/schemas/ai-gateway-preflight-telemetry.schema.json",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "result_id", "status", "terminal_disposition", "blocker_states", "claims"],
+  "properties": {
+    "schema_version": {"const": "1.0"}, "result_id": {"type": "string", "pattern": "^AIGWRES-[a-f0-9]{16}$"},
+    "status": {"const": "blocked"}, "terminal_disposition": {"const": "external_authority_required"},
+    "blocker_states": {"type": "array", "minItems": 1, "items": {"enum": ["missing", "pending", "denied", "failed", "unsupported", "outcome_unknown"]}},
+    "claims": {"type": "object", "additionalProperties": false, "required": ["dns_verified", "tls_verified", "authenticated", "protocol_verified", "content_filter_verified", "quota_verified", "provider_invoked", "repair_generated", "migration_ready"], "properties": {
+      "dns_verified": {"const": false}, "tls_verified": {"const": false}, "authenticated": {"const": false}, "protocol_verified": {"const": false}, "content_filter_verified": {"const": false}, "quota_verified": {"const": false}, "provider_invoked": {"const": false}, "repair_generated": {"const": false}, "migration_ready": {"const": false}
+    }}
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://smf.example/schemas/failure-classification-telemetry.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "failure_id", "workload_id", "run_id", "attempt_id", "stage", "reason_code", "terminal_disposition", "retryability", "next_action", "lifecycle", "evidence_count", "cause_count", "claims"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "failure_id": {"type": "string", "pattern": "^FAILRES-[A-Fa-f0-9]+$"},
+    "workload_id": {"$ref": "#/$defs/id"}, "run_id": {"$ref": "#/$defs/id"}, "attempt_id": {"$ref": "#/$defs/id"},
+    "stage": {"enum": ["readiness", "discovery", "dependency_resolution", "deterministic_conversion", "ai_fallback", "execution", "validation", "reconciliation", "evidence", "governance", "environment"]},
+    "reason_code": {"enum": ["prerequisite_missing", "unsupported_source", "dependency_unresolved", "deterministic_conversion_failed", "deterministic_conversion_transient", "ai_gateway_authority_required", "ai_fallback_exhausted", "ai_outcome_unknown", "execution_rejected", "execution_failed_no_side_effect", "execution_outcome_unknown", "validation_mismatch", "reconciliation_incomplete", "validation_policy_missing", "evidence_integrity_failed", "security_boundary", "external_system_unavailable"]},
+    "terminal_disposition": {"enum": ["blocked", "failed", "unsupported", "human_pending", "outcome_unknown"]},
+    "retryability": {"enum": ["bounded_retry", "not_retryable", "retry_after_evidence", "retry_after_authority", "outcome_unknown_do_not_retry"]},
+    "next_action": {"type": "string", "minLength": 1},
+    "lifecycle": {
+      "type": "object", "additionalProperties": false,
+      "required": ["generated", "executed", "validated", "parity", "human_assisted"],
+      "properties": {
+        "generated": {"$ref": "#/$defs/state"}, "executed": {"$ref": "#/$defs/state"},
+        "validated": {"$ref": "#/$defs/state"}, "parity": {"$ref": "#/$defs/state"},
+        "human_assisted": {"$ref": "#/$defs/state"}
+      }
+    },
+    "evidence_count": {"type": "integer", "minimum": 1},
+    "cause_count": {"type": "integer", "minimum": 0},
+    "claims": {
+      "type": "object", "additionalProperties": false,
+      "required": ["retry_executed", "ai_gateway_invoked", "provider_invoked", "external_system_contacted", "exception_approved", "human_decision_obtained", "validated", "parity_passed", "migration_ready", "production_ready", "migration_complete"],
+      "properties": {
+        "retry_executed": {"const": false}, "ai_gateway_invoked": {"const": false},
+        "provider_invoked": {"const": false}, "external_system_contacted": {"const": false},
+        "exception_approved": {"const": false}, "human_decision_obtained": {"const": false},
+        "validated": {"const": false}, "parity_passed": {"const": false},
+        "migration_ready": {"const": false}, "production_ready": {"const": false},
+        "migration_complete": {"const": false}
+      }
+    }
+  },
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"},
+    "state": {"enum": ["not_attempted", "succeeded", "failed", "rejected", "blocked", "incomplete", "unknown", "pending", "not_observed"]}
+  }
+}

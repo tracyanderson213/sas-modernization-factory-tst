@@ -1,0 +1,1 @@
+{"schema_version":1,"columns":[{"name":"id","logical_type":"numeric","nullable":false},{"name":"region","logical_type":"character","nullable":false,"length":8},{"name":"amount","logical_type":"numeric","nullable":false}],"rows":[[{"number":"2"},"WEST",{"number":"20"}]]}

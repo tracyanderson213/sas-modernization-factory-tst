@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sas-modernization-factory/schemas/conversion.schema.json",
+  "title": "SAS Workload Conversion Result",
+  "type": "object",
+  "required": [
+    "workload_id",
+    "conversion_id",
+    "status",
+    "target_artifacts"
+  ],
+  "properties": {
+    "workload_id": {
+      "type": "string"
+    },
+    "conversion_id": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "success",
+        "partial",
+        "failed"
+      ]
+    },
+    "target_artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "path"],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "pyspark",
+              "spark_sql",
+              "notebook",
+              "workflow",
+              "asset_bundle",
+              "configuration"
+            ]
+          },
+          "path": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "deterministic_rule_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "ai_assisted_transform_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "unsupported_constructs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    }
+  }
+}

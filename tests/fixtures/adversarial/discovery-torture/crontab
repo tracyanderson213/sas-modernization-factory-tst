@@ -1,0 +1,4 @@
+SHELL=/bin/bash
+PATH=/usr/local/bin:/usr/bin:/bin
+# 0 1 * * * scripts/should_not_run.sh
+17 2 * * 1-5 scripts/run_mixed.sh

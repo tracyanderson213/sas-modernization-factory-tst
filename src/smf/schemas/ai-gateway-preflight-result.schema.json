@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://smf.local/schemas/ai-gateway-preflight-result.schema.json",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "contract_version", "command", "result_id", "content_digest", "canonical_evidence_reference", "identity", "configuration", "implementation_manifest", "status", "terminal_disposition", "evidence_class", "blockers", "claims"],
+  "properties": {
+    "schema_version": {"const": "1.0"}, "contract_version": {"const": "1.0"}, "command": {"const": "ai-gateway.preflight"},
+    "result_id": {"type": "string", "pattern": "^AIGWRES-[a-f0-9]{16}$"}, "content_digest": {"$ref": "#/$defs/digest"},
+    "canonical_evidence_reference": {"type": "string", "pattern": "^runs/[^/]+/workloads/[^/]+/gateway-preflight-attempts/[^/]+/ai-gateway-preflight\\.result\\.json$"},
+    "identity": {"type": "object", "additionalProperties": false, "required": ["client_id", "deployment_id", "environment_id", "workload_id", "run_id", "attempt_id", "evaluation_time", "configuration_digest", "factory_bundle_digest", "implementation_digest", "source_state", "source_digest", "upstream_revision"], "properties": {
+      "client_id": {"type": "string"}, "deployment_id": {"type": "string"}, "environment_id": {"type": "string"}, "workload_id": {"type": "string"}, "run_id": {"type": "string"}, "attempt_id": {"type": "string"}, "evaluation_time": {"type": "string", "pattern": "^\\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\\d|3[01])T(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d{1,9})?[+-](?:[01]\\d|2[0-3]):[0-5]\\d$"},
+      "configuration_digest": {"$ref": "#/$defs/digest"}, "factory_bundle_digest": {"$ref": "#/$defs/digest"}, "implementation_digest": {"$ref": "#/$defs/digest"},
+      "source_state": {"const": "not_applicable_to_configuration_preflight"}, "source_digest": {"type": "null"}, "upstream_revision": {"$ref": "#/$defs/digest"}
+    }},
+    "configuration": {"$ref": "ai-gateway-config.schema.json"},
+    "implementation_manifest": {"type": "array", "minItems": 6, "items": {"type": "object", "additionalProperties": false, "required": ["path", "sha256"], "properties": {"path": {"type": "string"}, "sha256": {"$ref": "#/$defs/digest"}}}},
+    "status": {"const": "blocked"}, "terminal_disposition": {"const": "external_authority_required"}, "evidence_class": {"const": "offline_configuration_contract"},
+    "blockers": {"type": "array", "minItems": 1, "items": {"type": "object", "additionalProperties": false, "required": ["code", "state"], "properties": {"code": {"type": "string"}, "state": {"enum": ["missing", "pending", "denied", "failed", "unsupported", "outcome_unknown"]}}}},
+    "claims": {"$ref": "#/$defs/claims"}
+  },
+  "$defs": {
+    "digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "claims": {"type": "object", "additionalProperties": false, "required": ["dns_verified", "tls_verified", "authenticated", "protocol_verified", "content_filter_verified", "quota_verified", "provider_invoked", "repair_generated", "migration_ready"], "properties": {
+      "dns_verified": {"const": false}, "tls_verified": {"const": false}, "authenticated": {"const": false}, "protocol_verified": {"const": false}, "content_filter_verified": {"const": false}, "quota_verified": {"const": false}, "provider_invoked": {"const": false}, "repair_generated": {"const": false}, "migration_ready": {"const": false}
+    }}
+  }
+}

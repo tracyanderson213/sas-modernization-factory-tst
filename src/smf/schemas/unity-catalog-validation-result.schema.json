@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://smf.local/schemas/unity-catalog-validation-result.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "contract_version", "result_id", "content_digest", "request", "request_digest", "policy", "policy_digest", "upstream", "provider", "validation_plan", "state", "blockers", "implementation_manifest", "claims"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "contract_version": {"const": "dbpkg-01.1.0"},
+    "result_id": {"$ref": "#/$defs/id"},
+    "content_digest": {"$ref": "#/$defs/sha"},
+    "request": {
+      "type": "object", "additionalProperties": false,
+      "required": ["client_id", "deployment_id", "environment_id", "workload_id", "source_id", "run_id", "attempt_id", "target_dataset_id", "evaluation_time", "target_mapping_content_digest", "ingestion_content_digest", "authentication_result_id", "authentication_content_digest", "compute_result_id", "compute_content_digest"],
+      "properties": {
+        "client_id": {"$ref": "#/$defs/id"}, "deployment_id": {"$ref": "#/$defs/id"}, "environment_id": {"$ref": "#/$defs/id"}, "workload_id": {"$ref": "#/$defs/id"}, "source_id": {"$ref": "#/$defs/id"}, "run_id": {"$ref": "#/$defs/id"}, "attempt_id": {"$ref": "#/$defs/id"}, "target_dataset_id": {"$ref": "#/$defs/id"}, "evaluation_time": {"$ref": "#/$defs/time"}, "target_mapping_content_digest": {"$ref": "#/$defs/sha"}, "ingestion_content_digest": {"$ref": "#/$defs/sha"}, "authentication_result_id": {"$ref": "#/$defs/id"}, "authentication_content_digest": {"$ref": "#/$defs/sha"}, "compute_result_id": {"$ref": "#/$defs/id"}, "compute_content_digest": {"$ref": "#/$defs/sha"}
+      }
+    },
+    "request_digest": {"$ref": "#/$defs/sha"},
+    "policy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["policy_id", "version", "issued_at", "valid_until", "catalog", "schema", "table", "credential_reference", "required_grants", "environment_class", "live_validation_enabled", "mutation_enabled"],
+      "properties": {
+        "policy_id": {"$ref": "#/$defs/id"}, "version": {"type": "string", "pattern": "^[1-9][0-9]*\\.[0-9]+\\.[0-9]+$"}, "issued_at": {"$ref": "#/$defs/time"}, "valid_until": {"$ref": "#/$defs/time"}, "catalog": {"$ref": "#/$defs/name"}, "schema": {"$ref": "#/$defs/name"}, "table": {"$ref": "#/$defs/name"}, "credential_reference": {"$ref": "#/$defs/id"}, "required_grants": {"const": ["USE_CATALOG", "USE_SCHEMA", "SELECT", "MODIFY"]}, "environment_class": {"const": "evaluation"}, "live_validation_enabled": {"const": false}, "mutation_enabled": {"const": false}
+      }
+    },
+    "policy_digest": {"$ref": "#/$defs/sha"},
+    "upstream": {
+      "type": "object", "additionalProperties": false,
+      "required": ["target_mapping_result_id", "target_mapping_content_digest", "ingestion_result_id", "ingestion_content_digest", "delta_manifest_digest"],
+      "properties": {"target_mapping_result_id": {"$ref": "#/$defs/id"}, "target_mapping_content_digest": {"$ref": "#/$defs/sha"}, "ingestion_result_id": {"$ref": "#/$defs/id"}, "ingestion_content_digest": {"$ref": "#/$defs/sha"}, "delta_manifest_digest": {"$ref": "#/$defs/sha"}}
+    },
+    "provider": {"type": "object", "additionalProperties": false, "required": ["name", "status", "network_contacted"], "properties": {"name": {"const": "databricks-sdk-online-adapter"}, "status": {"const": "not_invoked_not_qualified"}, "network_contacted": {"const": false}}},
+    "validation_plan": {
+      "type": "object", "additionalProperties": false,
+      "required": ["qualified_name", "credential_reference", "required_grants", "read_operations", "write_operations", "rollback_operations", "external_requirements"],
+      "properties": {"qualified_name": {"type": "string", "pattern": "^[A-Za-z_][A-Za-z0-9_]{0,127}\\.[A-Za-z_][A-Za-z0-9_]{0,127}\\.[A-Za-z_][A-Za-z0-9_]{0,127}$"}, "credential_reference": {"$ref": "#/$defs/id"}, "required_grants": {"const": ["USE_CATALOG", "USE_SCHEMA", "SELECT", "MODIFY"]}, "read_operations": {"const": ["catalog_get", "schema_get", "table_get", "grants_get"]}, "write_operations": {"maxItems": 0, "type": "array"}, "rollback_operations": {"maxItems": 0, "type": "array"}, "external_requirements": {"type": "array", "minItems": 3, "maxItems": 3, "prefixItems": [{"$ref": "#/$defs/untrustedExternal"}, {"$ref": "#/$defs/untrustedCompute"}, {"type": "object", "additionalProperties": false, "required": ["kind", "expected_id", "expected_digest", "authority"], "properties": {"kind": {"const": "unity_catalog_readback"}, "expected_id": {"type": "null"}, "expected_digest": {"type": "null"}, "authority": {"const": "pending_external_authority"}}}]}}
+    },
+    "state": {"const": "blocked_external_validation"},
+    "blockers": {"const": ["live_unity_catalog_authority_and_readback_required"]},
+    "implementation_manifest": {"type": "array", "minItems": 5, "maxItems": 5, "items": {"type": "object", "additionalProperties": false, "required": ["path", "sha256"], "properties": {"path": {"type": "string", "minLength": 1}, "sha256": {"$ref": "#/$defs/sha"}}}},
+    "claims": {
+      "type": "object", "additionalProperties": false,
+      "required": ["live_databricks_contacted", "unity_catalog_validated", "grants_verified", "write_performed", "rollback_performed", "humana_ready", "production_ready", "semantic_parity", "migration_complete"],
+      "properties": {"live_databricks_contacted": {"const": false}, "unity_catalog_validated": {"const": false}, "grants_verified": {"const": false}, "write_performed": {"const": false}, "rollback_performed": {"const": false}, "humana_ready": {"const": false}, "production_ready": {"const": false}, "semantic_parity": {"const": false}, "migration_complete": {"const": false}}
+    }
+  },
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"},
+    "sha": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "time": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"},
+    "name": {"type": "string", "pattern": "^[A-Za-z_][A-Za-z0-9_]{0,127}$"},
+    "untrustedExternal": {"type": "object", "additionalProperties": false, "required": ["kind", "expected_id", "expected_digest", "authority"], "properties": {"kind": {"const": "dbx02_authentication_receipt"}, "expected_id": {"$ref": "#/$defs/id"}, "expected_digest": {"$ref": "#/$defs/sha"}, "authority": {"const": "untrusted_expectation_only"}}},
+    "untrustedCompute": {"type": "object", "additionalProperties": false, "required": ["kind", "expected_id", "expected_digest", "authority"], "properties": {"kind": {"const": "dbx03_compute_admission"}, "expected_id": {"$ref": "#/$defs/id"}, "expected_digest": {"$ref": "#/$defs/sha"}, "authority": {"const": "untrusted_expectation_only"}}}
+  }
+}

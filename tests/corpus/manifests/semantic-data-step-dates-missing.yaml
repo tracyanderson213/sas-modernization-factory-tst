@@ -1,0 +1,64 @@
+schema_version: 1
+scenario_id: semantic-data-step-dates-missing
+name: Core SAS DATA step dates and missing values
+domain: semantics
+description: SMF-authored executable semantic fixture for deterministic SAS discovery
+  and future conversion/behavioral validation.
+source:
+  source_id: smf-semantic-fixtures
+  origin: smf
+  license: Internal test fixture
+  upstream_url: https://github.com/sascommunities/learning-sas-by-example-2nd/blob/master/Example%20code/Programs%20Used%20in%20the%20Second%20Edition.sas
+  upstream_ref: 42b0ed32f5825838f366c01463ea708054460d82
+  notes: The fixture code is SMF-authored and does not copy upstream program text.
+    The public SAS Learning by Example source is retained as a semantic reference
+    and provenance aid.
+capabilities:
+- data-step
+- informat
+- format
+- sas-date-literal
+- missing-value
+- conditional-logic
+- datalines
+artifacts:
+- path: ../workloads/semantic/core/data-step-dates-missing.sas
+  role: sas-program
+  sha256: 3247c63527bad1b5c4d3673c08d2056d4b8fc0dd7a6d50ce5b4f18a8c231217b
+  source_id: smf-semantic-fixtures
+- path: ../workloads/semantic/expected/data-step-dates-missing.json
+  role: expected-output
+  sha256: 5126321d6ed34679bd4df54253b09818ca796cefa547ca60d8a5361ca327aef5
+  source_id: smf-semantic-fixtures
+output_evidence:
+- evidence_id: data-step-dates-missing-declared
+  logical_output: work.member_dates
+  artifact: ../workloads/semantic/expected/data-step-dates-missing.json
+  format: json
+  evidence_origin: declared-synthetic-expectation
+  producer: smf-authored-oracle
+  content_hash: 5126321d6ed34679bd4df54253b09818ca796cefa547ca60d8a5361ca327aef5
+  deterministic: true
+  authoritative: true
+semantic_oracles:
+- oracle_id: data-step-dates-missing-oracle
+  logical_output: work.member_dates
+  evidence_id: data-step-dates-missing-declared
+  comparison: ordered
+  behavior: DATA-step input, branching, date arithmetic, and ordinary missing values.
+  columns:
+  - {name: member_id, logical_type: character, nullable: false, length: 8}
+  - {name: birth_date, logical_type: date, nullable: false}
+  - {name: score, logical_type: numeric, nullable: true}
+  - {name: status, logical_type: character, nullable: false, length: 8}
+  - {name: age_days, logical_type: numeric, nullable: false}
+  - {name: score_status, logical_type: character, nullable: false, length: 7}
+  session: &semantic_session {yearcutoff: 1920, locale: en_US, encoding: utf-8, sort_sequence: binary, timezone: UTC}
+expected:
+  discovery:
+    minimum_artifacts: 1
+metadata:
+  tier: semantic
+  private_data: false
+  fixture_kind: smf-authored-public-reference-backed
+  primary_behavior: data-step-dates-missing

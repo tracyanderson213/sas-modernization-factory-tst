@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://smf.example/schemas/workload-identity-config.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "status", "identity_bindings"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "status": {"enum": ["active", "pending", "denied"]},
+    "identity_bindings": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["binding_id", "tenant", "issuer", "audience", "authentication_flow"],
+        "properties": {
+          "binding_id": {"$ref": "#/$defs/id"}, "tenant": {"$ref": "#/$defs/id"},
+          "issuer": {"type": "string", "pattern": "^https://"}, "audience": {"type": "string", "minLength": 1, "maxLength": 512, "pattern": "^\\S+$"},
+          "authentication_flow": {"const": "workload_identity_federation"}
+        }
+      }
+    }
+  },
+  "$defs": {"id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"}}
+}

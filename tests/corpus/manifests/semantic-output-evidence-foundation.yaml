@@ -1,0 +1,52 @@
+schema_version: 1
+scenario_id: semantic-output-evidence-foundation
+name: Output evidence foundation
+domain: core-sas
+description: SMF-owned deterministic scenario proving provenance-aware expected output
+  evidence without claiming a SAS-executed baseline.
+source:
+  source_id: smf-owned
+  origin: smf
+  license: Apache-2.0
+  notes: Created by SMF as a declared synthetic expectation for CORPUS-05.
+capabilities:
+- output-evidence
+- declared-synthetic-expectation
+- deterministic-data-fixtures
+artifacts:
+- path: ../workloads/semantic/output-evidence-foundation/source/main.sas
+  role: sas-program
+  sha256: f4012fd1d0b434ea68f82c904084904c0b16e5d2f56e6a7274874e9948ae0de8
+  source_id: smf-owned
+- path: ../workloads/semantic/output-evidence-foundation/data/transactions.csv
+  role: input-data
+  sha256: ffbe32656f1796ea0254241c68ef4c61d53683eafbcf9068031709fd5e4af9bb
+  source_id: smf-owned
+- path: ../workloads/semantic/output-evidence-foundation/expected/positive_amounts.csv
+  role: expected-output
+  sha256: d22dc6edc1dd766a710f4a5082b3543f1d600b8d0dcd54a1b7b6b4dadf696f02
+  source_id: smf-owned
+expected:
+  discovery:
+    minimum_artifacts: 1
+metadata:
+  tier: semantic
+  private_data: false
+  framework_stage: CORPUS-05
+data_fixtures:
+- fixture_id: transactions-input
+  dataset: work.transactions
+  artifact: ../workloads/semantic/output-evidence-foundation/data/transactions.csv
+  format: csv
+  deterministic: true
+  contains_private_data: false
+output_evidence:
+- evidence_id: positive-amounts-declared
+  logical_output: work.positive_amounts
+  artifact: ../workloads/semantic/output-evidence-foundation/expected/positive_amounts.csv
+  format: csv
+  evidence_origin: declared-synthetic-expectation
+  producer: smf-authored-oracle
+  content_hash: d22dc6edc1dd766a710f4a5082b3543f1d600b8d0dcd54a1b7b6b4dadf696f02
+  deterministic: true
+  authoritative: true

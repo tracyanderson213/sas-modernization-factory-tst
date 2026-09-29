@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0",
+  "profile": "vs01-public-fixture-local-delta",
+  "network_at_runtime": false,
+  "components": [
+    {"distribution": "pyreadstat", "version": "1.3.6", "role": "qualified_sas_reader"},
+    {"distribution": "pyspark", "version": "3.5.8", "role": "provisional_schema_and_rows"},
+    {"distribution": "py4j", "version": "0.10.9.7", "role": "pyspark_runtime_dependency"},
+    {"distribution": "deltalake", "version": "1.6.4", "role": "local_delta_writer_reader"},
+    {"distribution": "pyarrow", "version": "25.0.1", "role": "columnar_handoff"},
+    {"distribution": "datacompy", "version": "1.0.4", "role": "exact_fixture_reconciliation"},
+    {"distribution": "pandas", "version": "2.2.3", "role": "bounded_fixture_interchange"},
+    {"distribution": "polars", "version": "1.43.2", "role": "datacompy_runtime_dependency"},
+    {"distribution": "polars-runtime-32", "version": "1.43.2", "role": "datacompy_runtime_dependency"}
+  ],
+  "fixture": {
+    "upstream": "Roche/pyreadstat",
+    "revision": "12cc1495d468ae8a170c57cce7557c147b972eac",
+    "path": "test_data/basic/sample_bincompressed.sas7bdat",
+    "sha256": "641254bdd950e65631701b3182868fe25c46a44e99854881f5c3751b2847848c",
+    "byte_count": 196608,
+    "license": "Apache-2.0; embedded ReadStat MIT notice preserved",
+    "license_file": "tests/fixtures/sas_reader/LICENSE.pyreadstat",
+    "license_sha256": "07487bc4080297d9c65ffa3f66e3c405f9fd08e4af990cd54212d373eb28debc"
+  },
+  "claims": {
+    "canonical_cross_provider_descriptor": false,
+    "governed_production_semantic_mapping": false,
+    "databricks_or_unity_catalog_validated": false,
+    "humana_validated": false,
+    "production_ready": false,
+    "migration_complete": false
+  }
+}

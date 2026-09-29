@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://smf.local/schemas/databricks-remote-plan.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version","contract_version","result_id","content_digest","request","request_digest","upstream","submission","state","retry_disposition","blockers","implementation_manifest","claims"],
+  "properties": {
+    "schema_version": {"const":"1.0"},
+    "contract_version": {"const":"dbx-01.1.0"},
+    "result_id": {"$ref":"#/$defs/id"},
+    "content_digest": {"$ref":"#/$defs/sha"},
+    "request": {"type":"object","additionalProperties":false,"required":["client_id","deployment_id","environment_id","workload_id","source_id","run_id","attempt_id","source_artifact_id","source_sha256","generated_sha256","package_id","package_digest","catalog_plan_id","catalog_plan_digest","authentication_result_id","authentication_content_digest","compute_result_id","compute_content_digest","evaluation_time","timeout_seconds","max_poll_attempts"],"properties":{
+      "client_id":{"$ref":"#/$defs/id"},"deployment_id":{"$ref":"#/$defs/id"},"environment_id":{"$ref":"#/$defs/id"},"workload_id":{"$ref":"#/$defs/id"},"source_id":{"$ref":"#/$defs/id"},"run_id":{"$ref":"#/$defs/id"},"attempt_id":{"$ref":"#/$defs/id"},"source_artifact_id":{"$ref":"#/$defs/id"},"source_sha256":{"$ref":"#/$defs/sha"},"generated_sha256":{"$ref":"#/$defs/sha"},"package_id":{"$ref":"#/$defs/id"},"package_digest":{"$ref":"#/$defs/sha"},"catalog_plan_id":{"$ref":"#/$defs/id"},"catalog_plan_digest":{"$ref":"#/$defs/sha"},"authentication_result_id":{"$ref":"#/$defs/id"},"authentication_content_digest":{"$ref":"#/$defs/sha"},"compute_result_id":{"$ref":"#/$defs/id"},"compute_content_digest":{"$ref":"#/$defs/sha"},"evaluation_time":{"$ref":"#/$defs/time"},"timeout_seconds":{"type":"integer","minimum":1,"maximum":86400},"max_poll_attempts":{"type":"integer","minimum":1,"maximum":1000}
+    }},
+    "request_digest":{"$ref":"#/$defs/sha"},
+    "upstream":{"type":"object","additionalProperties":false,"required":["package_id","package_digest","catalog_plan_id","catalog_plan_digest","authentication_result_id","authentication_content_digest","compute_result_id","compute_content_digest"],"properties":{"package_id":{"$ref":"#/$defs/id"},"package_digest":{"$ref":"#/$defs/sha"},"catalog_plan_id":{"$ref":"#/$defs/id"},"catalog_plan_digest":{"$ref":"#/$defs/sha"},"authentication_result_id":{"$ref":"#/$defs/id"},"authentication_content_digest":{"$ref":"#/$defs/sha"},"compute_result_id":{"$ref":"#/$defs/id"},"compute_content_digest":{"$ref":"#/$defs/sha"}}},
+    "submission":{"type":"object","additionalProperties":false,"required":["enabled","idempotency_key","remote_run_id","remote_task_id"],"properties":{"enabled":{"const":false},"idempotency_key":{"$ref":"#/$defs/id"},"remote_run_id":{"type":"null"},"remote_task_id":{"type":"null"}}},
+    "state":{"const":"blocked_external_authority"},
+    "retry_disposition":{"const":"do_not_submit"},
+    "blockers":{"const":["live_remote_execution_authority_required","live_unity_catalog_readback_required","target_specific_submission_details_required"]},
+    "implementation_manifest":{"type":"array","minItems":7,"maxItems":7,"items":{"type":"object","additionalProperties":false,"required":["path","sha256"],"properties":{"path":{"type":"string","minLength":1},"sha256":{"$ref":"#/$defs/sha"}}}},
+    "claims":{"type":"object","additionalProperties":false,"required":["generated","submitted","executed","validated","parity_passed","human_assisted","humana_ready","production_ready","migration_complete"],"properties":{"generated":{"const":true},"submitted":{"const":false},"executed":{"const":false},"validated":{"const":false},"parity_passed":{"const":false},"human_assisted":{"const":false},"humana_ready":{"const":false},"production_ready":{"const":false},"migration_complete":{"const":false}}}
+  },
+  "$defs":{"id":{"type":"string","pattern":"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"},"sha":{"type":"string","pattern":"^[0-9a-f]{64}$"},"time":{"type":"string","pattern":"^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"}}
+}

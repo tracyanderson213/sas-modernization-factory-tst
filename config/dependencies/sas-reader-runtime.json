@@ -1,0 +1,53 @@
+{
+  "schema_version": "1.0",
+  "profile": "bounded-local-sas-reader",
+  "network_at_runtime": false,
+  "provider": {
+    "distribution": "pyreadstat",
+    "version": "1.3.6",
+    "release_tag_source_revision": "ae4bfa5d84ed1ceaf847ab242118da730a4084ec",
+    "evaluated_upstream_revision": "12cc1495d468ae8a170c57cce7557c147b972eac",
+    "license_ids": ["Apache-2.0", "MIT"],
+    "artifacts": [
+      {
+        "platform": "cp311-manylinux-x86_64",
+        "sha256": "db275cc6a96b259a6369cd8b2d8ad159cf6c81b296c1a8205bb23e51686b0f24"
+      },
+      {
+        "platform": "cp312-manylinux-x86_64",
+        "sha256": "93182fc101e2adf27c36fb935e8144e5bc92a3da8d7577a1dabfcacf29b672e8"
+      },
+      {
+        "platform": "cp312-macos11-arm64",
+        "sha256": "6949c7535dc57115f3d5620b3f381ca76589f0fb079c20c26b7cbcdd5fca54db"
+      }
+    ]
+  },
+  "runtime_dependencies": [
+    {
+      "distribution": "narwhals",
+      "version": "2.26.0",
+      "offline_artifact_sha256": null,
+      "qualification_state": "pending-pkg-qual-01"
+    },
+    {
+      "distribution": "numpy",
+      "version": "2.4.6",
+      "python": ">=3.11,<3.12",
+      "offline_artifact_sha256": null,
+      "qualification_state": "pending-pkg-qual-01"
+    },
+    {
+      "distribution": "numpy",
+      "version": "2.5.3",
+      "python": ">=3.12,<3.13",
+      "offline_artifact_sha256": null,
+      "qualification_state": "pending-pkg-qual-01"
+    }
+  ],
+  "claims": {
+    "humana_approved": false,
+    "offline_bundle_complete": false,
+    "production_ready": false
+  }
+}

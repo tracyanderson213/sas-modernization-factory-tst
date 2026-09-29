@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "policy_id", "policy_version", "policy_digest", "client_id", "authority", "cohort_size", "expected_inventory_size", "criteria", "required_prerequisites", "approval_policy", "inventory_provenance", "verification_keys", "permitted_origins", "dependency_grouping", "blocked_members_occupy_slots", "ordering", "owner_roles", "status", "valid_from", "valid_until", "supersedes"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "policy_id": {"$ref": "#/$defs/id"}, "policy_version": {"$ref": "#/$defs/id"},
+    "policy_digest": {"$ref": "#/$defs/digest"}, "client_id": {"$ref": "#/$defs/id"},
+    "authority": {"$ref": "#/$defs/id"}, "cohort_size": {"type": "integer", "minimum": 1, "maximum": 1000},
+    "expected_inventory_size": {"type": "integer", "minimum": 1, "maximum": 1000000},
+    "criteria": {"type": "array", "minItems": 1, "maxItems": 256, "items": {"type": "object", "additionalProperties": false, "required": ["criterion_id", "dimension", "value", "minimum_count"], "properties": {"criterion_id": {"$ref": "#/$defs/id"}, "dimension": {"enum": ["complexity", "construct", "macro_behavior", "dependency", "data_access", "validation_difficulty"]}, "value": {"$ref": "#/$defs/id"}, "minimum_count": {"type": "integer", "minimum": 1, "maximum": 1000}}}},
+    "required_prerequisites": {"type": "array", "maxItems": 64, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+    "approval_policy": {"type": "object", "additionalProperties": false, "required": ["readiness_policy_digests", "workload_complexity_policy_digests"], "properties": {"readiness_policy_digests": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/digest"}}, "workload_complexity_policy_digests": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/digest"}}}},
+    "inventory_provenance": {"type": "object", "additionalProperties": false, "required": ["authorities", "key_ids"], "properties": {"authorities": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}}, "key_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}}}},
+    "verification_keys": {"type": "object", "minProperties": 1, "additionalProperties": {"type": "string", "minLength": 40, "maxLength": 64}},
+    "permitted_origins": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["private_client", "public", "synthetic", "workshop", "mock", "generated"]}},
+    "dependency_grouping": {"enum": ["atomic", "independent"]},
+    "blocked_members_occupy_slots": {"type": "boolean"},
+    "ordering": {"type": "array", "minItems": 3, "maxItems": 3, "prefixItems": [{"const": "coverage_gain_desc"}, {"const": "complexity_score_desc"}, {"const": "workload_id_asc"}], "items": false},
+    "owner_roles": {"type": "object", "additionalProperties": false, "required": ["inventory", "selection_exception"], "properties": {"inventory": {"$ref": "#/$defs/id"}, "selection_exception": {"$ref": "#/$defs/id"}}},
+    "status": {"enum": ["active", "superseded"]}, "valid_from": {"type": "string", "format": "date-time"},
+    "valid_until": {"type": ["string", "null"], "format": "date-time"}, "supersedes": {"type": ["string", "null"]}
+  },
+  "$defs": {"id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"}, "digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"}}
+}

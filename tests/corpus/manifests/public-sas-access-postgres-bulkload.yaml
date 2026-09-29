@@ -1,0 +1,37 @@
+schema_version: 1
+scenario_id: public-sas-access-postgres-bulkload
+name: SAS ACCESS PostgreSQL bulk-load sample
+domain: connectivity
+description: Untouched public SAS acquired from a pinned upstream revision for CORPUS-07
+  realism testing.
+source:
+  source_id: sas-access-samples
+  origin: public-open-source
+  license: Apache-2.0
+  upstream_url: https://github.com/sascommunities/sas-access-samples
+  upstream_ref: 6e2fb148ee64aeda1e8e0a5d49689a0145afee13
+  notes: Vendored bytes are untouched. SMF must adapt to the upstream source, not
+    the reverse.
+capabilities:
+- sas-access
+- proc-sql
+- create-table-as-select
+- data-step
+- external-database-write
+artifacts:
+- path: ../workloads/public/sas-access-postgres/bulkload.sas
+  role: sas-program
+  sha256: 8ca4426f26bcb54b177a13ae393cce66e4008caa2f19f2fabc4e393abace7590
+  source_id: sas-access-samples
+  upstream_path: SAS Foundation/Postgres/bulkload.sas
+metadata:
+  tier: untouched-public
+  private_data: false
+  modification_status: untouched
+  acquisition_date: '2026-09-04'
+  independent_authorship: true
+workload:
+  root: ../workloads/public
+  entrypoints:
+  - ../workloads/public/sas-access-postgres/bulkload.sas
+  relationships: []

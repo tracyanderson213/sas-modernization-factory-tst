@@ -1,0 +1,18 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema","$id":"https://schemas.smf.example/dp05-sample-observation.schema.json",
+  "type":"object","additionalProperties":false,
+  "required":["binding","adapter_id","adapter_version","state","reason","population_count","unique_key_count","duplicate_key_count","rows","execution_id","authority_id","authority_digest","proof","content_digest"],
+  "$defs":{
+    "id":{"type":"string","pattern":"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"},"digest":{"type":"string","pattern":"^sha256:[0-9a-f]{64}$"},
+    "binding":{"type":"object","additionalProperties":false,"required":["dataset_id","snapshot_id","snapshot_digest","scope_id","scope_digest"],"properties":{"dataset_id":{"$ref":"#/$defs/id"},"snapshot_id":{"$ref":"#/$defs/id"},"snapshot_digest":{"$ref":"#/$defs/digest"},"scope_id":{"$ref":"#/$defs/id"},"scope_digest":{"$ref":"#/$defs/digest"}}},
+    "row":{"type":"object","additionalProperties":false,"required":["sample_id","key_digest","duplicate_ordinal","selection_score","cell_digests"],"properties":{"sample_id":{"$ref":"#/$defs/digest"},"key_digest":{"$ref":"#/$defs/digest"},"duplicate_ordinal":{"type":"integer","minimum":0},"selection_score":{"$ref":"#/$defs/digest"},"cell_digests":{"type":"object","minProperties":1,"additionalProperties":{"$ref":"#/$defs/digest"}}}},
+    "proof":{"type":["object","null"],"additionalProperties":false,"required":["algorithm","key_id","value"],"properties":{"algorithm":{"const":"ed25519"},"key_id":{"$ref":"#/$defs/id"},"value":{"type":"string","minLength":1}}}
+  },
+  "properties":{
+    "binding":{"$ref":"#/$defs/binding"},"adapter_id":{"const":"stable-row-stream"},"adapter_version":{"const":"1.0.0"},
+    "state":{"enum":["observed","unavailable","biased_selection","duplicate_keys"]},
+    "reason":{"enum":["observed","provider_error","empty_population","input_not_canonical_order","duplicate_keys_rejected","duplicate_limit_exceeded","prerequisite_blocked","authority_missing","authority_untrusted"]},
+    "population_count":{"type":"integer","minimum":0},"unique_key_count":{"type":"integer","minimum":0},"duplicate_key_count":{"type":"integer","minimum":0},
+    "rows":{"type":"array","items":{"$ref":"#/$defs/row"}},"execution_id":{"$ref":"#/$defs/digest"},"authority_id":{"type":["string","null"],"pattern":"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"},"authority_digest":{"oneOf":[{"$ref":"#/$defs/digest"},{"type":"null"}]},"proof":{"$ref":"#/$defs/proof"},"content_digest":{"$ref":"#/$defs/digest"}
+  }
+}

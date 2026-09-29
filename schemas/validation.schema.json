@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sas-modernization-factory/schemas/validation.schema.json",
+  "title": "SAS Migration Validation Result",
+  "type": "object",
+  "required": [
+    "workload_id",
+    "validation_id",
+    "overall_status",
+    "checks"
+  ],
+  "properties": {
+    "workload_id": {
+      "type": "string"
+    },
+    "validation_id": {
+      "type": "string"
+    },
+    "overall_status": {
+      "type": "string",
+      "enum": [
+        "pass",
+        "fail",
+        "warning"
+      ]
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "type",
+          "status"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "compile",
+              "execution",
+              "schema",
+              "row_count",
+              "null_profile",
+              "aggregate",
+              "checksum",
+              "business_rule",
+              "semantic",
+              "performance"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pass",
+              "fail",
+              "warning",
+              "not_run"
+            ]
+          },
+          "expected": {},
+          "actual": {},
+          "tolerance": {},
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "requires_human_review": {
+      "type": "boolean"
+    }
+  }
+}

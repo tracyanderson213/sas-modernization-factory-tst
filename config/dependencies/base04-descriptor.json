@@ -1,0 +1,51 @@
+{
+  "schema_version": "1.0",
+  "descriptor_version": "base04-canonical-physical-v1",
+  "snapshot_policy_version": "base04-public-fixture-v1",
+  "providers": {
+    "local": {
+      "record": "BASE-08",
+      "implementation": "pyreadstat/ReadStat",
+      "runtime_contract": "config/dependencies/sas-reader-runtime.json"
+    },
+    "distributed": {
+      "record": "SCALE-01",
+      "implementation": "spark-sas7bdat/Parso",
+      "runtime_contract": "config/dependencies/scale01-runtime.json"
+    }
+  },
+  "integration_inputs": {
+    "VS-01": "fixture-specific provisional Spark mapping and real local Delta evidence",
+    "BASE-08": "declared SAS metadata and bounded local observations",
+    "SCALE-01": "partition-complete Spark schema, row count and null observations"
+  },
+  "normalization": {
+    "str": "string",
+    "float": "double",
+    "int": "long",
+    "bool": "boolean"
+  },
+  "row_reconciliation": {
+    "projection": "SCALE-01 canonical physical cell v1",
+    "numeric_significant_digits": 12,
+    "multiset": "sha256 xor plus modulo-sum",
+    "persist_source_rows": false
+  },
+  "semantic_mapping_authority": "pending-base02",
+  "fixture": {
+    "repository": "https://github.com/saurfang/spark-sas7bdat",
+    "revision": "dad0840bd89b7581c35a41ce372c61dc42d15eab",
+    "sas7bdat_sha256": "bc7867bb33bbf238b7085a370f59e9a91a76ff1f61f6df7c74e3b66d47f5b277",
+    "csv_oracle_sha256": "a0d0b31f26342a58e5cae435794d4297029d99f6a23acce1eddf4040980c54ec",
+    "license": "Apache-2.0",
+    "license_sha256": "5f3e56904af6912d99cb1a569bed78e39ff6ea25301b7a8fccae5b6e5b62c3cc"
+  },
+  "claims": {
+    "governed_production_semantic_mapping": false,
+    "sas_semantic_parity": false,
+    "humana_validated": false,
+    "databricks_or_unity_catalog_validated": false,
+    "production_ready": false,
+    "migration_complete": false
+  }
+}

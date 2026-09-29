@@ -1,0 +1,602 @@
+{
+  "schema_version": 1,
+  "smf": {
+    "choices": {},
+    "commands": {
+      "acquire-baseline": {
+        "choices": {
+          "mode": [
+            "approved_export",
+            "sas_execution"
+          ]
+        },
+        "commands": {},
+        "options": [
+          "--acquisition-id",
+          "--approval",
+          "--attempt-id",
+          "--boundary-id",
+          "--closure-digest",
+          "--intake-policy",
+          "--intake-result",
+          "--json",
+          "--mode",
+          "--out",
+          "--package-root",
+          "--policy",
+          "--receipt",
+          "--run-id",
+          "--workload-id",
+          "--workload-revision-id"
+        ],
+        "path": "smf acquire-baseline",
+        "positionals": []
+      },
+      "ai-gateway": {
+        "choices": {},
+        "commands": {
+          "preflight": {
+            "choices": {},
+            "commands": {},
+            "options": [
+              "--attempt-id",
+              "--config",
+              "--evaluation-time",
+              "--factory-config",
+              "--json",
+              "--out",
+              "--run-id",
+              "--workload-id"
+            ],
+            "path": "smf ai-gateway preflight",
+            "positionals": []
+          }
+        },
+        "options": [],
+        "path": "smf ai-gateway",
+        "positionals": []
+      },
+      "architecture-review": {
+        "choices": {},
+        "commands": {
+          "assemble": {
+            "choices": {},
+            "commands": {},
+            "options": [
+              "--activation-evidence",
+              "--assessed-revision",
+              "--attempt-id",
+              "--boundary-id",
+              "--disclosure-evidence",
+              "--disclosure-policy-revision",
+              "--discovery-manifest",
+              "--discovery-namespace",
+              "--factory-config",
+              "--out",
+              "--readiness-manifest",
+              "--recipient-class",
+              "--repo-root",
+              "--requirements",
+              "--retention-policy-ref",
+              "--run-id",
+              "--security-bindings",
+              "--security-policy",
+              "--subject-id",
+              "--threat-model",
+              "--workload-id"
+            ],
+            "path": "smf architecture-review assemble",
+            "positionals": [
+              "source"
+            ]
+          }
+        },
+        "options": [],
+        "path": "smf architecture-review",
+        "positionals": []
+      },
+      "assess": {
+        "choices": {},
+        "commands": {},
+        "options": [
+          "--explain",
+          "--json"
+        ],
+        "path": "smf assess",
+        "positionals": [
+          "file"
+        ]
+      },
+      "convert": {
+        "choices": {
+          "target": [
+            "pyspark",
+            "sparksql"
+          ]
+        },
+        "commands": {},
+        "options": [
+          "--conversion-attempt-id",
+          "--deployment-config",
+          "--json",
+          "--model",
+          "--out",
+          "--provider",
+          "--readiness-attempt-id",
+          "--readiness-manifest",
+          "--readiness-policy-digest",
+          "--run-id",
+          "--source-artifact-id",
+          "--target",
+          "--temporal-policy",
+          "--value-compatibility-policy",
+          "--workload-id"
+        ],
+        "path": "smf convert",
+        "positionals": [
+          "file"
+        ]
+      },
+      "deployment-config": {
+        "choices": {},
+        "commands": {
+          "init": {
+            "choices": {
+              "template": [
+                "humana"
+              ]
+            },
+            "commands": {},
+            "options": [
+              "--out",
+              "--template"
+            ],
+            "path": "smf deployment-config init",
+            "positionals": []
+          },
+          "plan": {
+            "choices": {},
+            "commands": {},
+            "options": [
+              "--attempt-id",
+              "--config",
+              "--environment-config",
+              "--json",
+              "--out",
+              "--run-id"
+            ],
+            "path": "smf deployment-config plan",
+            "positionals": []
+          },
+          "preflight": {
+            "choices": {},
+            "commands": {},
+            "options": [
+              "--attempt-id",
+              "--config",
+              "--json",
+              "--readiness-manifest",
+              "--run-id",
+              "--workload-id"
+            ],
+            "path": "smf deployment-config preflight",
+            "positionals": []
+          }
+        },
+        "options": [],
+        "path": "smf deployment-config",
+        "positionals": []
+      },
+      "discover": {
+        "choices": {
+          "provider": [
+            "auto",
+            "filesystem",
+            "sas-content-assessment"
+          ]
+        },
+        "commands": {},
+        "options": [
+          "--json",
+          "--namespace",
+          "--out",
+          "--provider"
+        ],
+        "path": "smf discover",
+        "positionals": [
+          "source"
+        ]
+      },
+      "execute": {
+        "choices": {
+          "provider": [
+            "databricks",
+            "local"
+          ],
+          "target": [
+            "pyspark",
+            "sparksql"
+          ]
+        },
+        "commands": {},
+        "options": [
+          "--allow-writes",
+          "--attempt-id",
+          "--json",
+          "--out",
+          "--provider",
+          "--run-id",
+          "--target",
+          "--timeout",
+          "--workload-id"
+        ],
+        "path": "smf execute",
+        "positionals": [
+          "source",
+          "generated"
+        ]
+      },
+      "intake-batch": {
+        "choices": {},
+        "commands": {},
+        "options": [
+          "--attempt-id",
+          "--json",
+          "--out",
+          "--policy",
+          "--run-id",
+          "--source-root"
+        ],
+        "path": "smf intake-batch",
+        "positionals": [
+          "manifest"
+        ]
+      },
+      "migrate": {
+        "choices": {},
+        "commands": {
+          "approve": {
+            "choices": {
+              "stage": [
+                "migration-completion",
+                "modernization-architecture-business-disposition"
+              ]
+            },
+            "commands": {},
+            "options": [
+              "--approval-file",
+              "--approval-record",
+              "--json",
+              "--out",
+              "--run-id",
+              "--stage",
+              "--workload-id"
+            ],
+            "path": "smf migrate approve",
+            "positionals": []
+          },
+          "convert": {
+            "choices": {},
+            "commands": {},
+            "options": [
+              "--asset-policy",
+              "--attempt-id",
+              "--factory-config",
+              "--gateway-config",
+              "--json",
+              "--out",
+              "--run-id",
+              "--source",
+              "--source-root",
+              "--type-policy",
+              "--validation-policy",
+              "--workload-config",
+              "--workload-id"
+            ],
+            "path": "smf migrate convert",
+            "positionals": []
+          },
+          "exceptions": {
+            "choices": {},
+            "commands": {
+              "decide": {
+                "choices": {},
+                "commands": {},
+                "options": [
+                  "--decision-file",
+                  "--json",
+                  "--out",
+                  "--run-id",
+                  "--workload-id"
+                ],
+                "path": "smf migrate exceptions decide",
+                "positionals": []
+              },
+              "list": {
+                "choices": {},
+                "commands": {},
+                "options": [
+                  "--json",
+                  "--out",
+                  "--run-id",
+                  "--workload-id"
+                ],
+                "path": "smf migrate exceptions list",
+                "positionals": []
+              },
+              "submit": {
+                "choices": {},
+                "commands": {},
+                "options": [
+                  "--exception-file",
+                  "--json",
+                  "--out",
+                  "--run-id",
+                  "--workload-id"
+                ],
+                "path": "smf migrate exceptions submit",
+                "positionals": []
+              }
+            },
+            "options": [],
+            "path": "smf migrate exceptions",
+            "positionals": []
+          },
+          "modernize": {
+            "choices": {},
+            "commands": {},
+            "options": [
+              "--asset-policy",
+              "--attempt-id",
+              "--factory-config",
+              "--gateway-config",
+              "--json",
+              "--modernization-policy",
+              "--out",
+              "--run-id",
+              "--source",
+              "--source-root",
+              "--type-policy",
+              "--validation-policy",
+              "--workload-config",
+              "--workload-id"
+            ],
+            "path": "smf migrate modernize",
+            "positionals": []
+          },
+          "promote": {
+            "choices": {},
+            "commands": {},
+            "options": [
+              "--json",
+              "--out",
+              "--promotion-approval",
+              "--run-id",
+              "--target",
+              "--workload-id"
+            ],
+            "path": "smf migrate promote",
+            "positionals": []
+          },
+          "resume": {
+            "choices": {
+              "from_checkpoint": [
+                "approved-modernization-architecture-business-disposition",
+                "latest-safe"
+              ]
+            },
+            "commands": {},
+            "options": [
+              "--factory-config",
+              "--from-checkpoint",
+              "--json",
+              "--out",
+              "--run-id",
+              "--workload-id"
+            ],
+            "path": "smf migrate resume",
+            "positionals": []
+          },
+          "status": {
+            "choices": {},
+            "commands": {},
+            "options": [
+              "--json",
+              "--out",
+              "--run-id",
+              "--workload-id"
+            ],
+            "path": "smf migrate status",
+            "positionals": []
+          }
+        },
+        "options": [],
+        "path": "smf migrate",
+        "positionals": []
+      },
+      "ready": {
+        "choices": {},
+        "commands": {},
+        "options": [
+          "--attempt-id",
+          "--boundary-id",
+          "--evidence-root",
+          "--json",
+          "--out",
+          "--policy",
+          "--run-id",
+          "--workload-id"
+        ],
+        "path": "smf ready",
+        "positionals": [
+          "discovery",
+          "evidence"
+        ]
+      },
+      "select-pilot": {
+        "choices": {},
+        "commands": {},
+        "options": [
+          "--attempt-id",
+          "--json",
+          "--out",
+          "--policy",
+          "--run-id"
+        ],
+        "path": "smf select-pilot",
+        "positionals": [
+          "inventory"
+        ]
+      },
+      "upstream": {
+        "choices": {},
+        "commands": {
+          "qualify": {
+            "choices": {},
+            "commands": {},
+            "options": [
+              "--attempt-id",
+              "--evaluation-time",
+              "--evidence-root",
+              "--inventory",
+              "--json",
+              "--out",
+              "--policy",
+              "--run-id",
+              "--scope-id",
+              "--signing-authority",
+              "--signing-key",
+              "--signing-key-id"
+            ],
+            "path": "smf upstream qualify",
+            "positionals": []
+          }
+        },
+        "options": [],
+        "path": "smf upstream",
+        "positionals": []
+      },
+      "validate": {
+        "choices": {
+          "target": [
+            "pyspark",
+            "sparksql"
+          ]
+        },
+        "commands": {},
+        "options": [
+          "--explain",
+          "--json",
+          "--minimum-confidence",
+          "--out",
+          "--target"
+        ],
+        "path": "smf validate",
+        "positionals": [
+          "source",
+          "generated"
+        ]
+      },
+      "validate-schema": {
+        "choices": {},
+        "commands": {},
+        "options": [
+          "--json",
+          "--out",
+          "--policy"
+        ],
+        "path": "smf validate-schema",
+        "positionals": [
+          "source_schema",
+          "target_schema"
+        ]
+      },
+      "verify-provenance": {
+        "choices": {},
+        "commands": {},
+        "options": [
+          "--chain",
+          "--evidence-root",
+          "--json",
+          "--out",
+          "--policy",
+          "--source-root"
+        ],
+        "path": "smf verify-provenance",
+        "positionals": []
+      }
+    },
+    "options": [],
+    "path": "smf",
+    "positionals": []
+  },
+  "smf-agent": {
+    "choices": {},
+    "commands": {
+      "continue": {
+        "choices": {},
+        "commands": {},
+        "options": [
+          "--max-repairs",
+          "--offline",
+          "--runner"
+        ],
+        "path": "smf-agent continue",
+        "positionals": [
+          "key"
+        ]
+      },
+      "drain": {
+        "choices": {},
+        "commands": {},
+        "options": [
+          "--base-branch",
+          "--continue-external-blockers",
+          "--max-repairs",
+          "--runner",
+          "--scope-key"
+        ],
+        "path": "smf-agent drain",
+        "positionals": []
+      },
+      "next": {
+        "choices": {},
+        "commands": {},
+        "options": [
+          "--focus",
+          "--offline"
+        ],
+        "path": "smf-agent next",
+        "positionals": []
+      },
+      "plan": {
+        "choices": {},
+        "commands": {},
+        "options": [
+          "--json",
+          "--offline"
+        ],
+        "path": "smf-agent plan",
+        "positionals": [
+          "key"
+        ]
+      },
+      "work": {
+        "choices": {},
+        "commands": {},
+        "options": [
+          "--max-repairs",
+          "--offline",
+          "--runner"
+        ],
+        "path": "smf-agent work",
+        "positionals": [
+          "key"
+        ]
+      }
+    },
+    "options": [],
+    "path": "smf-agent",
+    "positionals": []
+  }
+}

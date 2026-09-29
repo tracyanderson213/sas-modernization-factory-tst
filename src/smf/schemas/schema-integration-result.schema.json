@@ -1,0 +1,215 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://smf.local/schemas/schema-integration-result.schema.json",
+  "type": "object",
+  "required": [
+    "schema_version", "contract_version", "result_id", "content_digest", "request",
+    "request_digest", "upstream", "source_snapshot", "target_snapshot", "comparison",
+    "evidence_boundary", "state", "blockers", "implementation_manifest", "claims"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "contract_version": {"const": "schema-int-01.1.0"},
+    "result_id": {"type": "string", "pattern": "^SCHEMAINT01-[0-9a-f]{16}$"},
+    "content_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "request": {
+      "type": "object",
+      "required": [
+        "client_id", "workload_id", "source_id", "run_id", "attempt_id",
+        "logical_dataset_id", "source_dataset_id", "target_dataset_id",
+        "base04_result_id", "base04_content_digest", "base02_result_id",
+        "base02_content_digest", "dbpkg01_result_id", "dbpkg01_content_digest"
+      ],
+      "properties": {
+        "client_id": {"$ref": "#/$defs/id"}, "workload_id": {"$ref": "#/$defs/id"},
+        "source_id": {"$ref": "#/$defs/id"}, "run_id": {"$ref": "#/$defs/id"},
+        "attempt_id": {"$ref": "#/$defs/id"}, "logical_dataset_id": {"$ref": "#/$defs/id"},
+        "source_dataset_id": {"$ref": "#/$defs/id"}, "target_dataset_id": {"$ref": "#/$defs/id"},
+        "base04_result_id": {"$ref": "#/$defs/id"},
+        "base04_content_digest": {"$ref": "#/$defs/sha"},
+        "base02_result_id": {"$ref": "#/$defs/id"},
+        "base02_content_digest": {"$ref": "#/$defs/sha"},
+        "dbpkg01_result_id": {"$ref": "#/$defs/id"},
+        "dbpkg01_content_digest": {"$ref": "#/$defs/sha"}
+      },
+      "additionalProperties": false
+    },
+    "request_digest": {"$ref": "#/$defs/sha"},
+    "upstream": {
+      "type": "object",
+      "required": [
+        "base04_result_id", "base04_content_digest", "base02_result_id",
+        "base02_content_digest", "dbpkg01_result_id", "dbpkg01_content_digest",
+        "base04_descriptor_digest", "base02_target_descriptor_digest",
+        "dbpkg04_result_id", "dbpkg04_content_digest"
+      ],
+      "properties": {
+        "base04_result_id": {"$ref": "#/$defs/id"}, "base04_content_digest": {"$ref": "#/$defs/sha"},
+        "base02_result_id": {"$ref": "#/$defs/id"}, "base02_content_digest": {"$ref": "#/$defs/sha"},
+        "dbpkg01_result_id": {"$ref": "#/$defs/id"}, "dbpkg01_content_digest": {"$ref": "#/$defs/sha"},
+        "base04_descriptor_digest": {"$ref": "#/$defs/sha"},
+        "base02_target_descriptor_digest": {"$ref": "#/$defs/sha"},
+        "dbpkg04_result_id": {"$ref": "#/$defs/id"}, "dbpkg04_content_digest": {"$ref": "#/$defs/sha"}
+      },
+      "additionalProperties": false
+    },
+    "source_snapshot": {
+      "allOf": [
+        {"$ref": "#/$defs/snapshot"},
+        {"properties": {"engine": {"const": "base04-cross-provider"}}}
+      ]
+    },
+    "target_snapshot": {
+      "allOf": [
+        {"$ref": "#/$defs/snapshot"},
+        {"properties": {
+          "engine": {"const": "base02-governed-target-plan"},
+          "metadata": {
+            "required": ["evidence_class", "physical_target_schema_observed"],
+            "properties": {
+              "evidence_class": {"const": "governed_plan_bound_to_reconciled_local_delta"},
+              "physical_target_schema_observed": {"const": false}
+            }
+          }
+        }}
+      ]
+    },
+    "comparison": {"$ref": "#/$defs/comparison"},
+    "evidence_boundary": {
+      "type": "object", "additionalProperties": false,
+      "required": ["source_descriptor_class", "target_descriptor_class", "target_physical_schema_observed"],
+      "properties": {
+        "source_descriptor_class": {"const": "observed_cross_provider_physical"},
+        "target_descriptor_class": {"const": "governed_plan_bound_to_reconciled_local_delta"},
+        "target_physical_schema_observed": {"const": false}
+      }
+    },
+    "state": {"enum": ["passed_governed_descriptor_integration", "failed_descriptor_comparison", "blocked_descriptor_comparison"]},
+    "blockers": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "implementation_manifest": {
+      "type": "array", "minItems": 4, "maxItems": 4,
+      "items": {
+        "type": "object", "required": ["path", "sha256"],
+        "properties": {
+          "path": {"type": "string", "minLength": 1},
+          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "claims": {
+      "type": "object",
+      "required": [
+        "live_databricks_contacted", "unity_catalog_readback_validated", "row_or_cell_parity",
+        "sas_semantic_parity", "humana_validated", "production_ready", "migration_complete"
+      ],
+      "properties": {
+        "live_databricks_contacted": {"const": false},
+        "unity_catalog_readback_validated": {"const": false},
+        "row_or_cell_parity": {"const": false},
+        "sas_semantic_parity": {"const": false},
+        "humana_validated": {"const": false},
+        "production_ready": {"const": false},
+        "migration_complete": {"const": false}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"},
+    "sha": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "snapshot": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "logical_dataset_id", "engine", "columns", "provenance", "digest", "metadata"],
+      "properties": {
+        "schema_version": {"const": "1.0"},
+        "logical_dataset_id": {"$ref": "#/$defs/id"},
+        "engine": {"type": "string", "minLength": 1},
+        "columns": {
+          "type": "array", "minItems": 1,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["ordinal", "name", "logical_type", "native_type", "nullable", "length", "precision", "scale"],
+            "properties": {
+              "ordinal": {"type": "integer", "minimum": 1},
+              "name": {"type": "string", "minLength": 1},
+              "logical_type": {"type": "string", "minLength": 1},
+              "native_type": {"type": "string", "minLength": 1},
+              "nullable": {"type": "boolean"},
+              "length": {"type": ["integer", "null"], "minimum": 1},
+              "precision": {"type": ["integer", "null"], "minimum": 1},
+              "scale": {"type": ["integer", "null"], "minimum": 0}
+            }
+          }
+        },
+        "provenance": {
+          "type": "object", "additionalProperties": false,
+          "required": ["producer", "origin", "reference", "authoritative"],
+          "properties": {
+            "producer": {"type": "string", "minLength": 1},
+            "origin": {"type": "string", "minLength": 1},
+            "reference": {"type": "string", "minLength": 1},
+            "authoritative": {"const": true}
+          }
+        },
+        "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "metadata": {
+          "type": "object",
+          "additionalProperties": {"type": ["string", "number", "boolean", "null"]}
+        }
+      }
+    },
+    "evidenceReference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["logical_dataset_id", "engine", "digest", "producer", "origin", "reference", "authoritative"],
+      "properties": {
+        "logical_dataset_id": {"$ref": "#/$defs/id"},
+        "engine": {"type": "string", "minLength": 1},
+        "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "producer": {"type": "string", "minLength": 1},
+        "origin": {"type": "string", "minLength": 1},
+        "reference": {"type": "string", "minLength": 1},
+        "authoritative": {"const": true}
+      }
+    },
+    "comparison": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "comparison_id", "policy", "source_evidence", "target_evidence", "status", "checks", "warnings", "output_files"],
+      "properties": {
+        "schema_version": {"const": "1.0"},
+        "comparison_id": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "policy": {
+          "type": "object", "additionalProperties": false,
+          "required": ["policy_id", "policy_version", "digest"],
+          "properties": {
+            "policy_id": {"type": "string", "minLength": 1},
+            "policy_version": {"type": "string", "minLength": 1},
+            "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+          }
+        },
+        "source_evidence": {"$ref": "#/$defs/evidenceReference"},
+        "target_evidence": {"$ref": "#/$defs/evidenceReference"},
+        "status": {"enum": ["passed", "failed", "blocked"]},
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["code", "path", "expected", "actual", "applied_rule", "status", "blocking", "diagnostic"],
+            "properties": {
+              "code": {"type": "string", "pattern": "^SCHEMA-[A-Z-]+$"},
+              "path": {"type": "string", "minLength": 1},
+              "expected": {}, "actual": {},
+              "applied_rule": {"type": "string", "minLength": 1},
+              "status": {"enum": ["pass", "fail", "blocked"]},
+              "blocking": {"type": "boolean"},
+              "diagnostic": {"type": "string", "minLength": 1}
+            }
+          }
+        },
+        "warnings": {"type": "array", "items": {"type": "string"}},
+        "output_files": {"type": "array", "items": {"type": "string"}}
+      }
+    }
+  }
+}

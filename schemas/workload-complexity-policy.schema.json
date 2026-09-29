@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "policy_id", "policy_version", "policy_digest", "status", "valid_from", "valid_until", "allowed_clients", "strategy", "dimensions", "thresholds", "unknown_handling", "permitted_evidence_methods", "authoritative_versions", "deduplication", "aggregation", "owner_roles", "result_provenance", "verification_keys", "authorizes_readiness", "authorizes_execution", "authorizes_parity", "authorizes_certification"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "policy_id": {"$ref": "#/$defs/id"},
+    "policy_version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+    "policy_digest": {"$ref": "#/$defs/digest"},
+    "status": {"enum": ["active", "pending", "denied", "expired"]},
+    "valid_from": {"type": "string", "format": "date-time"},
+    "valid_until": {"type": ["string", "null"], "format": "date-time"},
+    "allowed_clients": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+    "strategy": {"type": "object", "additionalProperties": false, "required": ["strategy_id", "strategy_version"], "properties": {"strategy_id": {"$ref": "#/$defs/id"}, "strategy_version": {"$ref": "#/$defs/id"}}},
+    "dimensions": {"type": "array", "minItems": 6, "maxItems": 6, "items": {"$ref": "#/$defs/dimension"}},
+    "thresholds": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"type": "object", "additionalProperties": false, "required": ["tier", "min_score"], "properties": {"tier": {"enum": ["simple", "moderate", "complex", "highly_complex"]}, "min_score": {"type": "integer", "minimum": 0, "maximum": 1000000}}}},
+    "unknown_handling": {"const": "block_tier"},
+    "permitted_evidence_methods": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["filesystem", "static_analysis"]}},
+    "authoritative_versions": {"type": "object", "additionalProperties": false, "required": ["discovery_providers", "macro_strategy_digests"], "properties": {"discovery_providers": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}}, "macro_strategy_digests": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/digest"}}}},
+    "deduplication": {"const": "canonical_observation_identity"},
+    "aggregation": {"const": "capped_sum"},
+    "owner_roles": {"type": "object", "additionalProperties": false, "required": ["policy_approval", "missing_evidence", "classification_exception"], "properties": {"policy_approval": {"$ref": "#/$defs/id"}, "missing_evidence": {"$ref": "#/$defs/id"}, "classification_exception": {"$ref": "#/$defs/id"}}},
+    "result_provenance": {"type": "object", "additionalProperties": false, "required": ["authorities", "key_ids"], "properties": {"authorities": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}}, "key_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}}}},
+    "verification_keys": {"type": "object", "minProperties": 1, "additionalProperties": {"type": "string", "minLength": 40, "maxLength": 128}},
+    "authorizes_readiness": {"const": false},
+    "authorizes_execution": {"const": false},
+    "authorizes_parity": {"const": false},
+    "authorizes_certification": {"const": false}
+  },
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"},
+    "digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "dimension": {"type": "object", "additionalProperties": false, "required": ["dimension_id", "required", "tier_critical", "cap", "features"], "properties": {"dimension_id": {"enum": ["static_constructs", "macro_behavior", "dependency_topology", "data_access", "source_scale", "validation_difficulty"]}, "required": {"type": "boolean"}, "tier_critical": {"type": "boolean"}, "cap": {"type": "integer", "minimum": 0, "maximum": 100000}, "features": {"type": "array", "minItems": 1, "items": {"type": "object", "additionalProperties": false, "required": ["feature_id", "weight", "max_count"], "properties": {"feature_id": {"$ref": "#/$defs/id"}, "weight": {"type": "integer", "minimum": 0, "maximum": 10000}, "max_count": {"type": "integer", "minimum": 1, "maximum": 100000}}}}}}
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "event", "baseline_result_id", "acquisition_id", "client_id", "workload_id", "workload_revision_id", "boundary_id", "run_id", "attempt_id", "disposition", "baseline_acquired", "acquisition_mode", "sas_execution_performed", "sas_execution_verified", "export_imported", "provenance_verified", "generated", "executed", "validated", "parity_passed", "certified", "human_assisted", "blocked", "blocker_reason"],
+  "properties": {
+    "schema_version": {"const": "1.0"}, "event": {"const": "baseline_acquisition_completed"},
+    "baseline_result_id": {"type": "string"}, "acquisition_id": {"type": "string"}, "client_id": {"type": "string"}, "workload_id": {"type": "string"}, "workload_revision_id": {"type": "string"}, "boundary_id": {"type": "string"}, "run_id": {"type": "string"}, "attempt_id": {"type": "string"}, "disposition": {"enum": ["acquired", "needs_evidence", "human_required", "blocked"]}, "baseline_acquired": {"type": "boolean"}, "acquisition_mode": {"enum": ["approved_export", "sas_execution"]}, "sas_execution_performed": {"type": "boolean"}, "sas_execution_verified": {"type": "boolean"}, "export_imported": {"type": "boolean"}, "provenance_verified": {"type": "boolean"}, "generated": {"const": false}, "executed": {"const": false}, "validated": {"const": false}, "parity_passed": {"const": false}, "certified": {"const": false}, "human_assisted": {"type": "boolean"}, "blocked": {"type": "boolean"}, "blocker_reason": {"type": ["string", "null"]}
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "projection_type", "result_id", "result_digest", "scope_id", "run_id", "attempt_id", "policy_digest", "inventory_digest", "outcome", "entries", "content_digest"],
+  "properties": {
+    "schema_version": {"const": "1.0"}, "projection_type": {"const": "bounded_upstream_permitted_use"},
+    "result_id": {"$ref": "#/$defs/id"}, "result_digest": {"$ref": "#/$defs/sha"}, "scope_id": {"$ref": "#/$defs/id"}, "run_id": {"$ref": "#/$defs/id"}, "attempt_id": {"$ref": "#/$defs/id"}, "policy_digest": {"$ref": "#/$defs/sha"}, "inventory_digest": {"$ref": "#/$defs/sha"},
+    "outcome": {"$ref": "#/$defs/outcome"}, "entries": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/entry"}}, "content_digest": {"$ref": "#/$defs/sha"}
+  },
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"}, "sha": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "outcome": {"enum": ["qualified", "blocked_missing", "blocked_pending", "denied", "incompatible", "stale", "ambiguous", "unsupported", "failed"]},
+    "disposition": {"enum": ["adopt_directly", "wrap", "reuse_transitively", "reuse_selected_licensed_components", "patterns_only", "reject", "fork_and_harden"]},
+    "use": {"enum": ["runtime", "provider_wrapper", "transitive_dependency", "licensed_component", "evaluation_in_place", "public_corpus", "design_patterns", "dataframe_layer", "optional_quality_policy", "fixture_research", "none"]},
+    "entry": {"type": "object", "additionalProperties": false, "required": ["upstream_id", "revision", "outcome", "disposition", "permitted_use", "receipt_digest", "selection_reason_required", "authorizes_execution", "authorizes_copying"], "properties": {"upstream_id": {"$ref": "#/$defs/id"}, "revision": {"type": "string", "pattern": "^[a-f0-9]{40,64}$"}, "outcome": {"$ref": "#/$defs/outcome"}, "disposition": {"$ref": "#/$defs/disposition"}, "permitted_use": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/use"}}, "receipt_digest": {"oneOf": [{"$ref": "#/$defs/sha"}, {"type": "null"}]}, "selection_reason_required": {"const": true}, "authorizes_execution": {"const": false}, "authorizes_copying": {"type": "boolean"}}}
+  }
+}

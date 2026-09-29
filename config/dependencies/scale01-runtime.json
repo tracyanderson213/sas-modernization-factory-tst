@@ -1,0 +1,54 @@
+{
+  "schema_version": "1.0",
+  "upstream": {
+    "spark_sas7bdat": {
+      "repository": "https://github.com/saurfang/spark-sas7bdat",
+      "revision": "dad0840bd89b7581c35a41ce372c61dc42d15eab",
+      "license": "Apache-2.0",
+      "build": "Scala 2.12.18 with Spark 3.5.8",
+      "build_receipt_sha256": "e919e2e2efe2f4ff44c8b68e401f29e97b95f9d4b3bd32926723eac954dc92c6",
+      "source_built_jar_sha256": "fd0c763c2b92457a583aab8855fd81fb76d30b9d017dcc39d17d952fe2ff3a27",
+      "published_scala_212_jar_sha256": "a4240d930e37d0bd2b8223e2b0186d26ecaa6dbf65226865227d3a2f71802d0e",
+      "published_scala_212_disposition": "rejected: contains no class files",
+      "license_sha256": "5f3e56904af6912d99cb1a569bed78e39ff6ea25301b7a8fccae5b6e5b62c3cc",
+      "redistribution": "retain Apache-2.0 license and notices"
+    },
+    "parso": {
+      "repository": "https://github.com/epam/parso",
+      "revision": "3c514e66264f5f3d5b2970bc2509d749065630c0",
+      "version": "2.0.14",
+      "license": "Apache-2.0",
+      "jar_sha256": "3b7e7a32915e04caed5dba31be1430aa57b4f9fa2b3d0ab0ed29067510d16575",
+      "license_sha256": "58d1e17ffe5109a7ae296caafcadfdbe6a7d176f0bc4ab01e12a689b0499d8bd",
+      "redistribution": "retain Apache-2.0 license and notices"
+    }
+  },
+  "fixture": {
+    "repository": "https://github.com/saurfang/spark-sas7bdat",
+    "revision": "dad0840bd89b7581c35a41ce372c61dc42d15eab",
+    "sas7bdat_path": "src/test/resources/ag121a_supp_sample.sas7bdat",
+    "sas7bdat_sha256": "bc7867bb33bbf238b7085a370f59e9a91a76ff1f61f6df7c74e3b66d47f5b277",
+    "csv_path": "src/test/resources/ag121a_supp_sample.csv",
+    "csv_sha256": "a0d0b31f26342a58e5cae435794d4297029d99f6a23acce1eddf4040980c54ec",
+    "license": "Apache-2.0",
+    "license_sha256": "5f3e56904af6912d99cb1a569bed78e39ff6ea25301b7a8fccae5b6e5b62c3cc"
+  },
+  "runtime": {
+    "spark": "3.5.8",
+    "scala": "2.12.18",
+    "master": "local[4]",
+    "split_bytes": 1048576,
+    "fixture_numeric_significant_digits": 12,
+    "network_at_runtime": false
+  },
+  "collection_policy": "partition_summaries_only",
+  "claims": {
+    "published_jar_qualified": false,
+    "databricks_or_unity_catalog_validated": false,
+    "humana_validated": false,
+    "arbitrary_sas_coverage": false,
+    "production_ready": false,
+    "semantic_parity": false,
+    "migration_complete": false
+  }
+}

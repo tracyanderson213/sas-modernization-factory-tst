@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://smf.local/schemas/conversion-provider-package.schema.json",
+  "title": "SMF deterministic conversion provider package",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version","package_id","identity","status","source","target","entrypoint","candidate_artifact","generated_sha256","provider","runtime","reproducibility","exceptions","exception_report","claims","content_digest"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "package_id": {"type": "string", "pattern": "^CVPKG-[0-9a-f]{16}$"},
+    "identity": {
+      "type": "object", "additionalProperties": false,
+      "required": ["client_id","deployment_id","environment_id","workload_id","source_artifact_id","run_id","attempt_id"],
+      "properties": {
+        "client_id": {"$ref": "#/$defs/id"}, "deployment_id": {"$ref": "#/$defs/id"},
+        "environment_id": {"$ref": "#/$defs/id"}, "workload_id": {"$ref": "#/$defs/id"},
+        "source_artifact_id": {"$ref": "#/$defs/id"}, "run_id": {"$ref": "#/$defs/id"},
+        "attempt_id": {"$ref": "#/$defs/id"}
+      }
+    },
+    "status": {"enum": ["packaged","review_required","unsupported","blocked"]},
+    "source": {
+      "type": "object", "additionalProperties": false,
+      "required": ["artifact_id","sha256","bytes","lines","provenance"],
+      "properties": {
+        "artifact_id": {"$ref": "#/$defs/id"}, "sha256": {"$ref": "#/$defs/sha256"},
+        "bytes": {"type": "integer", "minimum": 1}, "lines": {"type": "integer", "minimum": 1},
+        "provenance": {"type":"object","additionalProperties":false,"required":["evidence_id","evidence_digest","origin","revision","license"],"properties":{"evidence_id":{"$ref":"#/$defs/id"},"evidence_digest":{"$ref":"#/$defs/sha256"},"origin":{"type":"string","minLength":1,"maxLength":512},"revision":{"type":"string","minLength":1,"maxLength":512},"license":{"type":"string","minLength":1,"maxLength":512}}}
+      }
+    },
+    "target": {"enum": ["pyspark","sparksql"]},
+    "entrypoint": {"type": ["string","null"], "enum": ["entrypoint.py","entrypoint.sql",null]},
+    "candidate_artifact": {"type": ["string","null"], "enum": ["candidate.py","candidate.sql",null]},
+    "generated_sha256": {"anyOf": [{"$ref": "#/$defs/sha256"},{"type":"null"}]},
+    "provider": {
+      "type": "object", "additionalProperties": false,
+      "required": ["name","version","evaluated_revision","record_sha256","package_manifest_sha256","executable_sha256","license","runtime_bindings","command","summary","credential_environment_forwarded","direct_provider_access_authorized"],
+      "properties": {
+        "name": {"const":"sas2databricks"}, "version": {"const":"0.4.0"},
+        "evaluated_revision": {"const":"392d3a34c1390f6335fb47e165a4f4f3ac03111c"},
+        "record_sha256": {"$ref":"#/$defs/sha256"},
+        "package_manifest_sha256": {"const":"9c351f836e620d70c2d73ad0f968a8aceda2928931214a9b08133fa6f842216b"},
+        "executable_sha256": {"$ref":"#/$defs/sha256"},
+        "license": {"type":"object","additionalProperties":false,"required":["expression","sha256","disposition"],"properties":{"expression":{"const":"MIT"},"sha256":{"const":"0e5c49601a1879520e327e9f10da5747b10368d549b5329545e3d5f744efa635"},"disposition":{"const":"qualified_for_bounded_wrapper"}}},
+        "runtime_bindings": {"type":"array","minItems":2,"maxItems":2,"prefixItems":[{"$ref":"#/$defs/sqlglot"},{"$ref":"#/$defs/pyyaml"}],"items":false},
+        "command": {"type":"array","prefixItems":[{"const":"s2db"},{"const":"convert"},{"const":"<admitted-source>"},{"const":"--target"},{"enum":["pyspark","sparksql"]},{"const":"--threshold"},{"const":"0.8"}],"items":false,"minItems":7,"maxItems":7},
+        "summary": {"anyOf":[{"type":"null"},{"type":"object","additionalProperties":false,"required":["model","target","steps","review","llm_escalations"],"properties":{"model":{"type":"string","minLength":1},"target":{"enum":["pyspark","sparksql"]},"steps":{"type":"integer","minimum":0},"review":{"type":"integer","minimum":0},"llm_escalations":{"type":"integer","minimum":0}}}]},
+        "credential_environment_forwarded": {"const":false},
+        "direct_provider_access_authorized": {"const":false}
+      }
+    },
+    "runtime": {
+      "type":"object","additionalProperties":false,
+      "required":["python","python_executable_sha256","network_downloads_permitted","isolated_flags","dependencies"],
+      "properties":{"python":{"type":"string","pattern":"^3\\.(11|12)\\.[0-9]+$"},"python_executable_sha256":{"$ref":"#/$defs/sha256"},"network_downloads_permitted":{"const":false},"isolated_flags":{"const":["-I","-S"]},"dependencies":{"const":["sas2databricks==0.4.0","sqlglot==30.17.0","PyYAML==6.0.3"]}}
+    },
+    "reproducibility": {
+      "type":"object","additionalProperties":false,
+      "required":["executions","outputs_equal","durations_ms","provider_metadata_equal"],
+      "properties":{"executions":{"type":"integer","minimum":0,"maximum":2},"outputs_equal":{"type":"boolean"},"durations_ms":{"type":"array","items":{"type":"integer","minimum":1},"maxItems":2},"provider_metadata_equal":{"type":"boolean"}}
+    },
+    "exceptions": {"type":"array","items":{"type":"object","additionalProperties":false,"required":["code","detail","retryable"],"properties":{"code":{"enum":["PROVIDER_FAILURE","NON_REPRODUCIBLE_OUTPUT","NO_CONVERTIBLE_STEPS","UPSTREAM_REVIEW_REQUIRED","INVALID_GENERATED_SYNTAX"]},"detail":{"type":"string","minLength":1},"retryable":{"type":"boolean"}}}},
+    "exception_report": {"type":["string","null"],"enum":["exceptions.json",null]},
+    "claims": {
+      "type":"object","additionalProperties":false,
+      "required":["generated","package_ready","executed","validated","parity_passed","human_assisted","ai_repaired","production_ready","migration_complete"],
+      "properties":{"generated":{"type":"boolean"},"package_ready":{"type":"boolean"},"executed":{"const":false},"validated":{"const":false},"parity_passed":{"const":false},"human_assisted":{"const":false},"ai_repaired":{"const":false},"production_ready":{"const":false},"migration_complete":{"const":false}}
+    },
+    "content_digest": {"$ref":"#/$defs/sha256"}
+  },
+  "$defs": {
+    "id": {"type":"string","pattern":"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"},
+    "sha256": {"type":"string","pattern":"^[0-9a-f]{64}$"}
+    ,"sqlglot":{"type":"object","additionalProperties":false,"required":["distribution","version","manifest_sha256"],"properties":{"distribution":{"const":"sqlglot"},"version":{"const":"30.17.0"},"manifest_sha256":{"const":"5597d80b4ad667013c4ed06c03143db53e0527b3ce2d58900244efbe64a99374"}}}
+    ,"pyyaml":{"type":"object","additionalProperties":false,"required":["distribution","version","manifest_sha256"],"properties":{"distribution":{"const":"PyYAML"},"version":{"const":"6.0.3"},"manifest_sha256":{"const":"611b3f160be17edfe09e2cf84e1927951474ba2a302a1c4def99f4f8e3bb7195"}}}
+  },
+  "allOf": [
+    {"if":{"properties":{"status":{"const":"packaged"}}},"then":{"properties":{"entrypoint":{"type":"string"},"candidate_artifact":{"type":"null"},"exception_report":{"type":"null"},"exceptions":{"maxItems":0}}}},
+    {"if":{"properties":{"status":{"const":"review_required"}}},"then":{"properties":{"entrypoint":{"type":"null"},"candidate_artifact":{"type":"string"},"exception_report":{"const":"exceptions.json"},"exceptions":{"minItems":1}}}},
+    {"if":{"properties":{"status":{"enum":["unsupported","blocked"]}}},"then":{"properties":{"entrypoint":{"type":"null"},"candidate_artifact":{"type":"null"},"exception_report":{"const":"exceptions.json"},"exceptions":{"minItems":1}}}}
+  ]
+}

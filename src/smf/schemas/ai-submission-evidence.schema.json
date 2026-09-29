@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "$id": "https://smf.example/schemas/ai-submission-evidence.schema.json",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "evidence_id", "state", "authority", "purpose", "decision_id", "issued_at", "expires_at", "bindings", "proof"],
+  "properties": {
+    "schema_version": {"const": "1.0"}, "evidence_id": {"$ref": "#/$defs/id"}, "state": {"enum": ["approved", "pending", "denied"]}, "authority": {"$ref": "#/$defs/id"}, "purpose": {"const": "ai-prompt-submit"}, "decision_id": {"$ref": "#/$defs/id"},
+    "issued_at": {"type": "string", "format": "date-time"}, "expires_at": {"type": "string", "format": "date-time"}, "bindings": {"type": "object", "minProperties": 1}, "proof": {"$ref": "#/$defs/proof"}
+  },
+  "$defs": {"id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"}, "proof": {"type": "object", "additionalProperties": false, "required": ["algorithm", "key_id", "value"], "properties": {"algorithm": {"const": "ed25519"}, "key_id": {"$ref": "#/$defs/id"}, "value": {"type": "string", "minLength": 1}}}}
+}

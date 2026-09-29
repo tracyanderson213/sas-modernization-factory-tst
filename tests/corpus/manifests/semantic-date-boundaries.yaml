@@ -1,0 +1,26 @@
+schema_version: 1
+scenario_id: semantic-date-boundaries
+name: SAS date boundaries
+domain: semantics
+description: Isolates epoch, leap day, year boundary, INTCK, INTNX, and YEARCUTOFF behavior.
+source: {source_id: smf-semantic-fixtures, origin: smf, license: Internal test fixture}
+capabilities: [data-step, sas-date, date-boundary, intck, intnx, yearcutoff]
+artifacts:
+- {path: ../workloads/semantic/adversarial/date-boundaries.sas, role: sas-program, sha256: 8f04249df05b2c910a0c35ebfb9aa36601d6c4ff0e8cb67fbda3ea2a01a48335, source_id: smf-semantic-fixtures}
+- {path: ../workloads/semantic/expected/date-boundaries.json, role: expected-output, sha256: 6e2fa378d7323e5be48a84d07443af1090572e07e3534eecfc80b8c1ee94bf32, source_id: smf-semantic-fixtures}
+output_evidence:
+- {evidence_id: date-boundaries-declared, logical_output: work.date_boundaries, artifact: ../workloads/semantic/expected/date-boundaries.json, format: json, evidence_origin: declared-synthetic-expectation, producer: smf-authored-oracle, content_hash: 6e2fa378d7323e5be48a84d07443af1090572e07e3534eecfc80b8c1ee94bf32, deterministic: true, authoritative: true}
+semantic_oracles:
+- oracle_id: date-boundaries-oracle
+  logical_output: work.date_boundaries
+  evidence_id: date-boundaries-declared
+  comparison: ordered
+  behavior: Dates use the 1960 epoch with pinned two-digit-year and interval boundary behavior.
+  columns:
+  - {name: epoch, logical_type: date, nullable: false}
+  - {name: leap_day, logical_type: date, nullable: false}
+  - {name: next_year, logical_type: date, nullable: false}
+  - {name: year_boundaries, logical_type: numeric, nullable: false}
+  - {name: parsed_two_digit, logical_type: date, nullable: false}
+  session: {yearcutoff: 1920, locale: en_US, encoding: utf-8, sort_sequence: binary, timezone: UTC}
+metadata: {tier: semantic, private_data: false, fixture_kind: smf-authored, primary_behavior: date-boundaries}

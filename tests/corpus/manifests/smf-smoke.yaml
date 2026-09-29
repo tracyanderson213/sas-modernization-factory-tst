@@ -1,0 +1,33 @@
+schema_version: 1
+scenario_id: smf-smoke-external-file
+name: SMF corpus bootstrap external file scenario
+domain: core-sas
+description: >-
+  Small SMF-owned scenario used to validate corpus manifests, provenance,
+  fingerprints, and artifact acquisition before public fixtures are imported.
+source:
+  source_id: smf-owned
+  origin: smf
+  license: Apache-2.0
+  notes: Created by the SAS Modernization Factory project for regression testing.
+capabilities:
+  - data-step
+  - infile
+  - external-file
+  - proc-sql
+  - aggregation
+artifacts:
+  - path: ../workloads/smf-smoke/source/read_external_file.sas
+    role: sas-program
+    sha256: ec82ed956e647fabb653eac252965d44e0ab45730d20bf4e372fcb5dc25339c9
+    source_id: smf-owned
+  - path: ../workloads/smf-smoke/source/members.csv
+    role: input-data
+    sha256: 119ca147b2c042ad427dee618ef5f8f93f2b9d70b497633bae82eea8ef510379
+    source_id: smf-owned
+expected:
+  discovery:
+    minimum_artifacts: 2
+metadata:
+  tier: bootstrap
+  private_data: false

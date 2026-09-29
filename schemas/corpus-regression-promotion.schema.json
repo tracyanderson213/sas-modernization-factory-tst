@@ -1,0 +1,288 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://smf.local/schemas/corpus-regression-promotion.schema.json",
+  "title": "SMF Corpus Evidence-to-Regression Promotion Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "promotion_id",
+    "status",
+    "evidence",
+    "failure"
+  ],
+  "properties": {
+    "schema_version": {
+      "enum": [1, 2]
+    },
+    "promotion_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "enum": [
+        "observed",
+        "reproduced",
+        "fixed",
+        "promoted"
+      ]
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scenario_id",
+        "manifest_path",
+        "evidence_class",
+        "artifact_paths",
+        "preserved_unchanged"
+      ],
+      "properties": {
+        "scenario_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence_class": {
+          "enum": [
+            "untouched-public",
+            "controlled-synthetic",
+            "private-client"
+          ]
+        },
+        "artifact_paths": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "preserved_unchanged": {
+          "type": "boolean"
+        },
+        "manifest_path": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "failure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "stage",
+        "summary",
+        "observed_behavior"
+      ],
+      "properties": {
+        "stage": {
+          "enum": [
+            "discover",
+            "assess",
+            "plan",
+            "convert",
+            "execute",
+            "validate",
+            "certify"
+          ]
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "observed_behavior": {
+          "type": "string",
+          "minLength": 1
+        },
+        "issue_url": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "regression": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fixture_scenario_id",
+        "fixture_path",
+        "test_path",
+        "reproduction_method",
+        "contains_client_material"
+      ],
+      "properties": {
+        "fixture_scenario_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "fixture_path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "test_path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reproduction_method": {
+          "enum": [
+            "minimal-independent",
+            "sanitized-independent",
+            "direct-synthetic"
+          ]
+        },
+        "contains_client_material": {
+          "type": "boolean"
+        }
+      }
+    },
+    "fix": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "summary",
+        "commit"
+      ],
+      "properties": {
+        "summary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "commit": {
+          "type": "string",
+          "minLength": 7
+        }
+      }
+    },
+    "golden_change": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "original_evidence_ref", "original_evidence_digest", "reproduction_method",
+        "old_golden_version", "new_golden_version", "provider_id", "provider_version",
+        "strategy_id", "strategy_version", "rationale", "review_reference", "fix_commit",
+        "fixture_path", "test_path"
+      ],
+      "properties": {
+        "original_evidence_ref": {"type": "string", "minLength": 1},
+        "original_evidence_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "reproduction_method": {"enum": ["minimal-independent", "sanitized-independent", "direct-synthetic"]},
+        "old_golden_version": {
+          "anyOf": [
+            {"type": "string", "pattern": "^[1-9][0-9]*\\.[0-9]+\\.[0-9]+$"},
+            {"type": "null"}
+          ]
+        },
+        "new_golden_version": {"type": "string", "pattern": "^[1-9][0-9]*\\.[0-9]+\\.[0-9]+$"},
+        "provider_id": {"type": "string", "minLength": 1},
+        "provider_version": {"type": "string", "minLength": 1},
+        "strategy_id": {"type": "string", "minLength": 1},
+        "strategy_version": {"type": "string", "minLength": 1},
+        "rationale": {"type": "string", "minLength": 1},
+        "review_reference": {"type": "string", "minLength": 1},
+        "fix_commit": {"type": "string", "minLength": 7},
+        "fixture_path": {"type": "string", "minLength": 1},
+        "test_path": {"type": "string", "minLength": 1}
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"schema_version": {"const": 2}}},
+      "then": {"required": ["golden_change"]},
+      "else": {"not": {"required": ["golden_change"]}}
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "enum": [
+              "reproduced",
+              "fixed",
+              "promoted"
+            ]
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "regression"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "enum": [
+              "fixed",
+              "promoted"
+            ]
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "fix"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "promoted"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "evidence": {
+            "properties": {
+              "preserved_unchanged": {
+                "const": true
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "evidence": {
+            "properties": {
+              "evidence_class": {
+                "const": "private-client"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "regression": {
+            "properties": {
+              "reproduction_method": {
+                "enum": [
+                  "minimal-independent",
+                  "sanitized-independent"
+                ]
+              },
+              "contains_client_material": {
+                "const": false
+              }
+            }
+          },
+          "golden_change": {
+            "properties": {
+              "reproduction_method": {
+                "enum": ["minimal-independent", "sanitized-independent"]
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

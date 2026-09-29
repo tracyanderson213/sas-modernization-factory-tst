@@ -1,0 +1,71 @@
+schema_version: 1
+scenario_id: semantic-macro-generation
+name: Core SAS macro generation
+domain: semantics
+description: SMF-authored executable semantic fixture for deterministic SAS discovery
+  and future conversion/behavioral validation.
+source:
+  source_id: smf-semantic-fixtures
+  origin: smf
+  license: Internal test fixture
+  upstream_url: https://github.com/sascommunities/learning-sas-by-example-2nd/blob/master/Example%20code/Programs%20Used%20in%20the%20Second%20Edition.sas
+  upstream_ref: 42b0ed32f5825838f366c01463ea708054460d82
+  notes: The fixture code is SMF-authored and does not copy upstream program text.
+    The public SAS Learning by Example source is retained as a semantic reference
+    and provenance aid.
+capabilities:
+- macro-definition
+- macro-parameter
+- macro-variable-reference
+- macro-invocation
+- proc-sql
+- create-table
+artifacts:
+- path: ../workloads/semantic/core/macro-generation.sas
+  role: sas-program
+  sha256: a4d9864464beaff1ad104a25a4d3999a3fbc77b9ebf5680f9a4bb2c6864a5727
+  source_id: smf-semantic-fixtures
+- path: ../workloads/semantic/expected/macro-generation.json
+  role: expected-output
+  sha256: 5d90a8be3693ae718e95ea48571ff4c61bdcbd7812f16c82973c68bd9e01d34f
+  source_id: smf-semantic-fixtures
+output_evidence:
+- evidence_id: macro-generation-declared
+  logical_output: work.high_cost_members
+  artifact: ../workloads/semantic/expected/macro-generation.json
+  format: json
+  evidence_origin: declared-synthetic-expectation
+  producer: smf-authored-oracle
+  content_hash: 5d90a8be3693ae718e95ea48571ff4c61bdcbd7812f16c82973c68bd9e01d34f
+  deterministic: true
+  authoritative: true
+semantic_oracles:
+- oracle_id: macro-generation-oracle
+  logical_output: work.high_cost_members
+  evidence_id: macro-generation-declared
+  comparison: keyed
+  keys: [member_id]
+  behavior: Macro parameter resolution generates a filtered aggregate dataset.
+  columns:
+  - {name: member_id, logical_type: character, nullable: false, length: 8}
+  - {name: total_paid, logical_type: numeric, nullable: false}
+  session: {yearcutoff: 1920, locale: en_US, encoding: utf-8, sort_sequence: binary, timezone: UTC}
+expected:
+  discovery:
+    minimum_artifacts: 1
+    macro_definitions:
+    - summarize
+    macro_invocations:
+    - summarize
+    macro_variables:
+    - input
+    - output
+    - threshold
+    dynamic_dataset_references:
+    - '&input'
+    - '&output'
+metadata:
+  tier: semantic
+  private_data: false
+  fixture_kind: smf-authored-public-reference-backed
+  primary_behavior: macro-generation

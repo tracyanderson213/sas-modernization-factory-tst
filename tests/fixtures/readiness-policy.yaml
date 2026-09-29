@@ -1,0 +1,95 @@
+policy_id: test-workload-readiness
+policy_version: "1.0"
+classification_precedence:
+  - UNSUPPORTED
+  - BLOCKED
+  - NEEDS_EVIDENCE
+  - HUMAN_REQUIRED
+  - READY
+supported_artifact_kinds:
+  - sas_program
+  - sas_macro
+  - sas_include
+  - format_catalog
+  - configuration
+  - shell_script
+  - scheduler_job
+unresolved_dependencies:
+  dynamic: NEEDS_EVIDENCE
+  ambiguous: NEEDS_EVIDENCE
+  missing: BLOCKED
+  external: NEEDS_EVIDENCE
+  recursive: BLOCKED
+  cyclic: BLOCKED
+  runtime_dependent: NEEDS_EVIDENCE
+  unsupported: UNSUPPORTED
+  limit_exceeded: BLOCKED
+required_environment_checks:
+  - target_workspace_access
+  - governed_catalog_access
+required_runtime_checks:
+  - target_runtime_compatible
+evidence_provenance:
+  discovery_snapshot:
+    authorities: [smf-discovery-service]
+    acquisition_sources: [governed-discovery-store]
+    key_ids: [humana-readiness-v1]
+  assessment:
+    authorities: [humana-assessment-service]
+    acquisition_sources: [governed-assessment-store]
+    key_ids: [humana-readiness-v1]
+  dataset_mapping:
+    authorities: [humana-data-governance]
+    acquisition_sources: [governed-mapping-registry]
+    key_ids: [humana-readiness-v1]
+  baseline:
+    authorities: [sas-executed-baseline]
+    acquisition_sources: [governed-baseline-store]
+    key_ids: [humana-readiness-v1]
+  environment:
+    authorities: [humana-platform-control-plane]
+    acquisition_sources: [readiness-evidence-adapter]
+    key_ids: [humana-readiness-v1]
+  runtime:
+    authorities: [humana-platform-control-plane]
+    acquisition_sources: [readiness-evidence-adapter]
+    key_ids: [humana-readiness-v1]
+  approval:
+    authorities: [humana-change-governance]
+    acquisition_sources: [governed-approval-adapter]
+    key_ids: [humana-readiness-v1]
+verification_keys:
+  humana-readiness-v1: A6EHv/POEL4dcN0Y50vAmWfk1jCbpQ1fHdyGZBJVMbg=
+baseline:
+  authorities: [sas-executed-baseline]
+  require_source_execution_id: true
+  trusted_acquisition_policies: []
+mappings:
+  require_inputs: true
+  require_outputs: true
+human_review:
+  complexities: [highly_complex]
+  risk_factors: [regulated_manual_approval]
+max_evidence_age_seconds: 2592000
+owners:
+  discovery: discovery-owner
+  dependency: workload-owner
+  assessment: conversion-owner
+  unsupported_construct: architecture-owner
+  dataset_mapping: data-owner
+  baseline: validation-owner
+  runtime: platform-owner
+  environment: platform-owner
+  human_approval: workload-owner
+  evidence_integrity: security-owner
+next_actions:
+  discovery: Re-run canonical discovery and preserve attributable source evidence.
+  dependency: Resolve or explicitly govern the dependency finding.
+  assessment: Produce a current assessment for every convertible entry point.
+  unsupported_construct: Select a supported strategy or obtain an architecture decision.
+  dataset_mapping: Complete and approve the source-to-target dataset mapping.
+  baseline: Acquire an authoritative SAS-executed baseline with execution linkage.
+  runtime: Satisfy and re-test target runtime prerequisites.
+  environment: Restore access or configuration and capture a current environment check.
+  human_approval: Record the governed human decision as new evidence in a new attempt.
+  evidence_integrity: Re-acquire attributable evidence with matching identity and digests.

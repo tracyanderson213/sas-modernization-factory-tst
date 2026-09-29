@@ -1,0 +1,195 @@
+{
+  "schema_version": 1,
+  "corpus_id": "task-05-macro-regression",
+  "scenarios": [
+    {
+      "scenario_id": "positive-static-scope",
+      "category": "positive",
+      "namespace": "task-05-positive-static",
+      "root": "positive/static",
+      "sources": [
+        {
+          "path": "macros/common.sas",
+          "size": 37,
+          "sha256": "94b02df3c9db27886e454ff9a1e051b3a33f42b381a806463f663554d9fec5ea"
+        },
+        {
+          "path": "main.sas",
+          "size": 258,
+          "sha256": "c0741e04eec2d6cb4a2a3ea9fc0fbc9d515f248533c515eedd6911e364b885be"
+        }
+      ],
+      "expected": {
+        "complete": true,
+        "observation_kinds": {
+          "definition": 2,
+          "include_reference": 2,
+          "literal_invocation": 3,
+          "proc_format_definition": 1,
+          "variable_definition": 4,
+          "variable_reference": 2
+        },
+        "resolution_kinds": {
+          "runtime_dependent": 2,
+          "unique_static_definition": 5
+        },
+        "blocker_reasons": {"runtime_dependent": 2},
+        "construct_families": ["sas_macro_processor", "sas_proc_format"],
+        "calls_edges": 2,
+        "include_occurrences": 2
+      },
+      "non_claims": {
+        "expansion": false,
+        "generation": false,
+        "execution": false,
+        "validation": false,
+        "parity": false,
+        "certification": false,
+        "human_approval": false
+      }
+    },
+    {
+      "scenario_id": "negative-include-failures",
+      "category": "negative",
+      "namespace": "task-05-negative-includes",
+      "root": "negative/include-failures",
+      "sources": [
+        {
+          "path": "main.sas",
+          "size": 87,
+          "sha256": "1cef535dbabb64ec7a3f7c8f27ab35dda40453bd2f6ecd36ad272a915ee7e1af"
+        }
+      ],
+      "expected": {
+        "complete": false,
+        "observation_kinds": {
+          "include_reference": 3,
+          "literal_invocation": 1,
+          "variable_reference": 1
+        },
+        "resolution_kinds": {
+          "dynamic": 1,
+          "missing": 2,
+          "runtime_dependent": 1,
+          "unsupported": 1
+        },
+        "blocker_reasons": {
+          "dynamic": 1,
+          "missing": 2,
+          "runtime_dependent": 1,
+          "unsupported": 3
+        },
+        "construct_families": [],
+        "calls_edges": 0,
+        "include_occurrences": 3
+      },
+      "non_claims": {
+        "expansion": false,
+        "generation": false,
+        "execution": false,
+        "validation": false,
+        "parity": false,
+        "certification": false,
+        "human_approval": false
+      }
+    },
+    {
+      "scenario_id": "adversarial-false-resolution",
+      "category": "adversarial",
+      "namespace": "task-05-adversarial-resolution",
+      "root": "adversarial/fail-closed",
+      "sources": [
+        {
+          "path": "main.sas",
+          "size": 353,
+          "sha256": "fa43c6d4622bd9366a6ae3065c3d237a880342241aad2d41806956b4ae0a0518"
+        }
+      ],
+      "expected": {
+        "complete": true,
+        "observation_kinds": {
+          "definition": 5,
+          "dynamic_invocation": 1,
+          "intrinsic_operation": 2,
+          "literal_invocation": 3,
+          "proc_format_definition": 1,
+          "quoting_operation": 1,
+          "target_template": 1,
+          "variable_definition": 1,
+          "variable_reference": 1
+        },
+        "resolution_kinds": {
+          "ambiguous": 1,
+          "cyclic": 2,
+          "dynamic": 1,
+          "intrinsic_system": 2,
+          "recursive": 1,
+          "runtime_dependent": 1
+        },
+        "blocker_reasons": {
+          "ambiguous": 1,
+          "cyclic": 2,
+          "dynamic": 1,
+          "recursive": 1,
+          "runtime_dependent": 1
+        },
+        "construct_families": [
+          "sas_macro_processor",
+          "sas_proc_format",
+          "target_template"
+        ],
+        "calls_edges": 0,
+        "include_occurrences": 0
+      },
+      "non_claims": {
+        "expansion": false,
+        "generation": false,
+        "execution": false,
+        "validation": false,
+        "parity": false,
+        "certification": false,
+        "human_approval": false
+      }
+    },
+    {
+      "scenario_id": "adversarial-include-cycle",
+      "category": "adversarial",
+      "namespace": "task-05-adversarial-include-cycle",
+      "root": "adversarial/include-cycle",
+      "sources": [
+        {
+          "path": "a.sas",
+          "size": 27,
+          "sha256": "f3aceb14d5022b953a52e8dc38f2b6cac4b970462263e7ce03b891f4327daaa6"
+        },
+        {
+          "path": "b.sas",
+          "size": 40,
+          "sha256": "8cdd4d0ce5e8c170a2fc95798783fefd4b2e9bd5ca417aad18f1116acdaabf38"
+        }
+      ],
+      "expected": {
+        "complete": true,
+        "observation_kinds": {
+          "definition": 1,
+          "include_reference": 2,
+          "literal_invocation": 1
+        },
+        "resolution_kinds": {"cyclic": 2, "missing": 1},
+        "blocker_reasons": {"cyclic": 2, "missing": 1},
+        "construct_families": ["sas_macro_processor"],
+        "calls_edges": 0,
+        "include_occurrences": 2
+      },
+      "non_claims": {
+        "expansion": false,
+        "generation": false,
+        "execution": false,
+        "validation": false,
+        "parity": false,
+        "certification": false,
+        "human_approval": false
+      }
+    }
+  ]
+}

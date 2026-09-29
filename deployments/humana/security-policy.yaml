@@ -1,0 +1,45 @@
+version: 2
+deployment_identity:
+  client_id: humana
+  deployment_id: humana-competition-pilot
+  environment_id: humana-databricks-pilot
+
+ai:
+  allowed_providers:
+  - anthropic
+  approved_endpoint_required: true
+  binding_status: pending
+  approved_endpoint_bindings: []
+  approved_model_bindings: []
+  allowed_context_fields: []
+  allowed_artifact_kinds: []
+  classification_authority: null
+  retention_policy_ref: null
+  access_policy_ref: null
+  submission_authority: null
+  redirect_policy: reject
+  public_model_endpoints_allowed: false
+  protected_data_in_prompt_allowed: false
+
+identity:
+  provider: microsoft-entra-id-active-directory
+  workload_authentication_binding_status: pending
+
+secrets:
+  provider: hashicorp-vault
+  binding_status: pending
+  credential_values_persisted: false
+  required_configuration:
+  - deployment
+  - authentication_flow
+  - namespace_and_role_scope
+  - opaque_secret_bindings
+  - lease_and_rotation_policy
+  - approval_and_evidence_authority
+
+promotion:
+  production_human_approval_required: true
+
+source_control:
+  production_data_allowed: false
+  secrets_allowed: false

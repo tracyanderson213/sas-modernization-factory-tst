@@ -1,0 +1,10 @@
+insert_job: EDGE_PARENT job_type: c
+command: scripts/run_mixed.sh
+machine: batch01
+
+insert_job: EDGE_CHILD job_type: c
+command: /opt/jobs/child.sh
+condition: s(EDGE_PARENT) & s(MISSING_EXTERNAL_JOB)
+
+insert_job: MALFORMED_BUT_SURVIVABLE job_type: c
+condition: s(EDGE_PARENT

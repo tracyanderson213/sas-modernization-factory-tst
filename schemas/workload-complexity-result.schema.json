@@ -1,0 +1,585 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "assessment_id",
+    "client_id",
+    "workload_id",
+    "boundary_id",
+    "entry_point_artifact_id",
+    "run_id",
+    "attempt_id",
+    "execution_id",
+    "discovery_digest",
+    "workload_digest",
+    "source_closure_digest",
+    "artifacts",
+    "dependency_graph_id",
+    "dependency_graph_digest",
+    "macro_analysis_id",
+    "macro_analysis_digest",
+    "macro_strategy_digest",
+    "policy_id",
+    "policy_version",
+    "policy_digest",
+    "strategy_id",
+    "strategy_version",
+    "dimensions",
+    "observations",
+    "score",
+    "tier",
+    "confidence_basis",
+    "unknowns",
+    "blockers",
+    "warnings",
+    "sensitivity",
+    "projections",
+    "evaluated_at",
+    "authorizes_readiness",
+    "authorizes_execution",
+    "authorizes_parity",
+    "authorizes_certification",
+    "generated",
+    "executed",
+    "validated",
+    "parity_passed",
+    "certified",
+    "human_approved",
+    "proof",
+    "result_digest"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "assessment_id": {
+      "$ref": "#/$defs/id"
+    },
+    "client_id": {
+      "$ref": "#/$defs/id"
+    },
+    "workload_id": {
+      "$ref": "#/$defs/id"
+    },
+    "boundary_id": {
+      "$ref": "#/$defs/id"
+    },
+    "entry_point_artifact_id": {
+      "$ref": "#/$defs/id"
+    },
+    "run_id": {
+      "$ref": "#/$defs/id"
+    },
+    "attempt_id": {
+      "$ref": "#/$defs/id"
+    },
+    "execution_id": {
+      "$ref": "#/$defs/id"
+    },
+    "discovery_digest": {
+      "$ref": "#/$defs/digest"
+    },
+    "workload_digest": {
+      "$ref": "#/$defs/digest"
+    },
+    "source_closure_digest": {
+      "$ref": "#/$defs/digest"
+    },
+    "artifacts": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 4096,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "artifact_id",
+          "logical_path",
+          "source_uri",
+          "sha256",
+          "size_bytes"
+        ],
+        "properties": {
+          "artifact_id": {
+            "$ref": "#/$defs/id"
+          },
+          "logical_path": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "source_uri": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "sha256": {
+            "$ref": "#/$defs/digest"
+          },
+          "size_bytes": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      }
+    },
+    "dependency_graph_id": {
+      "$ref": "#/$defs/id"
+    },
+    "dependency_graph_digest": {
+      "$ref": "#/$defs/digest"
+    },
+    "macro_analysis_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
+    "macro_analysis_digest": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "macro_strategy_digest": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "policy_id": {
+      "$ref": "#/$defs/id"
+    },
+    "policy_version": {
+      "$ref": "#/$defs/id"
+    },
+    "policy_digest": {
+      "$ref": "#/$defs/digest"
+    },
+    "strategy_id": {
+      "$ref": "#/$defs/id"
+    },
+    "strategy_version": {
+      "$ref": "#/$defs/id"
+    },
+    "dimensions": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "items": {
+        "$ref": "#/$defs/dimension"
+      }
+    },
+    "observations": {
+      "type": "array",
+      "maxItems": 100000,
+      "items": {
+        "$ref": "#/$defs/observation"
+      }
+    },
+    "score": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "tier": {
+      "enum": [
+        "simple",
+        "moderate",
+        "complex",
+        "highly_complex",
+        "unknown"
+      ]
+    },
+    "confidence_basis": {
+      "enum": [
+        "complete_tier_critical_dimensions",
+        "incomplete_tier_critical_dimensions"
+      ]
+    },
+    "unknowns": {
+      "$ref": "#/$defs/ids"
+    },
+    "blockers": {
+      "$ref": "#/$defs/strings"
+    },
+    "warnings": {
+      "$ref": "#/$defs/strings"
+    },
+    "sensitivity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "current_score",
+        "minimum_score",
+        "maximum_score",
+        "unknown_dimensions",
+        "threshold_distance"
+      ],
+      "properties": {
+        "current_score": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "minimum_score": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "maximum_score": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unknown_dimensions": {
+          "$ref": "#/$defs/ids"
+        },
+        "threshold_distance": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "simple",
+            "moderate",
+            "complex",
+            "highly_complex"
+          ],
+          "properties": {
+            "simple": {
+              "type": "integer"
+            },
+            "moderate": {
+              "type": "integer"
+            },
+            "complex": {
+              "type": "integer"
+            },
+            "highly_complex": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    },
+    "projections": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "constructs",
+          "macro_behaviors",
+          "dependency_characteristics",
+          "data_access_categories",
+          "validation_difficulty"
+        ],
+        "properties": {
+          "constructs": {
+            "$ref": "#/$defs/ids"
+          },
+          "macro_behaviors": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "enum": [
+                "none",
+                "static",
+                "dynamic",
+                "external",
+                "cyclic",
+                "runtime_dependent",
+                "unsupported",
+                "unresolved"
+              ]
+            }
+          },
+          "dependency_characteristics": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "enum": [
+                "isolated",
+                "internal",
+                "external",
+                "scheduler",
+                "unresolved",
+                "cyclic"
+              ]
+            }
+          },
+          "data_access_categories": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "enum": [
+                "none",
+                "files",
+                "database",
+                "warehouse",
+                "api",
+                "protected",
+                "unknown"
+              ]
+            }
+          },
+          "validation_difficulty": {
+            "enum": [
+              "low",
+              "medium",
+              "high",
+              "unknown"
+            ]
+          }
+        }
+      },
+      "evaluated_at": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "authorizes_readiness": {
+        "const": false
+      },
+      "authorizes_execution": {
+        "const": false
+      },
+      "authorizes_parity": {
+        "const": false
+      },
+      "authorizes_certification": {
+        "const": false
+      },
+      "generated": {
+        "const": false
+      },
+      "executed": {
+        "const": false
+      },
+      "validated": {
+        "const": false
+      },
+      "parity_passed": {
+        "const": false
+      },
+      "certified": {
+        "const": false
+      },
+      "human_approved": {
+        "const": false
+      },
+      "proof": {
+        "oneOf": [
+          {
+            "type": "null"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "algorithm",
+              "authority",
+              "key_id",
+              "value"
+            ],
+            "properties": {
+              "algorithm": {
+                "const": "ed25519"
+              },
+              "authority": {
+                "$ref": "#/$defs/id"
+              },
+              "key_id": {
+                "$ref": "#/$defs/id"
+              },
+              "value": {
+                "type": "string",
+                "minLength": 40,
+                "maxLength": 128
+              }
+            }
+          }
+        ]
+      },
+    "result_digest": {
+        "$ref": "#/$defs/digest"
+      }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/id"
+      }
+    },
+    "strings": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 512
+      }
+    },
+    "observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "observation_id",
+        "canonical_identity",
+        "dimension_id",
+        "feature_id",
+        "subject_id",
+        "evidence_id",
+        "method",
+        "origin_digest",
+        "locator"
+      ],
+      "properties": {
+        "observation_id": {
+          "$ref": "#/$defs/id"
+        },
+        "canonical_identity": {
+          "$ref": "#/$defs/digest"
+        },
+        "dimension_id": {
+          "enum": [
+            "static_constructs",
+            "macro_behavior",
+            "dependency_topology",
+            "data_access",
+            "source_scale",
+            "validation_difficulty"
+          ]
+        },
+        "feature_id": {
+          "$ref": "#/$defs/id"
+        },
+        "subject_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "evidence_id": {
+          "$ref": "#/$defs/id"
+        },
+        "method": {
+          "enum": [
+            "filesystem",
+            "static_analysis"
+          ]
+        },
+        "origin_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "locator": {
+          "type": "string",
+          "pattern": "^evidence://[A-Za-z0-9]"
+        }
+      }
+    },
+    "feature": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "feature_id",
+        "observed_count",
+        "counted_count",
+        "weight",
+        "contribution",
+        "observation_ids"
+      ],
+      "properties": {
+        "feature_id": {
+          "$ref": "#/$defs/id"
+        },
+        "observed_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "counted_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "weight": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "contribution": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "observation_ids": {
+          "$ref": "#/$defs/ids"
+        }
+      }
+    },
+    "dimension": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dimension_id",
+        "status",
+        "required",
+        "tier_critical",
+        "raw_contribution",
+        "contribution",
+        "cap",
+        "cap_applied",
+        "features"
+      ],
+      "properties": {
+        "dimension_id": {
+          "enum": [
+            "static_constructs",
+            "macro_behavior",
+            "dependency_topology",
+            "data_access",
+            "source_scale",
+            "validation_difficulty"
+          ]
+        },
+        "status": {
+          "enum": [
+            "observed",
+            "partial",
+            "unknown"
+          ]
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "tier_critical": {
+          "type": "boolean"
+        },
+        "raw_contribution": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "contribution": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "cap": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "cap_applied": {
+          "type": "boolean"
+        },
+        "features": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/feature"
+          }
+        }
+      }
+    }
+  }
+}

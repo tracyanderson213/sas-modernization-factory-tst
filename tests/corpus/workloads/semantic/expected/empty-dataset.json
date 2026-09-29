@@ -1,0 +1,1 @@
+{"schema_version":1,"columns":[{"name":"group","logical_type":"character","nullable":false,"length":4},{"name":"value","logical_type":"numeric","nullable":true}],"rows":[]}

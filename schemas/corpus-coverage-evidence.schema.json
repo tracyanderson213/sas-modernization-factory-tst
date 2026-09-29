@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://smf.local/schemas/corpus-coverage-evidence.schema.json",
+  "title": "SMF Corpus Coverage Proof Evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "evidence_id", "dimension", "capability", "maturity", "scenario_id", "source_id", "evidence_ref", "result_digest", "independent_source"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "evidence_id": {"type": "string", "minLength": 1},
+    "dimension": {"enum": ["source-diversity", "construct", "procedure", "macro-behavior", "data-access", "dependency", "scheduler", "topology", "complexity", "modernization-pattern", "validation-assertion", "unsupported-behavior", "unresolved-behavior"]},
+    "capability": {"type": "string", "minLength": 1},
+    "maturity": {"enum": ["tested", "converted", "executed", "validated", "certified"]},
+    "scenario_id": {"type": "string", "minLength": 1},
+    "source_id": {"type": "string", "minLength": 1},
+    "evidence_ref": {"type": "string", "minLength": 1},
+    "result_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "independent_source": {"type": "boolean"},
+    "note": {"type": "string", "minLength": 1}
+  }
+}

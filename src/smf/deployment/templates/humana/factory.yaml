@@ -1,0 +1,32 @@
+schema_version: "1.0"
+deployment_identity:
+  client_id: humana
+  deployment_id: humana-competition-pilot
+  environment_id: humana-databricks-pilot
+template_status: placeholder
+
+deployment:
+  provider: databricks
+  configuration: databricks.yaml
+
+readiness:
+  required: true
+  policy: readiness-policy.yaml
+  configuration_files:
+    - factory.yaml
+    - databricks.yaml
+    - compute-policy.yaml
+    - security-policy.yaml
+    - validation-policy.yaml
+
+routing:
+  deterministic_first: true
+  ai_assistance_enabled: true
+  max_remediation_attempts: 2
+  human_review_on_low_confidence: true
+
+telemetry:
+  enabled: true
+
+# Environment-specific endpoints, credentials, and protected configuration
+# must not be committed here.
